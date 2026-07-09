@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="header :: head('500 Error')"></head>
+
+<body>
+	<div class="container py-5 text-center">
+		<h1 class="display-1 fw-bold">500</h1>
+		<p class="lead">Something went wrong.</p>
+		<p th:text="${message}"></p>
+		<a th:href="@{/}" class="btn btn-primary">Go Home</a>
+	</div>
+</body>
+
+</html>

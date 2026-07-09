@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="header :: head('Product Details')"></head>
+
+<body>
+	<div th:replace="header :: navbar"></div>
+
+	<section class="py-5">
+		<div class="container">
+			<div class="row g-5">
+				<div class="col-lg-6">
+					<div class="card-soft p-3">
+						<img src="/images/product-placeholder.jpg" class="rounded-4 mb-3" alt="Product">
+						<div class="row g-2">
+							<div class="col-3"><img src="/images/product-placeholder.jpg" class="rounded-3" alt="">
+							</div>
+							<div class="col-3"><img src="/images/product-placeholder.jpg" class="rounded-3" alt="">
+							</div>
+							<div class="col-3"><img src="/images/product-placeholder.jpg" class="rounded-3" alt="">
+							</div>
+							<div class="col-3"><img src="/images/product-placeholder.jpg" class="rounded-3" alt="">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<span class="badge-soft mb-3 d-inline-block">Handmade Crochet</span>
+					<h1 class="section-title">Crochet Product</h1>
+					<div class="rating my-2">
+						<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+							class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+							class="fa-regular fa-star"></i>
+						<span class="ms-2 text-muted">(24 reviews)</span>
+					</div>
+					<div class="price mb-3">₹799</div>
+					<p class="text-muted">Beautiful handmade crochet product crafted with premium yarn and elegant
+						finishing.</p>
+
+					<div class="row g-3 my-4">
+						<div class="col-md-4">
+							<label class="form-label">Quantity</label>
+							<div class="input-group">
+								<button class="btn btn-outline-primary" data-qty-minus="#qty">-</button>
+								<input type="number" id="qty" class="form-control qty-input" value="1" min="1">
+								<button class="btn btn-outline-primary" data-qty-plus="#qty">+</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="d-flex gap-2 flex-wrap">
+
+						<button class="btn btn-primary btn-lg" id="addToCartBtn" th:data-product-id="${productId}">
+							<i class="fa-solid fa-cart-shopping"></i>
+							Add to Cart
+						</button>
+
+						<button class="btn btn-outline-primary btn-lg" id="buyNowBtn" th:data-product-id="${productId}">
+							<i class="fa-solid fa-bolt"></i>
+							Buy Now
+						</button>
+
+						<button class="wishlist-btn" id="wishlistBtn" th:data-product-id="${productId}">
+							<i class="fa-regular fa-heart"></i>
+						</button>
+
+					</div>
+					<div class="card-soft p-4 mt-4">
+						<h5 class="fw-bold">Specifications</h5>
+						<ul class="mb-0 text-muted">
+							<li>Material: Premium yarn</li>
+							<li>Handmade with care</li>
+							<li>Custom colors available</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<div th:replace="footer :: footer"></div>
+	<div th:replace="scripts :: scripts"></div>
+</body>
+
+</html>

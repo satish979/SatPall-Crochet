@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="header :: head('403 Forbidden')"></head>
+
+<body>
+	<div class="container py-5 text-center">
+		<h1 class="display-1 fw-bold">403</h1>
+		<p class="lead">Access denied.</p>
+		<a th:href="@{/}" class="btn btn-primary">Go Home</a>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="header :: head('Checkout')"></head>
+
+<body>
+	<div th:replace="header :: navbar"></div>
+	<section class="py-5">
+		<div class="container">
+			<h2 class="section-title mb-4">Checkout</h2>
+			<div class="card-soft p-4">
+				<p class="text-muted">Checkout form will connect to your order service.</p>
+			</div>
+		</div>
+	</section>
+	<div th:replace="footer :: footer"></div>
+	<div th:replace="scripts :: scripts"></div>
+</body>
+
+</html>

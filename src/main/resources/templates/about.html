@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="header :: head('About')"></head>
+
+<body>
+	<div th:replace="header :: navbar"></div>
+
+	<section class="py-5">
+		<div class="container">
+			<div class="card-soft p-5">
+				<h1 class="section-title mb-3">About SatPall Crochet</h1>
+				<p class="text-muted">
+					SatPall Crochet creates premium handmade crochet gifts crafted with love, detail, and quality.
+				</p>
+				<p class="text-muted">
+					Our products are designed for birthdays, anniversaries, baby gifting, home decor, and custom
+					celebrations.
+				</p>
+			</div>
+		</div>
+	</section>
+
+	<div th:replace="footer :: footer"></div>
+	<div th:replace="scripts :: scripts"></div>
+</body>
+
+</html>

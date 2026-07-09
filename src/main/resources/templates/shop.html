@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="header :: head('Shop')"></head>
+
+<body>
+
+	<div th:replace="header :: navbar"></div>
+
+	<section class="py-5">
+		<div class="container">
+			<div class="row g-4">
+
+				<!-- Filters -->
+				<div class="col-lg-3">
+					<div class="card-soft p-4">
+						<h5 class="fw-bold mb-3">Filters</h5>
+
+						<div class="mb-3">
+							<label class="form-label">Search</label>
+							<input type="text" class="form-control" placeholder="Search products">
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label">Category</label>
+							<select class="form-select">
+								<option>All Categories</option>
+								<option>Flowers</option>
+								<option>Bouquets</option>
+								<option>Teddy Bears</option>
+							</select>
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label">Sort By</label>
+							<select class="form-select">
+								<option>Latest</option>
+								<option>Price Low to High</option>
+								<option>Price High to Low</option>
+								<option>Popular</option>
+							</select>
+						</div>
+
+						<button class="btn btn-primary w-100">
+							Apply
+						</button>
+					</div>
+				</div>
+
+				<!-- Products -->
+				<div class="col-lg-9">
+
+					<div class="row g-4">
+
+						<div class="col-md-6 col-xl-4" th:each="product : ${products}">
+
+							<div class="card-soft product-card h-100 position-relative">
+
+								<span class="product-badge">New</span>
+
+								<img th:src="@{'/uploads/' + ${product.imageUrl}}" alt="Product">
+
+								<div class="p-3">
+
+									<h6 class="fw-bold">
+										<span th:text="${product.name}"></span>
+									</h6>
+
+									<div class="rating mb-1">
+										<i class="fa-solid fa-star"></i>
+										<i class="fa-solid fa-star"></i>
+										<i class="fa-solid fa-star"></i>
+										<i class="fa-solid fa-star"></i>
+										<i class="fa-regular fa-star"></i>
+									</div>
+
+									₹<span th:text="${product.price}"></span>
+									<div class="d-flex justify-content-between align-items-center mt-3">
+
+										<a th:href="@{/product-details/{id}(id=${product.id})}">
+											View
+										</a>
+
+										<button class="wishlist-btn">
+											<i class="fa-regular fa-heart"></i>
+										</button>
+
+									</div>
+
+								</div>
+
+							</div>
+
+						</div>
+
+					</div>
+
+					<!-- Pagination -->
+
+					<nav class="mt-4">
+
+						<ul class="pagination justify-content-center">
+
+							<li class="page-item disabled">
+								<a class="page-link" href="#">Prev</a>
+							</li>
+
+							<li class="page-item active">
+								<a class="page-link" href="#">1</a>
+							</li>
+
+							<li class="page-item">
+								<a class="page-link" href="#">2</a>
+							</li>
+
+							<li class="page-item">
+								<a class="page-link" href="#">3</a>
+							</li>
+
+							<li class="page-item">
+								<a class="page-link" href="#">Next</a>
+							</li>
+
+						</ul>
+
+					</nav>
+
+				</div>
+
+			</div>
+		</div>
+	</section>
+
+	<div th:replace="footer :: footer"></div>
+	<div th:replace="scripts :: scripts"></div>
+
+</body>
+
+</html>
