@@ -22,6 +22,10 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import com.satpall.crochet.enums.OrderStatus;
+import com.satpall.crochet.enums.PaymentMethod;
+import com.satpall.crochet.enums.PaymentStatus;
+
 import lombok.Data;
 
 @Entity
@@ -58,12 +62,15 @@ public class Order {
 	@Column(nullable = false, precision = 10, scale = 2)
 	private BigDecimal total;
 
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private OrderStatus status = OrderStatus.PENDING;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "payment_method", nullable = false)
 	private PaymentMethod paymentMethod = PaymentMethod.COD;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "payment_status")
 	private PaymentStatus paymentStatus = PaymentStatus.PENDING;
 
@@ -113,18 +120,6 @@ public class Order {
 
 	@Column(name = "coupon_code", length = 50)
 	private String couponCode;
-
-	public enum OrderStatus {
-		PENDING, CONFIRMED, PROCESSING, SHIPPED, DELIVERED, CANCELLED, REFUNDED
-	}
-
-	public enum PaymentMethod {
-		COD, ONLINE, UPI, CARD, WALLET
-	}
-
-	public enum PaymentStatus {
-		PENDING, PAID, FAILED, REFUNDED
-	}
 
 	@PrePersist
 	protected void onPersist() {

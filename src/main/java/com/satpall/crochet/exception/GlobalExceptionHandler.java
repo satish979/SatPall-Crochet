@@ -10,6 +10,6 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	public String handleAllExceptions(Exception ex, Model model) {
 		model.addAttribute("message", ex.getMessage());
-		return "error/500";
+		return "500";
 	}
 }
