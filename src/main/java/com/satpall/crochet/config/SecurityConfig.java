@@ -25,11 +25,34 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-		http.authorizeRequests()
-				.antMatchers("/", "/shop", "/css/**", "/js/**", "/images/**", "/uploads/**", "/admin/login").permitAll()
-				.antMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated().and().formLogin()
+		http.csrf().ignoringAntMatchers("/api/**").and()
+
+				.authorizeRequests()
+
+				.antMatchers("/", "/shop", "/cart", "/checkout", "/order-success", "/about","/product-details/**",
+
+						"/css/**", "/js/**", "/images/**", "/uploads/**",
+
+						"/api/**",
+
+						"/admin/login")
+				.permitAll()
+
+				.antMatchers("/admin/**").hasRole("ADMIN")
+
+				.anyRequest().authenticated()
+
+				.and()
+
+				.formLogin()
+
 				.loginPage("/admin/login").loginProcessingUrl("/admin/login")
-				.defaultSuccessUrl("/admin/dashboard", true).failureUrl("/admin/login?error").permitAll().and().logout()
+				.defaultSuccessUrl("/admin/dashboard", true).failureUrl("/admin/login?error").permitAll()
+
+				.and()
+
+				.logout()
+
 				.logoutUrl("/logout").logoutSuccessUrl("/").permitAll();
 
 		return http.build();

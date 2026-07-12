@@ -1,3 +1,5 @@
+CONTEXT_PATH = '/SatPall-Crochet';
+
 document.addEventListener("DOMContentLoaded", function() {
 
     initNavbarActiveLink();
@@ -155,7 +157,6 @@ function initToastContainers() {
         }, 3000);
     };
 }
-
 function initCartActions() {
 
     const addBtn = document.getElementById("addToCartBtn");
@@ -169,31 +170,43 @@ function initCartActions() {
             const productId = this.dataset.productId;
             const qty = document.getElementById("qty").value;
 
-            fetch("/api/cart/add", {
+            fetch(CONTEXT_PATH + "/api/cart/add", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
                 },
                 body: JSON.stringify({
                     productId: productId,
                     quantity: qty
                 })
             })
-                .then(res => res.json())
-                .then(response => {
+                .then(async response => {
 
-                    showToast("Product added to cart.");
+                    const text = await response.text();
 
-                    updateCartCount(response.cartCount);
+                    if (!response.ok) {
+                        throw new Error("HTTP " + response.status);
+                    }
+
+                    if (text.trim().startsWith("<")) {
+                        throw new Error("Server returned HTML instead of JSON");
+                    }
+
+                    const data = JSON.parse(text);
+
+                    showToast(data.message);
 
                 })
-                .catch(() => {
-                    showToast("Unable to add product.", "danger");
+                .catch(error => {
+                    console.error(error);
+                    showToast(error.message, "danger");
                 });
 
         });
 
     }
+
 
     if (buyBtn) {
 
@@ -202,7 +215,8 @@ function initCartActions() {
             const productId = this.dataset.productId;
             const qty = document.getElementById("qty").value;
 
-            fetch("/api/cart/buy-now", {
+            fetch(CONTEXT_PATH + "/api/cart/buy-now", {
+
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -228,7 +242,8 @@ function initCartActions() {
 
             const productId = this.dataset.productId;
 
-            fetch("/api/wishlist/add/" + productId, {
+            fetch(CONTEXT_PATH + "/api/wishlist/add/" + productId, {
+
                 method: "POST"
             })
                 .then(res => res.json())

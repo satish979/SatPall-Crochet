@@ -25,8 +25,4 @@ public class CustomUserDetailsService implements UserDetailsService {
 		throw new UsernameNotFoundException("Invalid username");
 	}
 
-	public static void main(String[] args) {
-		System.out.println(new BCryptPasswordEncoder().encode("Gowri@123"));
-	}
-
 }

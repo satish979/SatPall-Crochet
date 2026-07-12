@@ -22,7 +22,7 @@
 					</div>
 				</div>
 				<div class="col-lg-6 text-center">
-					<img src="/images/hero-product.png" alt="SatPall Crochet" class="img-fluid">
+					<img src="/SatPall-Crochet/uploads/satpall_crochet_logo.png" alt="SatPall Crochet" class="img-fluid">
 				</div>
 			</div>
 		</div>
@@ -83,7 +83,8 @@
 
 							<div class="d-flex justify-content-between align-items-center mt-3">
 
-								<a th:href="@{/product-details/{id}(id=${product.id})}" class="btn btn-sm btn-primary">
+								<a th:href="@{/api/cart/product-details/{id}(id=${product.id})}"
+									class="btn btn-sm btn-primary">
 									View
 								</a>
 
