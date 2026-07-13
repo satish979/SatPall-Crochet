@@ -157,6 +157,8 @@ function initToastContainers() {
         }, 3000);
     };
 }
+
+
 function initCartActions() {
 
     const addBtn = document.getElementById("addToCartBtn");
@@ -164,11 +166,11 @@ function initCartActions() {
     const wishlistBtn = document.getElementById("wishlistBtn");
 
     if (addBtn) {
-
         addBtn.addEventListener("click", function() {
-
             const productId = this.dataset.productId;
             const qty = document.getElementById("qty").value;
+
+            addBtn.disabled = true; // prevent double-clicks
 
             fetch(CONTEXT_PATH + "/api/cart/add", {
                 method: "POST",
@@ -176,35 +178,25 @@ function initCartActions() {
                     "Content-Type": "application/json",
                     "Accept": "application/json"
                 },
-                body: JSON.stringify({
-                    productId: productId,
-                    quantity: qty
-                })
+                body: JSON.stringify({ productId: productId, quantity: qty })
             })
                 .then(async response => {
-
                     const text = await response.text();
-
-                    if (!response.ok) {
-                        throw new Error("HTTP " + response.status);
-                    }
-
-                    if (text.trim().startsWith("<")) {
-                        throw new Error("Server returned HTML instead of JSON");
-                    }
+                    if (!response.ok) throw new Error("HTTP " + response.status);
+                    if (text.trim().startsWith("<")) throw new Error("Server returned HTML instead of JSON");
 
                     const data = JSON.parse(text);
-
-                    showToast(data.message);
-
+                    showCartToast(data.message || "Added to cart");
+                    updateCartBadge(data.cartCount); // only fires if your API returns this
                 })
                 .catch(error => {
                     console.error(error);
                     showToast(error.message, "danger");
+                })
+                .finally(() => {
+                    addBtn.disabled = false;
                 });
-
         });
-
     }
 
 
@@ -259,4 +251,19 @@ function initCartActions() {
 
     }
 
+}
+
+function showCartToast(message) {
+    const toastEl = document.getElementById("cartToast");
+    document.getElementById("cartToastMsg").textContent = message || "Added to cart";
+    const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 3500 });
+    toast.show();
+}
+
+function updateCartBadge(count) {
+    const badge = document.getElementById("cartCountBadge");
+    if (badge && typeof count === "number") {
+        badge.textContent = count;
+        badge.classList.remove("d-none");
+    }
 }

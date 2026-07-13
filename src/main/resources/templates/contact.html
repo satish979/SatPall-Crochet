@@ -1,45 +1,56 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+
+
+<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
+<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
+<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
+<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
+<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
+
 <head th:replace="header :: head('Contact')"></head>
+
 <body>
-<div th:replace="header :: navbar"></div>
+	<div th:replace="header :: navbar"></div>
 
-<section class="py-5">
-  <div class="container">
-    <div class="row g-4">
-      <div class="col-lg-6">
-        <div class="card-soft p-4">
-          <h2 class="section-title mb-3">Contact Us</h2>
-          <form>
-            <div class="mb-3">
-              <label class="form-label">Name</label>
-              <input type="text" class="form-control">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Email</label>
-              <input type="email" class="form-control">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Message</label>
-              <textarea class="form-control" rows="5"></textarea>
-            </div>
-            <button class="btn btn-primary">Send Message</button>
-          </form>
-        </div>
-      </div>
-      <div class="col-lg-6">
-        <div class="card-soft p-4 h-100">
-          <h2 class="section-title mb-3">Store Details</h2>
-          <p class="text-muted"><strong>Email:</strong> hello@satpallcrochet.in</p>
-          <p class="text-muted"><strong>Phone:</strong> +91 98765 43210</p>
-          <p class="text-muted"><strong>Location:</strong> Bengaluru, Karnataka</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+	<section class="py-5">
+		<div class="container">
+			<div class="row g-4">
+				<div class="col-lg-6">
+					<div class="card-soft p-4">
+						<h2 class="section-title mb-3">Contact Us</h2>
+						<form>
+							<div class="mb-3">
+								<label class="form-label">Name</label>
+								<input type="text" class="form-control">
+							</div>
+							<div class="mb-3">
+								<label class="form-label">Email</label>
+								<input type="email" class="form-control">
+							</div>
+							<div class="mb-3">
+								<label class="form-label">Message</label>
+								<textarea class="form-control" rows="5"></textarea>
+							</div>
+							<button class="btn btn-primary">Send Message</button>
+						</form>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<div class="card-soft p-4 h-100">
+						<h2 class="section-title mb-3">Store Details</h2>
+						<p class="text-muted"><strong>Email:</strong> hello@satpallcrochet.in</p>
+						<p class="text-muted"><strong>Phone:</strong> +91 98765 43210</p>
+						<p class="text-muted"><strong>Location:</strong> Bengaluru, Karnataka</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 
-<div th:replace="footer :: footer"></div>
-<div th:replace="scripts :: scripts"></div>
+	<div th:replace="footer :: footer"></div>
+	<div th:replace="scripts :: scripts"></div>
 </body>
+
 </html>

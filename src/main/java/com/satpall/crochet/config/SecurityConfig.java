@@ -1,68 +1,54 @@
 package com.satpall.crochet.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.satpall.crochet.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
-import com.satpall.crochet.service.CustomUserDetailsService;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-	@Autowired
-	private CustomUserDetailsService customUserDetailsService;
+	private final CustomUserDetailsService customUserDetailsService;
 
-	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
-		http.csrf().ignoringAntMatchers("/api/**").and()
-
-				.authorizeRequests()
-
-				.antMatchers("/", "/shop", "/cart", "/checkout", "/order-success", "/about","/product-details/**",
-
-						"/css/**", "/js/**", "/images/**", "/uploads/**",
-
-						"/api/**",
-
-						"/admin/login")
-				.permitAll()
-
-				.antMatchers("/admin/**").hasRole("ADMIN")
-
-				.anyRequest().authenticated()
-
-				.and()
-
-				.formLogin()
-
-				.loginPage("/admin/login").loginProcessingUrl("/admin/login")
-				.defaultSuccessUrl("/admin/dashboard", true).failureUrl("/admin/login?error").permitAll()
-
-				.and()
-
-				.logout()
-
-				.logoutUrl("/logout").logoutSuccessUrl("/").permitAll();
-
-		return http.build();
+	public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+		this.customUserDetailsService = customUserDetailsService;
 	}
 
 	@Bean
-	public UserDetailsService userDetailsService(PasswordEncoder encoder) {
-		InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-		manager.createUser(User.withUsername("admin").password(encoder.encode("admin123")).roles("ADMIN").build());
-		return manager;
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.csrf(csrf -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/api/**")))
+				.authorizeHttpRequests(auth -> auth.requestMatchers(new AntPathRequestMatcher("/")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/shop")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/cart")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/checkout")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/order-success")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/about")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/api/cart/**")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/contact")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/product-details/**")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/SatPall-Crochet/**")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/css/**")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/js/**")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/images/**")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/uploads/**")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/api/**")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/admin/login")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole("ADMIN").anyRequest()
+						.authenticated())
+				.formLogin(form -> form.loginPage("/admin/login").loginProcessingUrl("/admin/login")
+						.usernameParameter("username").passwordParameter("password")
+						.defaultSuccessUrl("/admin/dashboard", true).failureUrl("/admin/login?error=true").permitAll())
+				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/").permitAll())
+				.authenticationProvider(authenticationProvider());
+
+		return http.build();
 	}
 
 	@Bean

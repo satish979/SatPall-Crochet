@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <clipPath id="ballClip">
+      <circle cx="92" cy="112" r="52"/>
+    </clipPath>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect x="4" y="4" width="192" height="192" rx="44" fill="#ffffff"/>
+  <rect x="4" y="4" width="192" height="192" rx="44" fill="none" stroke="#c9a227" stroke-width="4"/>
+
+  <!-- Yarn ball -->
+  <g>
+    <circle cx="92" cy="112" r="52" fill="#eab8ce"/>
+    <g clip-path="url(#ballClip)" fill="none" stroke="#c6aee0" stroke-width="4" opacity="0.9">
+      <ellipse cx="92" cy="112" rx="52" ry="20" transform="rotate(20 92 112)"/>
+      <ellipse cx="92" cy="112" rx="52" ry="18" transform="rotate(-25 92 112)"/>
+      <ellipse cx="92" cy="112" rx="20" ry="52" transform="rotate(10 92 112)"/>
+      <ellipse cx="92" cy="112" rx="52" ry="24" transform="rotate(70 92 112)"/>
+    </g>
+    <circle cx="92" cy="112" r="52" fill="none" stroke="#c9a227" stroke-width="3"/>
+  </g>
+
+  <!-- Yarn tail -->
+  <path d="M60,150 C50,165 48,178 58,186" fill="none" stroke="#eab8ce" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Crochet hook diagonally through/beside the ball -->
+  <g>
+    <path d="M56,180 L146,64 C150,54 162,50 171,56 C180,62 181,75 173,82 C167,87 159,86 155,80"
+          fill="none" stroke="#fdf6e3" stroke-width="10" stroke-linecap="round"/>
+    <path d="M56,180 L146,64 C150,54 162,50 171,56 C180,62 181,75 173,82 C167,87 159,86 155,80"
+          fill="none" stroke="#c9a227" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- Small leaf accent -->
+  <g transform="translate(148,150)">
+    <ellipse cx="-8" cy="0" rx="12" ry="8" fill="#93b48b" transform="rotate(-20 -8 0)"/>
+    <ellipse cx="8" cy="0" rx="12" ry="8" fill="#93b48b" transform="rotate(20 8 0)"/>
+  </g>
+</svg>
