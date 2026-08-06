@@ -33,7 +33,7 @@ public class SecurityConfig {
 						.requestMatchers(new AntPathRequestMatcher("/api/cart/**")).permitAll()
 						.requestMatchers(new AntPathRequestMatcher("/contact")).permitAll()
 						.requestMatchers(new AntPathRequestMatcher("/product-details/**")).permitAll()
-						.requestMatchers(new AntPathRequestMatcher("/SatPall-Crochet/**")).permitAll()
+						.requestMatchers(new AntPathRequestMatcher("/Loomellecrochet/**")).permitAll()
 						.requestMatchers(new AntPathRequestMatcher("/css/**")).permitAll()
 						.requestMatchers(new AntPathRequestMatcher("/js/**")).permitAll()
 						.requestMatchers(new AntPathRequestMatcher("/images/**")).permitAll()
@@ -45,6 +45,7 @@ public class SecurityConfig {
 				.formLogin(form -> form.loginPage("/admin/login").loginProcessingUrl("/admin/login")
 						.usernameParameter("username").passwordParameter("password")
 						.defaultSuccessUrl("/admin/dashboard", true).failureUrl("/admin/login?error=true").permitAll())
+			.rememberMe(remember -> remember.rememberMeParameter("remember-me").key("loomellecrochet-remember-key").tokenValiditySeconds(1209600).userDetailsService(customUserDetailsService))
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/").permitAll())
 				.authenticationProvider(authenticationProvider());
 

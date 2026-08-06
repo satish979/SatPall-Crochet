@@ -11,7 +11,6 @@ import com.satpall.crochet.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
 
 	private final ProductRepository productRepository;

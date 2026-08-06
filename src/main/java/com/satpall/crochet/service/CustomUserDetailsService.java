@@ -18,7 +18,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 		if ("admin".equals(username)) {
 
-			return new User("admin", "$2a$10$XwMlpf59d.7V2q31W1p4auBHcaXfrAVzvtOakiVw1Fsrm8XLDBQRm",
+			BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+			//String password = "admin123";
+
+			return new User("admin", "$2a$10$QVAVz11IUh16wjMlgdFjcOTwxmyunpVx/NV4Lfcyq8Nsy0gFHu6DK",
 					Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN")));
 		}
 

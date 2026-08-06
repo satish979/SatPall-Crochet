@@ -1,4 +1,4 @@
-CONTEXT_PATH = '/SatPall-Crochet';
+CONTEXT_PATH = '/Loomellecrochet';
 
 document.addEventListener("DOMContentLoaded", function() {
 

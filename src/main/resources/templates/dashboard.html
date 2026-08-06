@@ -25,6 +25,15 @@
 				<a th:href="@{/logout}" class="btn btn-outline-primary">Logout</a>
 			</div>
 
+			<div class="mb-4">
+				<div class="btn-group" role="group" aria-label="Admin actions">
+					<a th:href="@{/admin/products}" class="btn btn-primary">Manage Products</a>
+					<a th:href="@{/admin/products/new}" class="btn btn-success">Add Product</a>
+					<a th:href="@{/admin/categories}" class="btn btn-secondary">Manage Categories</a>
+					<a th:href="@{/admin/orders}" class="btn btn-info text-white">Manage Orders</a>
+				</div>
+			</div>
+
 			<div class="row g-4">
 				<div class="col-md-3">
 					<div class="card-soft p-4">

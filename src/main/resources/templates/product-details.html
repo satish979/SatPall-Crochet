@@ -19,16 +19,17 @@
 			<div class="row g-5">
 				<div class="col-lg-6">
 					<div class="card-soft p-3">
-						<img src="/images/product-placeholder.jpg" class="rounded-4 mb-3" alt="Product">
+						<img th:src="${product.imageUrl != null ? product.imageUrl : '/images/product-placeholder.jpg'}"
+							class="rounded-4 mb-3" alt="Product">
 						<div class="row g-2">
-							<div class="col-3"><img src="/images/product-placeholder.jpg" class="rounded-3" alt="">
-							</div>
-							<div class="col-3"><img src="/images/product-placeholder.jpg" class="rounded-3" alt="">
-							</div>
-							<div class="col-3"><img src="/images/product-placeholder.jpg" class="rounded-3" alt="">
-							</div>
-							<div class="col-3"><img src="/images/product-placeholder.jpg" class="rounded-3" alt="">
-							</div>
+							<div class="col-3"><img th:src="${product.imageUrl != null ? product.imageUrl : '/images/product-placeholder.jpg'}"
+								class="rounded-3" alt=""></div>
+							<div class="col-3"><img th:src="${product.imageUrl != null ? product.imageUrl : '/images/product-placeholder.jpg'}"
+								class="rounded-3" alt=""></div>
+							<div class="col-3"><img th:src="${product.imageUrl != null ? product.imageUrl : '/images/product-placeholder.jpg'}"
+								class="rounded-3" alt=""></div>
+							<div class="col-3"><img th:src="${product.imageUrl != null ? product.imageUrl : '/images/product-placeholder.jpg'}"
+								class="rounded-3" alt=""></div>
 						</div>
 					</div>
 				</div>
