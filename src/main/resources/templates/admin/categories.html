@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="header :: head('Manage Categories')"></head>
+
+<body>
+	<div th:replace="header :: navbar"></div>
+
+	<section class="py-5">
+		<div class="container">
+			<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+				<div>
+					<h1 class="section-title mb-1">Manage Categories</h1>
+					<p class="text-muted mb-0">Organize products by category with a polished admin view.</p>
+				</div>
+				<a th:href="@{/admin/dashboard}" class="btn btn-outline-primary">Back to Dashboard</a>
+			</div>
+
+			<div class="card-soft p-4">
+				<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+					<div>
+						<h4 class="fw-bold mb-1">Category List</h4>
+						<p class="text-muted mb-0">Use this section to manage all your store categories.</p>
+					</div>
+						<a class="btn btn-primary" th:href="@{/admin/categories/new}">+ Add Category</a>
+							<tr>
+								<th>#</th>
+								<th>Name</th>
+								<th>Status</th>
+								<th>Actions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:if="${#lists.isEmpty(categories)}">
+								<td colspan="4" class="text-center text-muted py-4">No categories found yet.</td>
+							</tr>
+							<tr th:each="category, iterStat : ${categories}">
+								<td th:text="${iterStat.count}"></td>
+								<td>
+									<img th:src="${category.imageUrl != null ? category.imageUrl : '/images/product-placeholder.jpg'}"
+										alt="Category"
+										style="width: 48px; height: 48px; object-fit: contain; border-radius: 8px; background: #f8f9fa;">
+									<span class="ms-2" th:text="${category.name}"></span>
+								</td>
+								<td>
+									<span class="badge" th:classappend="${category.active} ? 'bg-success' : 'bg-secondary'"
+										th:text="${category.active ? 'Active' : 'Inactive'}"></span>
+								</td>
+								<td>
+									<a class="btn btn-sm btn-outline-primary me-2" th:href="@{'/admin/categories/' + ${category.id} + '/edit'}">Edit</a>
+									<form th:action="@{'/admin/categories/' + ${category.id} + '/delete'}" method="post" class="d-inline">
+										<button class="btn btn-sm btn-outline-danger" type="submit" onclick="return confirm('Delete this category?');">Delete</button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<div th:replace="footer :: footer"></div>
+	<div th:replace="scripts :: scripts"></div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="header :: head('Category Form')"></head>
+
+<body>
+	<div th:replace="header :: navbar"></div>
+
+	<section class="py-5">
+		<div class="container">
+			<div class="card-soft p-4 p-md-5">
+				<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+					<div>
+						<h1 class="section-title mb-1" th:text="${category.id != null ? 'Edit Category' : 'Add Category'}">Category Form</h1>
+						<p class="text-muted mb-0">Create or edit a category and assign a simple placeholder image if needed.</p>
+					</div>
+					<a th:href="@{/admin/categories}" class="btn btn-outline-secondary">Back</a>
+				</div>
+
+				<form th:action="@{/admin/categories/save}" th:object="${category}" method="post">
+					<input type="hidden" th:field="*{id}" />
+
+					<div class="row g-3">
+						<div class="col-md-6">
+							<label class="form-label fw-semibold">Category Name</label>
+							<input type="text" class="form-control" th:field="*{name}" required>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-semibold">Display Order</label>
+							<input type="number" class="form-control" th:field="*{displayOrder}">
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-semibold">Image URL</label>
+							<input type="text" class="form-control" th:field="*{imageUrl}" placeholder="/images/product-placeholder.jpg">
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-semibold">Status</label>
+							<select class="form-select" th:field="*{active}">
+								<option th:value="true">Active</option>
+								<option th:value="false">Inactive</option>
+							</select>
+						</div>
+						<div class="col-12">
+							<label class="form-label fw-semibold">Description</label>
+							<textarea class="form-control" rows="4" th:field="*{description}"></textarea>
+						</div>
+					</div>
+
+					<div class="mt-4 text-end">
+						<button type="submit" class="btn btn-primary">Save Category</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</section>
+
+	<div th:replace="footer :: footer"></div>
+	<div th:replace="scripts :: scripts"></div>
+</body>
+</html>

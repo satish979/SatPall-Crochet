@@ -45,7 +45,11 @@ public class SecurityConfig {
 				.formLogin(form -> form.loginPage("/admin/login").loginProcessingUrl("/admin/login")
 						.usernameParameter("username").passwordParameter("password")
 						.defaultSuccessUrl("/admin/dashboard", true).failureUrl("/admin/login?error=true").permitAll())
-			.rememberMe(remember -> remember.rememberMeParameter("remember-me").key("loomellecrochet-remember-key").tokenValiditySeconds(1209600).userDetailsService(customUserDetailsService))
+			.rememberMe(remember -> remember.rememberMeParameter("remember-me")
+					.key("loomellecrochet-remember-key")
+					.tokenValiditySeconds(1209600)
+					.userDetailsService(customUserDetailsService)
+					.alwaysRemember(true))
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/").permitAll())
 				.authenticationProvider(authenticationProvider());
 

@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,9 +16,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.satpall.crochet.dto.ProductForm;
-import com.satpall.crochet.entity.Category;
+import com.satpall.crochet.entity.Category; 
+import com.satpall.crochet.entity.Order;
 import com.satpall.crochet.entity.Product;
 import com.satpall.crochet.repository.CategoryRepository;
+import com.satpall.crochet.repository.OrderRepository;
 import com.satpall.crochet.service.AdminService;
 import com.satpall.crochet.service.ProductService;
 
@@ -26,11 +30,14 @@ public class AdminController {
 	private final AdminService adminService;
 	private final ProductService productService;
 	private final CategoryRepository categoryRepository;
+	private final OrderRepository orderRepository;
 
-	public AdminController(AdminService adminService, ProductService productService, CategoryRepository categoryRepository) {
+	public AdminController(AdminService adminService, ProductService productService,
+			CategoryRepository categoryRepository, OrderRepository orderRepository) {
 		this.adminService = adminService;
 		this.productService = productService;
 		this.categoryRepository = categoryRepository;
+		this.orderRepository = orderRepository;
 	}
 
 	@ModelAttribute("categories")
@@ -105,12 +112,15 @@ public class AdminController {
 	@GetMapping("/admin/categories")
 	public String categories(Model model) {
 		model.addAttribute("pageTitle", "Manage Categories");
+		model.addAttribute("categories", categoryRepository.findAllByOrderByDisplayOrderAscNameAsc());
 		return "admin/categories";
 	}
 
 	@GetMapping("/admin/orders")
 	public String orders(Model model) {
 		model.addAttribute("pageTitle", "Manage Orders");
+		Page<Order> orders = orderRepository.findAllByOrderByCreatedDateDesc(Pageable.unpaged());
+		model.addAttribute("orders", orders);
 		return "admin/orders";
 	}
 
