@@ -29,8 +29,7 @@ public class ProductService {
 	private final CartItemRepository cartItemRepository;
 
 	public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository,
-			CloudinaryService cloudinaryService, CartRepository cartRepository,
-			CartItemRepository cartItemRepository) {
+			CloudinaryService cloudinaryService, CartRepository cartRepository, CartItemRepository cartItemRepository) {
 		this.productRepository = productRepository;
 		this.categoryRepository = categoryRepository;
 		this.cloudinaryService = cloudinaryService;
@@ -132,7 +131,8 @@ public class ProductService {
 
 		});
 
-		Product product = productRepository.findById(productId).orElseThrow();
+		Product product = productRepository.findById(productId)
+				.orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
 		CartItem item = new CartItem();
 
