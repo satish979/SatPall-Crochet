@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.satpall.crochet.dto.CartRequest;
+import com.satpall.crochet.dto.OrderSummaryDTO;
+import com.satpall.crochet.entity.Product;
 import com.satpall.crochet.service.ProductService;
 
 @RestController
@@ -27,14 +29,31 @@ public class CartController {
 	}
 
 	@PostMapping("/buy-now")
-	public ResponseEntity<Map<String, Object>> buyNow(@RequestBody CartRequest request) {
+	public ResponseEntity<Map<String, Object>> buyNow(@RequestBody CartRequest request, HttpSession session) {
 
-		// TODO: Save temporary cart/order
+		Product product = productService.getProduct(request.getProductId());
+
+		if (product == null) {
+			Map<String, Object> response = new HashMap<>();
+			response.put("success", false);
+			response.put("message", "Product not found");
+			return ResponseEntity.badRequest().body(response);
+		}
+
+		com.satpall.crochet.dto.OrderSummaryDTO item = new com.satpall.crochet.dto.OrderSummaryDTO();
+		item.setProductId(product.getId());
+		item.setProductName(product.getName());
+		item.setImageUrl(product.getImageUrl());
+		item.setPrice(product.getPrice());
+		item.setQuantity(request.getQuantity());
+		item.setSubtotal(product.getPrice().multiply(java.math.BigDecimal.valueOf(request.getQuantity())));
+
+		session.setAttribute("buyNowItem", item);
 
 		Map<String, Object> response = new HashMap<>();
-
 		response.put("success", true);
 
+		System.out.println("item " + item);
 		return ResponseEntity.ok(response);
 	}
 

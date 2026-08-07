@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
     initQuantityButtons();
     initTooltips();
     initToastContainers();
+    initRazorpayScript();
 
     // Product & Cart
     initCartActions();
@@ -265,5 +266,17 @@ function updateCartBadge(count) {
     if (badge && typeof count === "number") {
         badge.textContent = count;
         badge.classList.remove("d-none");
+    }
+}
+
+function initRazorpayScript() {
+    if (document.querySelector("input[name='paymentMethod'][value='RAZORPAY']")) {
+        if (!document.getElementById("razorpay-script")) {
+            const script = document.createElement("script");
+            script.id = "razorpay-script";
+            script.src = "https://checkout.razorpay.com/v1/checkout.js";
+            script.async = true;
+            document.head.appendChild(script);
+        }
     }
 }

@@ -9,13 +9,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import com.satpall.crochet.entity.Order;
 import com.satpall.crochet.enums.OrderStatus;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Order, Long> {
+public interface OrderRepository extends JpaRepository<Order, Long>, JpaSpecificationExecutor<Order> {
 
 	Order findByOrderNumber(String orderNumber);
 
@@ -24,6 +25,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	Page<Order> findByStatusOrderByCreatedDateDesc(OrderStatus status, Pageable pageable);
 
 	Page<Order> findAllByOrderByCreatedDateDesc(Pageable pageable);
+
+	Page<Order> findByPaymentStatusOrderByCreatedDateDesc(com.satpall.crochet.enums.PaymentStatus paymentStatus, Pageable pageable);
 
 	@Query("SELECT COUNT(o) FROM Order o WHERE o.createdDate BETWEEN :startDate AND :endDate")
 	Long countOrdersInDateRange(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);

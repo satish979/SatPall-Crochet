@@ -41,7 +41,7 @@ public class Order {
 	private String orderNumber;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "customer_id", nullable = false)
+	@JoinColumn(name = "customer_id")
 	private Customer customer;
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -77,6 +77,12 @@ public class Order {
 	@Column(name = "shipping_address", columnDefinition = "TEXT", nullable = false)
 	private String shippingAddress;
 
+	@Column(name = "address_line_1", length = 255)
+	private String addressLine1;
+
+	@Column(name = "address_line_2", length = 255)
+	private String addressLine2;
+
 	@Column(name = "billing_address", columnDefinition = "TEXT")
 	private String billingAddress;
 
@@ -88,6 +94,9 @@ public class Order {
 	@Column(nullable = false)
 	private String state;
 
+	@Column(length = 100)
+	private String country;
+
 	@Size(max = 10, message = "PIN code must be less than 10 characters")
 	@Column(name = "pin_code", length = 10, nullable = false)
 	private String pinCode;
@@ -96,9 +105,27 @@ public class Order {
 	@Column(nullable = false)
 	private String phone;
 
+	@Column(length = 100)
+	private String email;
+
+	@Column(name = "customer_name", length = 100)
+	private String customerName;
+
 	@Size(max = 500, message = "Notes must be less than 500 characters")
 	@Column(length = 500)
 	private String notes;
+
+	@Column(name = "razorpay_order_id", length = 100)
+	private String razorpayOrderId;
+
+	@Column(name = "razorpay_payment_id", length = 100)
+	private String razorpayPaymentId;
+
+	@Column(name = "razorpay_signature", length = 255)
+	private String razorpaySignature;
+
+	@Column(name = "transaction_date")
+	private LocalDateTime transactionDate;
 
 	@Column(name = "created_date", nullable = false)
 	private LocalDateTime createdDate;

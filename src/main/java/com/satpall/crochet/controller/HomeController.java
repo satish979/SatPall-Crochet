@@ -1,6 +1,9 @@
 package com.satpall.crochet.controller;
 
 import java.util.Arrays;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,7 +11,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.satpall.crochet.dto.OrderSummaryDTO;
+import com.satpall.crochet.entity.Cart;
+import com.satpall.crochet.entity.CartItem;
 import com.satpall.crochet.entity.Product;
+import com.satpall.crochet.repository.CartItemRepository;
+import com.satpall.crochet.repository.CartRepository;
+import com.satpall.crochet.service.OrderService;
 import com.satpall.crochet.service.ProductService;
 
 @Controller
@@ -16,6 +25,12 @@ public class HomeController {
 
 	@Autowired
 	private ProductService productService;
+	@Autowired
+	private CartRepository cartRepository;
+	@Autowired
+	private CartItemRepository cartItemRepository;
+	@Autowired
+	private OrderService orderService;
 
 	@GetMapping("/")
 	public String home(Model model) {
@@ -71,17 +86,24 @@ public class HomeController {
 	}
 
 	@GetMapping("/cart")
-	public String cart(Model model) {
+	public String cart(Model model, HttpSession session) {
 
 		model.addAttribute("pageTitle", "Shopping Cart");
 
-		return "cart";
-	}
+		Cart cart = cartRepository.findBySessionId(session.getId()).orElse(null);
+		if (cart != null) {
+			List<CartItem> cartItems = cartItemRepository.findByCart(cart);
+			List<OrderSummaryDTO> items = orderService.buildOrderSummary(cartItems);
+			model.addAttribute("items", items);
+			model.addAttribute("subtotal", items.stream()
+					.map(item -> item.getSubtotal() != null ? item.getSubtotal() : java.math.BigDecimal.ZERO)
+					.reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add));
+		} else {
+			model.addAttribute("items", new java.util.ArrayList<>());
+			model.addAttribute("subtotal", java.math.BigDecimal.ZERO);
+		}
 
-	@GetMapping("/checkout")
-	public String checkout(Model model) {
-		model.addAttribute("pageTitle", "Checkout");
-		return "checkout";
+		return "cart";
 	}
 
 	@GetMapping("/403")

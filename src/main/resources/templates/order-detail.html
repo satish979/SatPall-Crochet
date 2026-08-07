@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
+<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
+<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
+<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
+<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
+
+<head th:replace="header :: head('Order Detail')"></head>
+
+<body>
+	<div th:replace="header :: navbar"></div>
+	<section class="py-5">
+		<div class="container">
+			<div class="d-flex justify-content-between align-items-center mb-4">
+				<h2 class="section-title mb-0">Order Details</h2>
+				<div class="d-flex gap-2">
+					<a th:href="@{'/invoice/' + ${order.orderNumber}}" class="btn btn-outline-primary btn-sm">
+						<i class="fa-solid fa-download me-1"></i>Invoice
+					</a>
+					<a th:href="@{/my-orders}" class="btn btn-outline-secondary btn-sm">Back to Orders</a>
+				</div>
+			</div>
+
+			<div class="row g-4" th:if="${order != null}">
+				<div class="col-lg-8">
+					<div class="card-soft p-4 mb-3">
+						<h5 class="fw-bold mb-3">Items</h5>
+						<div th:each="item : ${order.orderItems}" class="d-flex gap-3 align-items-center border-bottom pb-3 mb-3">
+							<img th:src="${item.imageUrl != null ? item.imageUrl : '/images/product-placeholder.jpg'}" class="rounded-3" width="80" height="80" style="object-fit:cover;" alt="">
+							<div class="flex-grow-1">
+								<h6 class="mb-1" th:text="${item.productName}">Product</h6>
+								<small class="text-muted">Qty: <span th:text="${item.quantity}">1</span> x ₹<span th:text="${item.price}">0</span></small>
+							</div>
+							<div class="fw-bold">₹<span th:text="${item.total}">0</span></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-lg-4">
+					<div class="card-soft p-4 mb-3">
+						<h5 class="fw-bold mb-3">Order Summary</h5>
+						<div class="d-flex justify-content-between mb-2"><span>Subtotal</span><span>₹<span th:text="${order.subtotal}">0</span></span></div>
+						<div class="d-flex justify-content-between mb-2"><span>Tax</span><span>₹<span th:text="${order.tax}">0</span></span></div>
+						<div class="d-flex justify-content-between mb-2"><span>Shipping</span><span>₹<span th:text="${order.shipping}">0</span></span></div>
+						<div class="d-flex justify-content-between mb-2 text-success" th:if="${order.discount > 0}">
+							<span>Discount</span><span>-₹<span th:text="${order.discount}">0</span></span>
+						</div>
+						<hr>
+						<div class="d-flex justify-content-between fw-bold fs-5">
+							<span>Total</span><span>₹<span th:text="${order.total}">0</span></span>
+						</div>
+					</div>
+
+					<div class="card-soft p-4 mb-3">
+						<h5 class="fw-bold mb-3">Status</h5>
+						<div class="mb-2">
+							<span class="badge badge-soft" th:text="${order.status}">PENDING</span>
+						</div>
+						<div>
+							<span class="badge badge-soft" th:text="${order.paymentStatus}">PENDING</span>
+						</div>
+					</div>
+
+					<div class="card-soft p-4 mb-3">
+						<h5 class="fw-bold mb-3">Shipping Address</h5>
+						<p class="mb-0 text-muted small" th:text="${order.shippingAddress}">Address</p>
+						<p class="mb-0 text-muted small mt-1" th:if="${order.notes != null and !order.notes.isEmpty()}">
+							<strong>Notes:</strong> <span th:text="${order.notes}"></span>
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="card-soft p-5 text-center" th:unless="${order != null}">
+				<p class="text-muted">Order not found.</p>
+				<a th:href="@{/my-orders}" class="btn btn-primary">Back to Orders</a>
+			</div>
+		</div>
+	</section>
+	<div th:replace="footer :: footer"></div>
+	<div th:replace="scripts :: scripts"></div>
+</body>
+</html>

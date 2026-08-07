@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-
 <link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
 <link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
 <link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
@@ -12,16 +11,382 @@
 
 <body>
 	<div th:replace="header :: navbar"></div>
+
 	<section class="py-5">
 		<div class="container">
 			<h2 class="section-title mb-4">Checkout</h2>
-			<div class="card-soft p-4">
-				<p class="text-muted">Checkout form will connect to your order service.</p>
-			</div>
+			<form id="checkoutForm" th:object="${checkoutRequest}" novalidate>
+				<div class="row g-4">
+					<div class="col-lg-7">
+						<div class="card-soft p-4 mb-4">
+							<h5 class="fw-bold mb-3"><i class="fa-solid fa-truck me-2"></i>Shipping Address</h5>
+							<div class="row g-3">
+								<div class="col-md-6">
+									<label class="form-label">Full Name *</label>
+									<input type="text" th:field="*{customerName}" class="form-control" placeholder="Enter your full name" required>
+									<div class="invalid-feedback" th:errors="*{customerName}"></div>
+								</div>
+								<div class="col-md-6">
+									<label class="form-label">Email *</label>
+									<input type="email" th:field="*{email}" class="form-control" placeholder="Enter your email" required>
+									<div class="invalid-feedback" th:errors="*{email}"></div>
+								</div>
+								<div class="col-md-6">
+									<label class="form-label">Mobile Number *</label>
+									<input type="tel" th:field="*{phone}" class="form-control" placeholder="10-digit mobile number" required>
+									<div class="invalid-feedback" th:errors="*{phone}"></div>
+								</div>
+								<div class="col-12">
+									<label class="form-label">Address Line 1 *</label>
+									<input type="text" th:field="*{addressLine1}" class="form-control" placeholder="House/Flat No., Building, Street" required>
+									<div class="invalid-feedback" th:errors="*{addressLine1}"></div>
+								</div>
+								<div class="col-12">
+									<label class="form-label">Address Line 2</label>
+									<input type="text" th:field="*{addressLine2}" class="form-control" placeholder="Area, Landmark (optional)">
+								</div>
+								<div class="col-md-4">
+									<label class="form-label">City *</label>
+									<input type="text" th:field="*{city}" class="form-control" placeholder="City" required>
+									<div class="invalid-feedback" th:errors="*{city}"></div>
+								</div>
+								<div class="col-md-4">
+									<label class="form-label">State *</label>
+									<input type="text" th:field="*{state}" class="form-control" placeholder="State" required>
+									<div class="invalid-feedback" th:errors="*{state}"></div>
+								</div>
+								<div class="col-md-4">
+									<label class="form-label">Country *</label>
+									<input type="text" th:field="*{country}" class="form-control" placeholder="Country" value="India" required>
+									<div class="invalid-feedback" th:errors="*{country}"></div>
+								</div>
+								<div class="col-md-6">
+									<label class="form-label">Pincode *</label>
+									<input type="text" th:field="*{pinCode}" class="form-control" placeholder="6-digit pincode" required>
+									<div class="invalid-feedback" th:errors="*{pinCode}"></div>
+								</div>
+								<div class="col-12">
+									<label class="form-label">Order Notes (Optional)</label>
+									<textarea th:field="*{notes}" class="form-control" rows="2" placeholder="Any special instructions for delivery"></textarea>
+								</div>
+							</div>
+						</div>
+
+						<div class="card-soft p-4">
+							<h5 class="fw-bold mb-3"><i class="fa-solid fa-credit-card me-2"></i>Payment Method</h5>
+							<div class="row g-3">
+								<div class="col-md-6">
+									<div class="payment-card" data-method="RAZORPAY">
+										<input type="radio" name="paymentMethod" id="razorpay" value="RAZORPAY" required>
+										<label for="razorpay" class="payment-label">
+											<div class="payment-icon">
+												<i class="fa-solid fa-mobile-screen-button"></i>
+											</div>
+											<div>
+												<div class="fw-bold">Razorpay</div>
+												<small class="text-muted">Pay via UPI, Card, Net Banking</small>
+											</div>
+										</label>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="payment-card" data-method="COD">
+										<input type="radio" name="paymentMethod" id="cod" value="COD" required>
+										<label for="cod" class="payment-label">
+											<div class="payment-icon">
+												<i class="fa-solid fa-money-bill-wave"></i>
+											</div>
+											<div>
+												<div class="fw-bold">Cash on Delivery</div>
+												<small class="text-muted">Pay when you receive</small>
+											</div>
+										</label>
+									</div>
+								</div>
+							</div>
+							<div class="invalid-feedback d-block" id="paymentError">Please select a payment method</div>
+						</div>
+					</div>
+
+					<div class="col-lg-5">
+						<div class="card-soft p-4 mb-3">
+							<h5 class="fw-bold mb-3">Order Summary</h5>
+							<div th:each="item : ${items}" class="order-item mb-3 pb-3 border-bottom">
+								<div class="d-flex gap-3 align-items-center">
+									<img th:src="${item.imageUrl != null ? item.imageUrl : '/images/product-placeholder.jpg'}" class="rounded-3" width="70" height="70" style="object-fit:cover;" alt="">
+									<div class="flex-grow-1">
+										<h6 class="mb-1" th:text="${item.productName}">Product Name</h6>
+										<small class="text-muted">Qty: <span th:text="${item.quantity}">1</span></small>
+										<div class="price mt-1">₹<span th:text="${item.price}">0</span></div>
+									</div>
+									<div class="text-end">
+										<div class="fw-bold">₹<span th:text="${item.subtotal}">0</span></div>
+									</div>
+								</div>
+							</div>
+
+							<div th:if="${#lists.isEmpty(items)}" class="text-center text-muted py-4">
+								<i class="fa-solid fa-cart-shopping fa-2x mb-3 d-block"></i>
+								<p>Your cart is empty</p>
+								<a th:href="@{/shop}" class="btn btn-primary btn-sm">Continue Shopping</a>
+							</div>
+
+							<div class="mt-3 pt-3" th:unless="${#lists.isEmpty(items)}">
+								<div class="d-flex justify-content-between mb-2">
+									<span>Subtotal</span>
+									<span>₹<span id="subtotalAmount">0</span></span>
+								</div>
+								<div class="d-flex justify-content-between mb-2">
+									<span>Shipping</span>
+									<span>₹99</span>
+								</div>
+								<div class="d-flex justify-content-between mb-2">
+									<span>Tax (5%)</span>
+									<span>₹<span id="taxAmount">0</span></span>
+								</div>
+								<div class="d-flex justify-content-between mb-2 text-success" id="discountRow" style="display:none;">
+									<span>Discount</span>
+									<span>-₹<span id="discountAmount">0</span></span>
+								</div>
+								<hr>
+								<div class="d-flex justify-content-between fw-bold fs-5">
+									<span>Grand Total</span>
+									<span class="text-primary">₹<span id="grandTotal">0</span></span>
+								</div>
+
+								<button type="submit" class="btn btn-primary w-100 mt-3 btn-lg" id="placeOrderBtn" th:unless="${#lists.isEmpty(items)}">
+									<span id="placeOrderText">Place Order</span>
+									<span id="placeOrderSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+								</button>
+							</div>
+						</div>
+
+						<div class="card-soft p-3">
+							<div class="d-flex align-items-center gap-2 text-muted small">
+								<i class="fa-solid fa-shield-halved"></i>
+								<span>Secure checkout powered by Razorpay</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
 		</div>
 	</section>
+
 	<div th:replace="footer :: footer"></div>
 	<div th:replace="scripts :: scripts"></div>
-</body>
 
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			const checkoutForm = document.getElementById("checkoutForm");
+			const placeOrderBtn = document.getElementById("placeOrderBtn");
+			const placeOrderText = document.getElementById("placeOrderText");
+			const placeOrderSpinner = document.getElementById("placeOrderSpinner");
+
+			const subtotalEl = document.getElementById("subtotalAmount");
+			const taxEl = document.getElementById("taxAmount");
+			const discountRow = document.getElementById("discountRow");
+			const discountEl = document.getElementById("discountAmount");
+			const grandTotalEl = document.getElementById("grandTotal");
+
+			const shipping = 99;
+			const taxRate = 0.05;
+			const discountThreshold = 1000;
+			const discountAmount = 100;
+
+			let subtotal = 0;
+			document.querySelectorAll(".order-item").forEach(item => {
+				const totalText = item.querySelector(".fw-bold").textContent.replace(/[^0-9]/g, "");
+				subtotal += parseInt(totalText) || 0;
+			});
+
+			const tax = Math.round(subtotal * taxRate);
+			const discount = subtotal >= discountThreshold ? discountAmount : 0;
+			const total = subtotal + shipping + tax - discount;
+
+			subtotalEl.textContent = subtotal;
+			taxEl.textContent = tax;
+			grandTotalEl.textContent = total;
+
+			if (discount > 0) {
+				discountRow.style.display = "flex";
+				discountEl.textContent = discount;
+			}
+
+			checkoutForm.addEventListener("submit", function(e) {
+				e.preventDefault();
+
+				if (!checkoutForm.checkValidity()) {
+					checkoutForm.classList.add("was-validated");
+					return;
+				}
+
+				const selectedPayment = document.querySelector("input[name='paymentMethod']:checked");
+				if (!selectedPayment) {
+					document.getElementById("paymentError").style.display = "block";
+					return;
+				}
+				document.getElementById("paymentError").style.display = "none";
+
+				const paymentMethod = selectedPayment.value;
+				const formData = new FormData(checkoutForm);
+				const data = {};
+				formData.forEach((value, key) => {
+					data[key] = value.trim();
+				});
+
+				placeOrderBtn.disabled = true;
+				placeOrderText.textContent = "Processing...";
+				placeOrderSpinner.classList.remove("d-none");
+
+				if (paymentMethod === "COD") {
+					fetch(CONTEXT_PATH + "/api/orders/create-cod", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(data)
+					})
+					.then(async res => {
+						const text = await res.text();
+						const result = JSON.parse(text);
+						if (!result.success) throw new Error(result.message || "Failed to place order");
+						window.location.href = CONTEXT_PATH + "/order-success?orderNumber=" + result.orderNumber;
+					})
+					.catch(err => {
+						showToast(err.message, "danger");
+					})
+					.finally(() => {
+						placeOrderBtn.disabled = false;
+						placeOrderText.textContent = "Place Order";
+						placeOrderSpinner.classList.add("d-none");
+					});
+				} else if (paymentMethod === "RAZORPAY") {
+					fetch(CONTEXT_PATH + "/api/orders/create-razorpay", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(data)
+					})
+					.then(async res => {
+						const text = await res.text();
+						const result = JSON.parse(text);
+						if (!result.success) throw new Error(result.message || "Failed to initiate payment");
+
+						openRazorpayCheckout(result);
+					})
+					.catch(err => {
+						showToast(err.message, "danger");
+					})
+					.finally(() => {
+						placeOrderBtn.disabled = false;
+						placeOrderText.textContent = "Place Order";
+						placeOrderSpinner.classList.add("d-none");
+					});
+				}
+			});
+
+			document.querySelectorAll("input[name='paymentMethod']").forEach(radio => {
+				radio.addEventListener("change", function() {
+					document.querySelectorAll(".payment-card").forEach(card => card.classList.remove("selected"));
+					if (this.checked) {
+						this.closest(".payment-card").classList.add("selected");
+					}
+				});
+			});
+
+			const selectedPayment = document.querySelector("input[name='paymentMethod']:checked");
+			if (selectedPayment) {
+				selectedPayment.closest(".payment-card").classList.add("selected");
+			}
+		});
+
+		function openRazorpayCheckout(data) {
+			const options = {
+				key: data.keyId,
+				amount: data.amount,
+				currency: data.currency,
+				name: "Loomelle Crochet",
+				description: "Order " + data.orderNumber,
+				order_id: data.razorpayOrderId,
+				prefill: {
+					name: data.customerName,
+					email: data.email,
+					contact: data.phone
+				},
+				handler: function(response) {
+					fetch(CONTEXT_PATH + "/api/payment/razorpay/verify", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							razorpay_order_id: response.razorpay_order_id,
+							razorpay_payment_id: response.razorpay_payment_id,
+							razorpay_signature: response.razorpay_signature,
+							order_number: data.orderNumber
+						})
+					})
+					.then(res => res.json())
+					.then(result => {
+						if (result.success) {
+							window.location.href = CONTEXT_PATH + "/order-success?orderNumber=" + result.orderNumber;
+						} else {
+							window.location.href = CONTEXT_PATH + "/order-failure?reason=" + encodeURIComponent(result.message || "Payment verification failed");
+						}
+					});
+				},
+				modal: {
+					ondismiss: function() {
+						window.location.href = CONTEXT_PATH + "/order-failure?reason=Payment cancelled by user";
+					}
+				}
+			};
+
+			const rzp = new Razorpay(options);
+			rzp.open();
+		}
+	</script>
+
+	<style>
+		.payment-card {
+			border: 2px solid var(--border);
+			border-radius: var(--radius);
+			padding: 1rem;
+			cursor: pointer;
+			transition: all 0.25s ease;
+			background: var(--surface);
+		}
+		.payment-card:hover {
+			border-color: var(--primary);
+			box-shadow: 0 4px 12px rgba(201, 123, 132, 0.1);
+		}
+		.payment-card.selected {
+			border-color: var(--primary);
+			background: rgba(201, 123, 132, 0.05);
+			box-shadow: 0 4px 16px rgba(201, 123, 132, 0.15);
+		}
+		.payment-card input[type="radio"] {
+			display: none;
+		}
+		.payment-label {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+			cursor: pointer;
+			margin: 0;
+			width: 100%;
+		}
+		.payment-icon {
+			width: 48px;
+			height: 48px;
+			border-radius: 12px;
+			background: var(--secondary);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.2rem;
+			color: var(--primary);
+			flex-shrink: 0;
+		}
+		.order-item img {
+			object-fit: cover;
+		}
+	</style>
+</body>
 </html>
