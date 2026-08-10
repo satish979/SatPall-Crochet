@@ -29,8 +29,7 @@ public class ProductService {
 	private final CartItemRepository cartItemRepository;
 
 	public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository,
-			CloudinaryService cloudinaryService, CartRepository cartRepository,
-			CartItemRepository cartItemRepository) {
+			CloudinaryService cloudinaryService, CartRepository cartRepository, CartItemRepository cartItemRepository) {
 		this.productRepository = productRepository;
 		this.categoryRepository = categoryRepository;
 		this.cloudinaryService = cloudinaryService;
@@ -121,7 +120,11 @@ public class ProductService {
 		});
 	}
 
-	public void addToCart(Long productId, Integer quantity, String sessionId) {
+	public int addToCart(Long productId, Integer quantity, String sessionId) {
+
+		if (quantity == null || quantity <= 0) {
+			throw new IllegalArgumentException("Quantity must be at least 1");
+		}
 
 		Cart cart = cartRepository.findBySessionId(sessionId).orElseGet(() -> {
 
@@ -132,16 +135,36 @@ public class ProductService {
 
 		});
 
-		Product product = productRepository.findById(productId).orElseThrow();
+		Product product = productRepository.findById(productId)
+				.orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
-		CartItem item = new CartItem();
+		if (!Boolean.TRUE.equals(product.getActive())) {
+			throw new IllegalArgumentException("Product is not available");
+		}
 
-		item.setCart(cart);
-		item.setProduct(product);
-		item.setQuantity(quantity);
-		item.setPrice(product.getPrice());
+		if (product.getStockQuantity() == null || product.getStockQuantity() < quantity) {
+			throw new IllegalArgumentException("Insufficient stock available");
+		}
 
-		cartItemRepository.save(item);
+		List<CartItem> existingItems = cartItemRepository.findByCart(cart);
+		Optional<CartItem> existingItem = existingItems.stream()
+				.filter(item -> item.getProduct() != null && item.getProduct().getId().equals(productId))
+				.findFirst();
+
+		if (existingItem.isPresent()) {
+			CartItem item = existingItem.get();
+			item.setQuantity(item.getQuantity() + quantity);
+			cartItemRepository.save(item);
+		} else {
+			CartItem item = new CartItem();
+			item.setCart(cart);
+			item.setProduct(product);
+			item.setQuantity(quantity);
+			item.setPrice(product.getPrice());
+			cartItemRepository.save(item);
+		}
+
+		return cartItemRepository.findByCart(cart).size();
 
 	}
 }

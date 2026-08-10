@@ -14,8 +14,11 @@ import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import lombok.Data;
+
 @Entity
 @Table(name = "order_item")
+@Data
 public class OrderItem {
 
     @Id

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="header :: head('Order Detail')"></head>
+
+<body>
+    <div th:replace="header :: navbar"></div>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="mb-1">Order <span th:text="${order.orderNumber}">ORD-001</span></h1>
+                    <p class="text-muted mb-0">Manage and track this order</p>
+                </div>
+                <a th:href="@{/admin/orders}" class="btn btn-outline-secondary">Back to Orders</a>
+            </div>
+
+            <div class="row g-4" th:if="${order != null}">
+                <div class="col-lg-8">
+                    <div class="card-soft p-4 mb-3">
+                        <h5 class="fw-bold mb-3">Customer Details</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small">Name</label>
+                                <p class="fw-bold" th:text="${order.customerName}">Customer Name</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small">Email</label>
+                                <p th:text="${order.email}">email@example.com</p>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-muted small">Phone</label>
+                                <p th:text="${order.phone}">9876543210</p>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label text-muted small">Shipping Address</label>
+                                <p th:text="${order.shippingAddress}">Address</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-soft p-4 mb-3">
+                        <h5 class="fw-bold mb-3">Order Items</h5>
+                        <div th:each="item : ${order.orderItems}" class="d-flex gap-3 align-items-center border-bottom pb-3 mb-3">
+                            <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/product-placeholder.jpg'}" class="rounded-3" width="80" height="80" style="object-fit:cover;" alt="">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1" th:text="${item.productName}">Product</h6>
+                                <small class="text-muted">Qty: <span th:text="${item.quantity}">1</span> x ₹<span th:text="${item.price}">0</span></small>
+                            </div>
+                            <div class="fw-bold">₹<span th:text="${item.total}">0</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card-soft p-4 mb-3">
+                        <h5 class="fw-bold mb-3">Update Status</h5>
+                       	<form th:action="@{'/admin/orders/' + ${order.id} + '/status'}" method="post" class="row g-2">
+                            <div class="col-12">
+                                <select name="status" class="form-select">
+                                    <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}" th:selected="${s == order.status}"></option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary w-100">Update Status</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card-soft p-4 mb-3">
+                        <h5 class="fw-bold mb-3">Order Summary</h5>
+                        <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><span>₹<span th:text="${order.subtotal}">0</span></span></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Tax</span><span>₹<span th:text="${order.tax}">0</span></span></div>
+                        <div class="d-flex justify-content-between mb-2"><span>Shipping</span><span>₹<span th:text="${order.shipping}">0</span></span></div>
+                        <div class="d-flex justify-content-between mb-2 text-success" th:if="${order.discount > 0}">
+                            <span>Discount</span><span>-₹<span th:text="${order.discount}">0</span></span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>Total</span><span>₹<span th:text="${order.total}">0</span></span>
+                        </div>
+                    </div>
+
+                    <div class="card-soft p-4 mb-3">
+                        <h5 class="fw-bold mb-3">Payment Info</h5>
+                        <div class="mb-2"><span class="text-muted small">Method:</span> <span th:text="${order.paymentMethod}">COD</span></div>
+                        <div class="mb-2"><span class="text-muted small">Status:</span> <span th:text="${order.paymentStatus}">PENDING</span></div>
+                        <div th:if="${order.razorpayPaymentId != null}" class="mb-2">
+                            <span class="text-muted small">Payment ID:</span> <span th:text="${order.razorpayPaymentId}">pay_xxx</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-soft p-5 text-center" th:unless="${order != null}">
+                <p class="text-muted">Order not found.</p>
+                <a th:href="@{/admin/orders}" class="btn btn-primary">Back to Orders</a>
+            </div>
+        </div>
+    </section>
+
+    <div th:replace="footer :: footer"></div>
+    <div th:replace="scripts :: scripts"></div>
+</body>
+</html>

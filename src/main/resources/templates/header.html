@@ -45,6 +45,26 @@
 						<i class="fa-solid fa-bag-shopping me-1"></i>Cart
 					</a>
 				</li>
+				<li class="nav-item" th:if="${navCustomer == null}">
+					<a class="btn btn-outline-primary btn-sm ms-lg-2" th:href="@{/checkout}">
+						<i class="fa-regular fa-user me-1"></i>Login
+					</a>
+				</li>
+				<li class="nav-item dropdown" th:if="${navCustomer != null}">
+					<a class="nav-link dropdown-toggle btn btn-outline-primary btn-sm ms-lg-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<i class="fa-regular fa-user me-1"></i><span th:text="${navCustomerName}">Customer</span>
+					</a>
+					<ul class="dropdown-menu dropdown-menu-end">
+						<li><a class="dropdown-item" th:href="@{/customer/profile}"><i class="fa-regular fa-user me-2"></i>My Profile</a></li>
+						<li><a class="dropdown-item" th:href="@{/my-orders}"><i class="fa-solid fa-box me-2"></i>My Orders</a></li>
+						<li><a class="dropdown-item" th:href="@{/customer/addresses}"><i class="fa-solid fa-location-dot me-2"></i>Addresses</a></li>
+						<li><hr class="dropdown-divider"></li>
+							<li><a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); handleNavbarLogout();">
+								<i class="fa-solid fa-right-from-bracket me-2"></i>Logout
+							</a></li>
+					</ul>
+					<form th:action="@{/api/customer/auth/logout}" method="post" id="logoutForm" class="d-none"></form>
+				</li>
 			</ul>
 		</div>
 	</div>

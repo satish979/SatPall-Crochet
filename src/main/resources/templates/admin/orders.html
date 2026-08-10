@@ -1,60 +1,117 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="header :: head('Manage Orders')"></head>
+<head th:replace="header :: head('Admin Orders')"></head>
 
 <body>
 	<div th:replace="header :: navbar"></div>
 
 	<section class="py-5">
 		<div class="container">
-			<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+			<div class="d-flex justify-content-between align-items-center mb-4">
 				<div>
-					<h1 class="section-title mb-1">Manage Orders</h1>
-					<p class="text-muted mb-0">Review recent orders in a clear, modern admin layout.</p>
+					<h1 class="mb-1">Order Management</h1>
+					<p class="text-muted mb-0">View and manage all orders.</p>
 				</div>
-				<a th:href="@{/admin/dashboard}" class="btn btn-outline-primary">Back to Dashboard</a>
 			</div>
 
-			<div class="card-soft p-4">
-				<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-					<div>
-						<h4 class="fw-bold mb-1">Recent Orders</h4>
-						<p class="text-muted mb-0">Track and manage the most recent customer orders.</p>
+			<div class="card-soft p-3 mb-4">
+				<form th:action="@{/admin/orders}" method="get" class="row g-3">
+					<div class="col-md-4">
+						<input type="text" name="search" class="form-control"
+							placeholder="Search order #, name, phone, email" th:value="${param.search}">
 					</div>
-					<button class="btn btn-primary" type="button">Export</button>
-				</div>
+					<div class="col-md-3">
+						<select name="status" class="form-select">
+							<option value="">All Statuses</option>
+							<option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"
+								th:selected="${param.status == s}"></option>
+						</select>
+					</div>
+					<div class="col-md-2">
+						<select name="paymentStatus" class="form-select">
+							<option value="">All Payments</option>
+							<option th:each="ps : ${paymentStatuses}" th:value="${ps}" th:text="${ps}"
+								th:selected="${param.paymentStatus == ps}"></option>
+						</select>
+					</div>
+					<div class="col-md-1">
+						<button type="submit" class="btn btn-primary w-100">Search</button>
+					</div>
+					<div class="col-md-2">
+						<a th:href="@{/admin/orders}" class="btn btn-outline-secondary w-100">Reset</a>
+					</div>
+				</form>
+			</div>
 
+			<div class="card-soft p-0 overflow-hidden">
 				<div class="table-responsive">
-					<table class="table align-middle">
-						<thead>
+					<table class="table table-bordered align-middle text-nowrap mb-0">
+						<thead class="table-light">
 							<tr>
-								<th>Order ID</th>
+								<th>Order #</th>
 								<th>Customer</th>
-								<th>Status</th>
+								<th>Date</th>
 								<th>Total</th>
-								<th>Actions</th>
+								<th>Payment</th>
+								<th>Status</th>
+								<th>Action</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr th:if="${#lists.isEmpty(orders)}">
-								<td colspan="5" class="text-center text-muted py-4">No orders found yet.</td>
+							<tr th:each="order : ${ordersPage.content}">
+								<td th:text="${order.orderNumber}">ORD-001</td>
+								<td>
+									<div th:text="${order.customerName}">John Doe</div>
+									<small class="text-muted" th:text="${order.phone}">9876543210</small>
+								</td>
+								<td th:text="${#temporals.format(order.createdDate, 'dd MMM yyyy')}">01 Jan 2025</td>
+								<td class="fw-bold">₹<span th:text="${order.total}">0</span></td>
+								<td>
+									<div th:text="${order.paymentMethod}">COD</div>
+									<span th:text="${order.paymentStatus}">PENDING</span>
+								</td>
+								<td>
+									<span th:text="${order.status}">PENDING</span>
+								</td>
+								<td>
+									<a th:href="@{'/admin/orders/' + ${order.id}}"
+										class="btn btn-sm btn-outline-primary">Manage</a>
+								</td>
 							</tr>
-							<tr th:each="order : ${orders}">
-								<td th:text="${'#' + order.orderNumber}"></td>
-								<td th:text="${order.customer != null ? order.customer.firstName + ' ' + order.customer.lastName : 'Guest'}"></td>
-								<td>
-									<span class="badge" th:classappend="${order.status.name() == 'PENDING'} ? 'bg-warning text-dark' : (${order.status.name() == 'DELIVERED'} ? 'bg-success' : 'bg-secondary')"
-										th:text="${order.status}"></span>
-								</td>
-								<td th:text="${'₹' + #numbers.formatDecimal(order.total, 1, 2)}"></td>
-								<td>
-									<button class="btn btn-sm btn-outline-primary me-2" type="button">View</button>
-									<button class="btn btn-sm btn-outline-success" type="button">Update</button>
-								</td>
+							<tr th:if="${ordersPage.empty}">
+								<td colspan="7" class="text-center text-muted">No orders found.</td>
 							</tr>
 						</tbody>
 					</table>
+				</div>
+				<div class="p-3" th:if="${ordersPage.totalPages > 1}">
+					<nav>
+						<ul class="pagination justify-content-center mb-0">
+							<li class="page-item" th:classappend="${ordersPage.number == 0} ? 'disabled'">
+								<a class="page-link"
+									th:href="@{/admin/orders(page=0, search=${param.search}, status=${param.status}, paymentStatus=${param.paymentStatus})}">First</a>
+							</li>
+							<li class="page-item" th:classappend="${ordersPage.number == 0} ? 'disabled'">
+								<a class="page-link"
+									th:href="@{/admin/orders(page=${ordersPage.number - 1}, search=${param.search}, status=${param.status}, paymentStatus=${param.paymentStatus})}">Previous</a>
+							</li>
+							<li class="page-item active">
+								<span class="page-link"
+									th:text="${ordersPage.number + 1} + ' / ' + ${ordersPage.totalPages}">1 / 5</span>
+							</li>
+							<li class="page-item"
+								th:classappend="${ordersPage.number == ordersPage.totalPages - 1} ? 'disabled'">
+								<a class="page-link"
+									th:href="@{/admin/orders(page=${ordersPage.number + 1}, search=${param.search}, status=${param.status}, paymentStatus=${param.paymentStatus})}">Next</a>
+							</li>
+							<li class="page-item"
+								th:classappend="${ordersPage.number == ordersPage.totalPages - 1} ? 'disabled'">
+								<a class="page-link"
+									th:href="@{/admin/orders(page=${ordersPage.totalPages - 1}, search=${param.search}, status=${param.status}, paymentStatus=${param.paymentStatus})}">Last</a>
+							</li>
+						</ul>
+					</nav>
 				</div>
 			</div>
 		</div>
@@ -63,4 +120,5 @@
 	<div th:replace="footer :: footer"></div>
 	<div th:replace="scripts :: scripts"></div>
 </body>
+
 </html>

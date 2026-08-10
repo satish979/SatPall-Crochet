@@ -1,6 +1,6 @@
 const CONTEXT_PATH = '/Loomellecrochet';
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     document.body.classList.add('page-loading');
 
     initSkeletonLoader();
@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initScrollReveal();
     initDashboardStats();
     initProgressBars();
+    initRazorpayScript();
 
     initCartActions();
 });
@@ -34,11 +35,11 @@ function initSpinner() {
     const spinner = document.getElementById('pageSpinner');
     if (!spinner) return;
 
-    window.showSpinner = function () {
+    window.showSpinner = function() {
         spinner.classList.add('show');
     };
 
-    window.hideSpinner = function () {
+    window.hideSpinner = function() {
         spinner.classList.remove('show');
     };
 }
@@ -48,12 +49,12 @@ function initImagePreview() {
     const preview = document.querySelector('[data-image-preview]');
     if (!input || !preview) return;
 
-    input.addEventListener('change', function () {
+    input.addEventListener('change', function() {
         const file = this.files && this.files[0];
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = function (e) {
+        reader.onload = function(e) {
             preview.src = e.target.result;
             preview.classList.remove('d-none');
         };
@@ -68,7 +69,7 @@ function initSearchSuggestions() {
 
     let timer = null;
 
-    input.addEventListener('input', function () {
+    input.addEventListener('input', function() {
         const keyword = this.value.trim();
         clearTimeout(timer);
 
@@ -78,7 +79,7 @@ function initSearchSuggestions() {
             return;
         }
 
-        timer = setTimeout(function () {
+        timer = setTimeout(function() {
             fetch(`/search/suggestions?keyword=${encodeURIComponent(keyword)}`)
                 .then((res) => res.json())
                 .then((items) => {
@@ -104,7 +105,7 @@ function initSearchSuggestions() {
         }, 250);
     });
 
-    document.addEventListener('click', function (e) {
+    document.addEventListener('click', function(e) {
         if (!box.contains(e.target) && e.target !== input) {
             box.classList.add('d-none');
         }
@@ -113,7 +114,7 @@ function initSearchSuggestions() {
 
 function initQuantityButtons() {
     document.querySelectorAll('[data-qty-plus]').forEach((btn) => {
-        btn.addEventListener('click', function () {
+        btn.addEventListener('click', function() {
             const target = document.querySelector(this.dataset.qtyPlus);
             if (!target) return;
             target.value = parseInt(target.value || '1', 10) + 1;
@@ -122,7 +123,7 @@ function initQuantityButtons() {
     });
 
     document.querySelectorAll('[data-qty-minus]').forEach((btn) => {
-        btn.addEventListener('click', function () {
+        btn.addEventListener('click', function() {
             const target = document.querySelector(this.dataset.qtyMinus);
             if (!target) return;
             const value = parseInt(target.value || '1', 10);
@@ -143,7 +144,7 @@ function initTooltips() {
 }
 
 function initToastContainers() {
-    window.showToast = function (message, type = 'success') {
+    window.showToast = function(message, type = 'success') {
         let container = document.querySelector('.toast-container');
         if (!container) {
             container = document.createElement('div');
@@ -165,7 +166,7 @@ function initToastContainers() {
 
 function initButtons() {
     document.querySelectorAll('button, .btn').forEach((button) => {
-        button.addEventListener('click', function (event) {
+        button.addEventListener('click', function(event) {
             if (button.tagName === 'A' || button.classList.contains('dropdown-toggle')) return;
             const ripple = document.createElement('span');
             ripple.className = 'ripple';
@@ -229,7 +230,7 @@ function revealImage(img, placeholder) {
         img.setAttribute('src', actualSrc);
     }
 
-    img.addEventListener('load', function () {
+    img.addEventListener('load', function() {
         if (shell) {
             shell.classList.add('is-loaded');
         }
@@ -303,7 +304,7 @@ function initCartActions() {
     const wishlistBtn = document.getElementById('wishlistBtn');
 
     if (addBtn) {
-        addBtn.addEventListener('click', function () {
+        addBtn.addEventListener('click', function() {
             const productId = this.dataset.productId;
             const qtyInput = document.getElementById('qty');
             const qty = qtyInput ? qtyInput.value : '1';
@@ -338,7 +339,7 @@ function initCartActions() {
     }
 
     if (buyBtn) {
-        buyBtn.addEventListener('click', function () {
+        buyBtn.addEventListener('click', function() {
             const productId = this.dataset.productId;
             const qtyInput = document.getElementById('qty');
             const qty = qtyInput ? qtyInput.value : '1';
@@ -359,7 +360,7 @@ function initCartActions() {
     }
 
     if (wishlistBtn) {
-        wishlistBtn.addEventListener('click', function () {
+        wishlistBtn.addEventListener('click', function() {
             const productId = this.dataset.productId;
 
             fetch(CONTEXT_PATH + '/api/wishlist/add/' + productId, {
@@ -388,27 +389,36 @@ function updateCartBadge(count) {
         badge.classList.remove('d-none');
     }
 }
-
 function initSkeletonLoader() {
     const loader = document.createElement('div');
     loader.className = 'page-loader';
+
     loader.innerHTML = `
         <div class="loader-card">
             <div class="d-flex align-items-center gap-3 mb-4">
-                <div class="skeleton-circle" style="width: 48px; height: 48px;"></div>
+                <div class="skeleton-circle" style="width:48px;height:48px;"></div>
                 <div class="flex-grow-1">
-                    <div class="skeleton-line mb-2" style="height: 14px; width: 55%;"></div>
-                    <div class="skeleton-line" style="height: 12px; width: 80%;"></div>
+                    <div class="skeleton-line mb-2" style="height:14px;width:55%;"></div>
+                    <div class="skeleton-line" style="height:12px;width:80%;"></div>
                 </div>
             </div>
-            <div class="skeleton-block mb-3" style="height: 140px;"></div>
+
+            <div class="skeleton-block mb-3" style="height:140px;"></div>
+
             <div class="row g-3">
-                <div class="col-6"><div class="skeleton-block" style="height: 96px;"></div></div>
-                <div class="col-6"><div class="skeleton-block" style="height: 96px;"></div></div>
-                <div class="col-12"><div class="skeleton-block" style="height: 48px;"></div></div>
+                <div class="col-6">
+                    <div class="skeleton-block" style="height:96px;"></div>
+                </div>
+                <div class="col-6">
+                    <div class="skeleton-block" style="height:96px;"></div>
+                </div>
+                <div class="col-12">
+                    <div class="skeleton-block" style="height:48px;"></div>
+                </div>
             </div>
         </div>
     `;
+
     document.body.appendChild(loader);
 
     window.addEventListener('load', () => {
@@ -416,7 +426,83 @@ function initSkeletonLoader() {
             loader.classList.add('is-hidden');
             document.body.classList.remove('page-loading');
             document.body.classList.add('page-ready');
-            setTimeout(() => loader.remove(), 350);
+
+            setTimeout(() => {
+                loader.remove();
+            }, 350);
         }, 400);
     });
+}
+
+function initRazorpayScript() {
+    if (document.querySelector("input[name='paymentMethod'][value='RAZORPAY']")) {
+        if (!document.getElementById("razorpay-script")) {
+            const script = document.createElement("script");
+            script.id = "razorpay-script";
+            script.src = "https://checkout.razorpay.com/v1/checkout.js";
+            script.async = true;
+            document.head.appendChild(script);
+        }
+    }
+}
+
+function sendOtp(identifier) {
+    return fetch(CONTEXT_PATH + "/api/customer/auth/send-otp", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({identifier: identifier, type: "EMAIL"})
+    })
+    .then(async res => {
+        const text = await res.text();
+        let result;
+        try { result = JSON.parse(text); } catch(e) { result = {success: false, message: text}; }
+        return result;
+    });
+}
+
+function verifyOtp(identifier, otp) {
+    return fetch(CONTEXT_PATH + "/api/customer/auth/verify-otp", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({identifier: identifier, otp: otp})
+    })
+    .then(async res => {
+        const text = await res.text();
+        let result;
+        try { result = JSON.parse(text); } catch(e) { result = {success: false, message: text}; }
+        return result;
+    });
+}
+
+function logoutCustomer() {
+    return fetch(CONTEXT_PATH + "/api/customer/auth/logout", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"}
+    })
+    .then(async res => {
+        const text = await res.text();
+        let result;
+        try { result = JSON.parse(text); } catch(e) { result = {success: false, message: text}; }
+        return result;
+    });
+}
+
+function handleNavbarLogout() {
+    logoutCustomer().then(result => {
+        if (result.success) {
+            showToast("Logged out successfully", "success");
+            window.location.href = CONTEXT_PATH + "/";
+        } else {
+            showToast(result.message || "Logout failed", "danger");
+        }
+    });
+}
+
+function fillAddress(address) {
+    document.getElementById("addressLine1").value = address.addressLine1 || "";
+    const addr2 = document.getElementById("addressLine2");
+    if (addr2) addr2.value = address.addressLine2 || "";
+    document.getElementById("city").value = address.city || "";
+    document.getElementById("state").value = address.state || "";
+    document.getElementById("pinCode").value = address.pinCode || "";
 }

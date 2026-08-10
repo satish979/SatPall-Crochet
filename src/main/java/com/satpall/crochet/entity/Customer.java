@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -66,15 +67,34 @@ public class Customer {
 	@Column(name = "created_date")
 	private LocalDateTime createdDate;
 
+	@Column(name = "last_login")
+	private LocalDateTime lastLogin;
+
+	@Column(nullable = false)
+	private Boolean enabled = true;
+
+	@Column(name = "password_hash")
+	private String password;
+
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Order> orders = new ArrayList<>();
 
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<WishlistItem> wishlistItems = new ArrayList<>();
 
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<CustomerAddress> addresses = new ArrayList<>();
+
 	@PrePersist
 	protected void onPersist() {
 		createdDate = LocalDateTime.now();
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		if (createdDate == null) {
+			createdDate = LocalDateTime.now();
+		}
 	}
 
 }

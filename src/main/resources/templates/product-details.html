@@ -36,16 +36,15 @@
 				</div>
 				<div class="col-lg-6">
 					<span class="badge-soft mb-3 d-inline-block">Handmade Crochet</span>
-					<h1 class="section-title">Crochet Product</h1>
+					<h1 class="section-title" th:text="${product.name}">Crochet Product</h1>
 					<div class="rating my-2">
 						<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
 							class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
 							class="fa-regular fa-star"></i>
 						<span class="ms-2 text-muted">(24 reviews)</span>
 					</div>
-					<div class="price mb-3">₹799</div>
-					<p class="text-muted">Beautiful handmade crochet product crafted with premium yarn and elegant
-						finishing.</p>
+					<div class="price mb-3">₹<span th:text="${product.price}">799</span></div>
+					<p class="text-muted" th:text="${product.description != null ? product.description : 'Beautiful handmade crochet product crafted with premium yarn and elegant finishing.'}">Beautiful handmade crochet product crafted with premium yarn and elegant finishing.</p>
 
 					<div class="row g-3 my-4">
 						<div class="col-md-4">

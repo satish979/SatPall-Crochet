@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-
 <link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
 <link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
 <link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
@@ -12,16 +11,649 @@
 
 <body>
 	<div th:replace="header :: navbar"></div>
+
 	<section class="py-5">
 		<div class="container">
 			<h2 class="section-title mb-4">Checkout</h2>
-			<div class="card-soft p-4">
-				<p class="text-muted">Checkout form will connect to your order service.</p>
+
+			<div th:if="${loggedInCustomer == null}" class="row g-4">
+				<div class="col-lg-8 mx-auto">
+					<div class="card-soft p-4 mb-4">
+						<h5 class="fw-bold mb-3"><i class="fa-solid fa-user me-2"></i>Login to Continue</h5>
+						<p class="text-muted small mb-3">Enter your email to receive a one-time password (OTP).</p>
+
+						<div id="loginStep1">
+							<div class="row g-3">
+								<div class="col-12">
+									<label class="form-label">Email Address *</label>
+									<div class="input-group">
+										<span class="input-group-text bg-white"><i class="fa-regular fa-envelope"></i></span>
+										<input type="email" id="loginEmail" class="form-control" placeholder="Enter your email" required>
+									</div>
+								</div>
+								<div class="col-12">
+									<button type="button" class="btn btn-primary" id="sendOtpBtn" onclick="handleSendOtp()">
+										<i class="fa-solid fa-paper-plane me-1"></i> Send OTP
+									</button>
+								</div>
+							</div>
+						</div>
+
+						<div id="loginStep2" class="d-none">
+							<div class="row g-3">
+								<div class="col-12">
+									<label class="form-label">Enter OTP *</label>
+									<div class="input-group">
+										<span class="input-group-text bg-white"><i class="fa-solid fa-shield-halved"></i></span>
+										<input type="text" id="loginOtp" class="form-control" placeholder="Enter 6-digit OTP" maxlength="6">
+									</div>
+									<small class="text-muted">OTP sent to <span id="otpEmailDisplay"></span></small>
+								</div>
+								<div class="col-12">
+									<button type="button" class="btn btn-primary" id="verifyOtpBtn" onclick="handleVerifyOtp()">
+										<i class="fa-solid fa-check me-1"></i> Verify OTP
+									</button>
+									<button type="button" class="btn btn-outline-secondary ms-2" onclick="resendOtp()">Resend OTP</button>
+								</div>
+							</div>
+						</div>
+
+						<div id="loginError" class="alert alert-danger d-none mt-3"></div>
+					</div>
+				</div>
+			</div>
+
+			<div th:if="${loggedInCustomer != null}">
+				<div th:if="${defaultAddress != null}" id="defaultAddressData"
+					data-address-line1="${defaultAddress.addressLine1}"
+					data-address-line2="${defaultAddress.addressLine2}"
+					data-city="${defaultAddress.city}"
+					data-state="${defaultAddress.state}"
+					data-pin-code="${defaultAddress.pinCode}"
+					class="d-none">
+				</div>
+				<div id="loggedInCustomerData"
+					data-first-name="${loggedInCustomer.firstName}"
+					data-last-name="${loggedInCustomer.lastName}"
+					data-email="${loggedInCustomer.email}"
+					data-phone="${loggedInCustomer.phone}"
+					class="d-none">
+				</div>
+				<div class="row g-4">
+					<div class="col-lg-7">
+						<div class="card-soft p-4 mb-4" style="background: rgba(201,123,132,0.05); border: 1px solid rgba(201,123,132,0.15);">
+							<div class="d-flex justify-content-between align-items-center">
+								<div>
+									<h6 class="fw-bold mb-1">Welcome, <span th:text="${loggedInCustomer.firstName}">Customer</span>!</h6>
+									<small class="text-muted" th:text="${loggedInCustomer.email}">email@example.com</small>
+								</div>
+								<button type="button" class="btn btn-sm btn-outline-secondary" onclick="handleLogout()">Logout</button>
+							</div>
+						</div>
+
+						<div th:if="${!#lists.isEmpty(savedAddresses)}" class="card-soft p-4 mb-4">
+							<h5 class="fw-bold mb-3"><i class="fa-solid fa-location-dot me-2"></i>Select Delivery Address</h5>
+							<div class="row g-3" id="savedAddressesList">
+								<div th:each="addr, iter : ${savedAddresses}" class="col-md-6">
+									<div class="card-soft p-3 address-card" th:id="'addr-' + ${addr.id}" style="cursor:pointer; border: 2px solid var(--border);" onclick="selectAddress(this, '${addr.fullName}', '${addr.mobile}', '${addr.addressLine1}', '${addr.addressLine2}', '${addr.city}', '${addr.state}', '${addr.pinCode}', '${addr.landmark}')">
+										<div class="d-flex justify-content-between align-items-start mb-2">
+											<span class="badge badge-soft" th:text="${addr.type}">HOME</span>
+											<span th:if="${addr.isDefault}" class="badge bg-success">Default</span>
+										</div>
+										<h6 class="fw-bold mb-1" th:text="${addr.fullName}">Name</h6>
+										<small class="text-muted d-block mb-1" th:text="${addr.mobile}">Mobile</small>
+										<small class="text-muted d-block" th:text="${addr.addressLine1 + (addr.addressLine2 != null and !addr.addressLine2.isEmpty() ? ', ' + addr.addressLine2 : '')}">Address</small>
+										<small class="text-muted d-block" th:text="${addr.city + ', ' + addr.state + ' - ' + addr.pinCode}">City</small>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<form id="checkoutForm" th:object="${checkoutRequest}" novalidate>
+							<div class="card-soft p-4 mb-4">
+								<h5 class="fw-bold mb-3"><i class="fa-solid fa-truck me-2"></i>Shipping Address</h5>
+								<div class="row g-3">
+									<div class="col-md-6">
+										<label class="form-label">Full Name *</label>
+										<input type="text" id="customerName" th:field="*{customerName}" class="form-control" placeholder="Enter your full name" required>
+										<div class="invalid-feedback" th:errors="*{customerName}"></div>
+									</div>
+									<div class="col-md-6">
+										<label class="form-label">Email *</label>
+										<input type="email" id="email" th:field="*{email}" class="form-control" placeholder="Enter your email" required>
+										<div class="invalid-feedback" th:errors="*{email}"></div>
+									</div>
+									<div class="col-md-6">
+										<label class="form-label">Mobile Number *</label>
+										<input type="tel" id="phone" th:field="*{phone}" class="form-control" placeholder="10-digit mobile number" required>
+										<div class="invalid-feedback" th:errors="*{phone}"></div>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Address Line 1 *</label>
+										<input type="text" id="addressLine1" th:field="*{addressLine1}" class="form-control" placeholder="House/Flat No., Building, Street" required>
+										<div class="invalid-feedback" th:errors="*{addressLine1}"></div>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Address Line 2</label>
+										<input type="text" id="addressLine2" th:field="*{addressLine2}" class="form-control" placeholder="Area, Landmark (optional)">
+									</div>
+									<div class="col-md-4">
+										<label class="form-label">City *</label>
+										<input type="text" id="city" th:field="*{city}" class="form-control" placeholder="City" required>
+										<div class="invalid-feedback" th:errors="*{city}"></div>
+									</div>
+									<div class="col-md-4">
+										<label class="form-label">State *</label>
+										<input type="text" id="state" th:field="*{state}" class="form-control" placeholder="State" required>
+										<div class="invalid-feedback" th:errors="*{state}"></div>
+									</div>
+									<div class="col-md-4">
+										<label class="form-label">Country *</label>
+										<input type="text" th:field="*{country}" class="form-control" placeholder="Country" value="India" required>
+										<div class="invalid-feedback" th:errors="*{country}"></div>
+									</div>
+									<div class="col-md-6">
+										<label class="form-label">Pincode *</label>
+										<input type="text" id="pinCode" th:field="*{pinCode}" class="form-control" placeholder="6-digit pincode" required>
+										<div class="invalid-feedback" th:errors="*{pinCode}"></div>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Order Notes (Optional)</label>
+										<textarea th:field="*{notes}" class="form-control" rows="2" placeholder="Any special instructions for delivery"></textarea>
+									</div>
+								</div>
+							</div>
+
+							<div class="card-soft p-4">
+								<h5 class="fw-bold mb-3"><i class="fa-solid fa-credit-card me-2"></i>Payment Method</h5>
+								<div class="row g-3">
+									<div class="col-md-6">
+										<div class="payment-card" data-method="RAZORPAY">
+											<input type="radio" name="paymentMethod" id="razorpay" value="RAZORPAY" required>
+											<label for="razorpay" class="payment-label">
+												<div class="payment-icon">
+													<i class="fa-solid fa-mobile-screen-button"></i>
+												</div>
+												<div>
+													<div class="fw-bold">Razorpay</div>
+													<small class="text-muted">Pay via UPI, Card, Net Banking</small>
+												</div>
+											</label>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="payment-card" data-method="COD">
+											<input type="radio" name="paymentMethod" id="cod" value="COD" required>
+											<label for="cod" class="payment-label">
+												<div class="payment-icon">
+													<i class="fa-solid fa-money-bill-wave"></i>
+												</div>
+												<div>
+													<div class="fw-bold">Cash on Delivery</div>
+													<small class="text-muted">Pay when you receive</small>
+												</div>
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="invalid-feedback d-block" id="paymentError">Please select a payment method</div>
+							</div>
+						</form>
+					</div>
+
+					<div class="col-lg-5">
+						<div class="card-soft p-4 mb-3">
+							<h5 class="fw-bold mb-3">Order Summary</h5>
+							<div th:each="item : ${items}" class="order-item mb-3 pb-3 border-bottom">
+								<div class="d-flex gap-3 align-items-center">
+									<img th:src="${item.imageUrl != null ? item.imageUrl : '/images/product-placeholder.jpg'}" class="rounded-3" width="70" height="70" style="object-fit:cover;" alt="">
+									<div class="flex-grow-1">
+										<h6 class="mb-1" th:text="${item.productName}">Product Name</h6>
+										<small class="text-muted">Qty: <span th:text="${item.quantity}">1</span></small>
+										<div class="price mt-1">₹<span th:text="${item.price}">0</span></div>
+									</div>
+									<div class="text-end">
+										<div class="fw-bold">₹<span th:text="${item.subtotal}">0</span></div>
+									</div>
+								</div>
+							</div>
+
+							<div th:if="${#lists.isEmpty(items)}" class="text-center text-muted py-4">
+								<i class="fa-solid fa-cart-shopping fa-2x mb-3 d-block"></i>
+								<p>Your cart is empty</p>
+								<a th:href="@{/shop}" class="btn btn-primary btn-sm">Continue Shopping</a>
+							</div>
+
+							<div class="mt-3 pt-3" th:unless="${#lists.isEmpty(items)}">
+								<div class="d-flex justify-content-between mb-2">
+									<span>Subtotal</span>
+									<span>₹<span id="subtotalAmount">0</span></span>
+								</div>
+								<div class="d-flex justify-content-between mb-2">
+									<span>Shipping</span>
+									<span>₹1</span>
+								</div>
+								<div class="d-flex justify-content-between mb-2">
+									<span>Tax (5%)</span>
+									<span>₹<span id="taxAmount">0</span></span>
+								</div>
+								<div class="d-flex justify-content-between mb-2 text-success" id="discountRow" style="display:none;">
+									<span>Discount</span>
+									<span>-₹<span id="discountAmount">0</span></span>
+								</div>
+								<hr>
+								<div class="d-flex justify-content-between fw-bold fs-5">
+									<span>Grand Total</span>
+									<span class="text-primary">₹<span id="grandTotal">0</span></span>
+								</div>
+
+								<button type="submit" class="btn btn-primary w-100 mt-3 btn-lg" id="placeOrderBtn" th:if="${loggedInCustomer != null}" th:unless="${#lists.isEmpty(items)}">
+									<span id="placeOrderText">Place Order</span>
+									<span id="placeOrderSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+								</button>
+								<div th:if="${loggedInCustomer == null and !#lists.isEmpty(items)}" class="alert alert-warning mt-3">
+									Please login above to continue with your order.
+								</div>
+							</div>
+						</div>
+
+						<div class="card-soft p-3">
+							<div class="d-flex align-items-center gap-2 text-muted small">
+								<i class="fa-solid fa-shield-halved"></i>
+								<span>Secure checkout powered by Razorpay</span>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</section>
+
 	<div th:replace="footer :: footer"></div>
 	<div th:replace="scripts :: scripts"></div>
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const checkoutForm = document.getElementById("checkoutForm");
+			const placeOrderBtn = document.getElementById("placeOrderBtn");
+			const placeOrderText = document.getElementById("placeOrderText");
+			const placeOrderSpinner = document.getElementById("placeOrderSpinner");
+
+			const subtotalEl = document.getElementById("subtotalAmount");
+			const taxEl = document.getElementById("taxAmount");
+			const discountRow = document.getElementById("discountRow");
+			const discountEl = document.getElementById("discountAmount");
+			const grandTotalEl = document.getElementById("grandTotal");
+
+			const shipping = 1;
+			const taxRate = 0.05;
+			const discountThreshold = 1000;
+			const discountAmount = 100;
+
+			let subtotal = 0;
+
+			document.querySelectorAll(".order-item").forEach(item => {
+				const totalText = item.querySelector(".fw-bold").textContent;
+
+				const value = parseFloat(
+					totalText.replace(/,/g, "").replace(/[^0-9.]/g, "")
+				) || 0;
+
+				subtotal += value;
+			});
+
+			const tax = +(subtotal * taxRate).toFixed(2);
+			const discount = subtotal >= discountThreshold ? discountAmount : 0;
+			const total = +(subtotal + shipping + tax - discount).toFixed(2);
+
+			subtotalEl.textContent = subtotal.toFixed(2);
+			taxEl.textContent = tax.toFixed(2);
+			grandTotalEl.textContent = total.toFixed(2);
+
+			if (discount > 0) {
+				discountRow.style.display = "flex";
+				discountEl.textContent = discount.toFixed(2);
+			}
+
+			if (document.getElementById("defaultAddressData")) {
+				const da = document.getElementById("defaultAddressData");
+				if (da) {
+					fillAddress({
+						addressLine1: da.dataset.addressLine1 || "",
+						addressLine2: da.dataset.addressLine2 || "",
+						city: da.dataset.city || "",
+						state: da.dataset.state || "",
+						pinCode: da.dataset.pinCode || ""
+					});
+				}
+			}
+
+			const loggedInCustomer = document.getElementById("loggedInCustomerData");
+			if (loggedInCustomer) {
+				const nameEl = document.getElementById("customerName");
+				const emailEl = document.getElementById("email");
+				const phoneEl = document.getElementById("phone");
+				if (nameEl && !nameEl.value) nameEl.value = loggedInCustomer.dataset.firstName || "";
+				if (emailEl && !emailEl.value) emailEl.value = loggedInCustomer.dataset.email || "";
+				if (phoneEl && !phoneEl.value) phoneEl.value = loggedInCustomer.dataset.phone || "";
+			}
+
+			checkoutForm.addEventListener("submit", function (e) {
+				e.preventDefault();
+
+				if (!checkoutForm.checkValidity()) {
+					checkoutForm.classList.add("was-validated");
+					return;
+				}
+
+				const selectedPayment = document.querySelector("input[name='paymentMethod']:checked");
+				if (!selectedPayment) {
+					document.getElementById("paymentError").style.display = "block";
+					return;
+				}
+				document.getElementById("paymentError").style.display = "none";
+
+				const paymentMethod = selectedPayment.value;
+				const formData = new FormData(checkoutForm);
+				const data = {};
+				formData.forEach((value, key) => {
+					data[key] = value.trim();
+				});
+
+				placeOrderBtn.disabled = true;
+				placeOrderText.textContent = "Processing...";
+				placeOrderSpinner.classList.remove("d-none");
+
+				if (paymentMethod === "COD") {
+					fetch(CONTEXT_PATH + "/api/orders/create-cod", {
+						method: "POST",
+						headers: {"Content-Type": "application/json"},
+						body: JSON.stringify(data)
+					})
+						.then(async res => {
+							const text = await res.text();
+							console.log("COD response:", res.status, text);
+							if (!text) throw new Error("Empty response from server");
+							let result;
+							try {
+								result = JSON.parse(text);
+							} catch (e) {
+								throw new Error("Server returned an invalid response. Please try again.");
+							}
+							if (!result.success) throw new Error(result.message || "Failed to place order");
+							window.location.href = CONTEXT_PATH + "/order-success?orderNumber=" + result.orderNumber;
+						})
+						.catch(err => {
+							console.error("Place order error:", err);
+							showToast(err.message, "danger");
+						})
+						.finally(() => {
+							placeOrderBtn.disabled = false;
+							placeOrderText.textContent = "Place Order";
+							placeOrderSpinner.classList.add("d-none");
+						});
+				} else if (paymentMethod === "RAZORPAY") {
+					fetch(CONTEXT_PATH + "/api/orders/create-razorpay", {
+						method: "POST",
+						headers: {"Content-Type": "application/json"},
+						body: JSON.stringify(data)
+					})
+						.then(async res => {
+							const text = await res.text();
+							console.log("Razorpay response:", res.status, text);
+							if (!text) throw new Error("Empty response from server");
+							let result;
+							try {
+								result = JSON.parse(text);
+							} catch (e) {
+								throw new Error("Server returned an invalid response. Please try again.");
+							}
+							if (!result.success) throw new Error(result.message || "Failed to initiate payment");
+
+							openRazorpayCheckout(result);
+						})
+						.catch(err => {
+							console.error("Place order error:", err);
+							showToast(err.message, "danger");
+						})
+						.finally(() => {
+							placeOrderBtn.disabled = false;
+							placeOrderText.textContent = "Place Order";
+							placeOrderSpinner.classList.add("d-none");
+						});
+				}
+			});
+
+			document.querySelectorAll("input[name='paymentMethod']").forEach(radio => {
+				radio.addEventListener("change", function () {
+					document.querySelectorAll(".payment-card").forEach(card => card.classList.remove("selected"));
+					if (this.checked) {
+						this.closest(".payment-card").classList.add("selected");
+					}
+				});
+			});
+
+			const selectedPayment = document.querySelector("input[name='paymentMethod']:checked");
+			if (selectedPayment) {
+				selectedPayment.closest(".payment-card").classList.add("selected");
+			}
+		});
+
+		function selectAddress(el, name, mobile, addr1, addr2, city, state, pinCode, landmark) {
+			document.querySelectorAll(".address-card").forEach(card => {
+				card.style.borderColor = "var(--border)";
+				card.style.background = "var(--surface)";
+			});
+			el.style.borderColor = "var(--primary)";
+			el.style.background = "rgba(201,123,132,0.05)";
+
+			document.getElementById("customerName").value = name;
+			document.getElementById("phone").value = mobile;
+			document.getElementById("addressLine1").value = addr1;
+			const addr2El = document.getElementById("addressLine2");
+			if (addr2El) addr2El.value = addr2 || "";
+			document.getElementById("city").value = city;
+			document.getElementById("state").value = state;
+			document.getElementById("pinCode").value = pinCode;
+		}
+
+		function handleSendOtp() {
+			const email = document.getElementById("loginEmail").value.trim();
+			const btn = document.getElementById("sendOtpBtn");
+			const errorDiv = document.getElementById("loginError");
+
+			if (!email) {
+				errorDiv.textContent = "Please enter your email address";
+				errorDiv.classList.remove("d-none");
+				return;
+			}
+
+			btn.disabled = true;
+			btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Sending...';
+			errorDiv.classList.add("d-none");
+
+			sendOtp(email)
+				.then(result => {
+					if (result.success) {
+						document.getElementById("loginStep1").classList.add("d-none");
+						document.getElementById("loginStep2").classList.remove("d-none");
+						document.getElementById("otpEmailDisplay").textContent = email;
+					} else {
+						errorDiv.textContent = result.message || "Failed to send OTP";
+						errorDiv.classList.remove("d-none");
+					}
+				})
+				.catch(err => {
+					errorDiv.textContent = "Failed to send OTP. Please try again.";
+					errorDiv.classList.remove("d-none");
+				})
+				.finally(() => {
+					btn.disabled = false;
+					btn.innerHTML = '<i class="fa-solid fa-paper-plane me-1"></i> Send OTP';
+				});
+		}
+
+		function handleVerifyOtp() {
+			const email = document.getElementById("loginEmail").value.trim();
+			const otp = document.getElementById("loginOtp").value.trim();
+			const btn = document.getElementById("verifyOtpBtn");
+			const errorDiv = document.getElementById("loginError");
+
+			if (!otp || otp.length !== 6) {
+				errorDiv.textContent = "Please enter the 6-digit OTP";
+				errorDiv.classList.remove("d-none");
+				return;
+			}
+
+			btn.disabled = true;
+			btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Verifying...';
+			errorDiv.classList.add("d-none");
+
+			verifyOtp(email, otp)
+				.then(result => {
+					if (result.success) {
+						showToast("Login successful!", "success");
+						window.location.reload();
+					} else {
+						errorDiv.textContent = result.message || "Invalid or expired OTP";
+						errorDiv.classList.remove("d-none");
+					}
+				})
+				.catch(err => {
+					errorDiv.textContent = "Verification failed. Please try again.";
+					errorDiv.classList.remove("d-none");
+				})
+				.finally(() => {
+					btn.disabled = false;
+					btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Verify OTP';
+				});
+		}
+
+		function resendOtp() {
+			const email = document.getElementById("loginEmail").value.trim();
+			sendOtp(email).then(result => {
+				if (result.success) {
+					showToast("OTP resent successfully", "success");
+				} else {
+					showToast(result.message || "Failed to resend OTP", "danger");
+				}
+			});
+		}
+
+		function handleLogout() {
+			logoutCustomer().then(result => {
+				if (result.success) {
+					showToast("Logged out successfully", "success");
+					window.location.reload();
+				}
+			});
+		}
+
+		function openRazorpayCheckout(data) {
+			const options = {
+				key: data.keyId,
+				amount: data.amount,
+				currency: data.currency,
+				name: "Loomelle Crochet",
+				description: "Order " + data.orderNumber,
+				order_id: data.razorpayOrderId,
+				prefill: {
+					name: data.customerName,
+					email: data.email,
+					contact: data.phone
+				},
+				handler: function (response) {
+					fetch(CONTEXT_PATH + "/api/payment/razorpay/verify", {
+						method: "POST",
+						headers: {"Content-Type": "application/json"},
+						body: JSON.stringify({
+							razorpay_order_id: response.razorpay_order_id,
+							razorpay_payment_id: response.razorpay_payment_id,
+							razorpay_signature: response.razorpay_signature,
+							order_number: data.orderNumber
+						})
+					})
+						.then(res => res.json())
+						.then(result => {
+							if (result.success) {
+								window.location.href = CONTEXT_PATH + "/order-success?orderNumber=" + result.orderNumber;
+							} else {
+								window.location.href = CONTEXT_PATH + "/order-failure?reason=" + encodeURIComponent(result.message || "Payment verification failed");
+							}
+						});
+				},
+				modal: {
+					ondismiss: function () {
+						window.location.href = CONTEXT_PATH + "/order-failure?reason=Payment cancelled by user";
+					}
+				}
+			};
+
+			const rzp = new Razorpay(options);
+			rzp.open();
+		}
+	</script>
+
+	<style>
+		.payment-card {
+			border: 2px solid var(--border);
+			border-radius: var(--radius);
+			padding: 1rem;
+			cursor: pointer;
+			transition: all 0.25s ease;
+			background: var(--surface);
+		}
+
+		.payment-card:hover {
+			border-color: var(--primary);
+			box-shadow: 0 4px 12px rgba(201, 123, 132, 0.1);
+		}
+
+		.payment-card.selected {
+			border-color: var(--primary);
+			background: rgba(201, 123, 132, 0.05);
+			box-shadow: 0 4px 16px rgba(201, 123, 132, 0.15);
+		}
+
+		.payment-card input[type="radio"] {
+			display: none;
+		}
+
+		.payment-label {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+			cursor: pointer;
+			margin: 0;
+			width: 100%;
+		}
+
+		.payment-icon {
+			width: 48px;
+			height: 48px;
+			border-radius: 12px;
+			background: var(--secondary);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.2rem;
+			color: var(--primary);
+			flex-shrink: 0;
+		}
+
+		.order-item img {
+			object-fit: cover;
+		}
+
+		.address-card:hover {
+			border-color: var(--primary) !important;
+		}
+
+		.address-card.selected {
+			border-color: var(--primary) !important;
+			background: rgba(201,123,132,0.05) !important;
+		}
+	</style>
 </body>
 
 </html>

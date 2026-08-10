@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
+<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
+<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
+<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
+<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
+
+<head th:replace="header :: head('My Orders')"></head>
+
+<body>
+	<div th:replace="header :: navbar"></div>
+	<section class="py-5">
+		<div class="container">
+			<div class="d-flex justify-content-between align-items-center mb-4">
+				<h2 class="section-title mb-0">My Orders</h2>
+				<span th:if="${navCustomerName != null}" class="text-muted">Welcome, <span th:text="${navCustomerName}">Customer</span></span>
+			</div>
+
+			<div class="card-soft p-3 mb-4">
+				<form th:action="@{/my-orders}" method="get" class="row g-3 align-items-end">
+					<div class="col-md-4">
+						<label class="form-label">Filter by Status</label>
+						<select name="status" class="form-select">
+							<option value="">All Orders</option>
+							<option th:each="s : ${statuses}" th:value="${s}" th:text="${s}" th:selected="${s == selectedStatus}"></option>
+						</select>
+					</div>
+					<div class="col-md-2">
+						<button type="submit" class="btn btn-primary w-100">Filter</button>
+					</div>
+				</form>
+			</div>
+
+			<div class="card-soft p-0 overflow-hidden" th:if="${ordersPage.content.empty}">
+				<div class="text-center py-5">
+					<i class="fa-solid fa-box-open fa-3x text-muted mb-3"></i>
+					<p class="text-muted">No orders found.</p>
+					<a th:href="@{/shop}" class="btn btn-primary">Shop Now</a>
+				</div>
+			</div>
+
+			<div class="card-soft p-0 overflow-hidden" th:unless="${ordersPage.content.empty}">
+				<div class="table-responsive">
+					<table class="table table-bordered align-middle text-nowrap mb-0">
+						<thead class="table-light">
+							<tr>
+								<th>Order #</th>
+								<th>Date</th>
+								<th>Total</th>
+								<th>Payment</th>
+								<th>Status</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="order : ${ordersPage.content}">
+								<td th:text="${order.orderNumber}">ORD-001</td>
+								<td th:text="${#temporals.format(order.createdDate, 'dd MMM yyyy')}">01 Jan 2025</td>
+								<td class="fw-bold">₹<span th:text="${order.total}">0</span></td>
+								<td>
+									<span th:classappend="${order.paymentStatus == 'SUCCESS'} ? 'text-success' : (order.paymentStatus == 'FAILED') ? 'text-danger' : 'text-warning'" th:text="${order.paymentStatus}">PENDING</span>
+								</td>
+							<td>
+								<span th:classappend="${order.status == 'DELIVERED'} ? 'text-success' : (order.status == 'CANCELLED') ? 'text-danger' : 'text-warning'" th:text="${order.status}">PENDING</span>
+							</td>
+							<td>
+								<a th:href="@{'/my-orders/' + ${order.orderNumber}}" class="btn btn-sm btn-outline-primary">View</a>
+							</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="p-3" th:if="${ordersPage.totalPages > 1}">
+					<nav>
+						<ul class="pagination justify-content-center mb-0">
+							<li class="page-item" th:classappend="${ordersPage.number == 0} ? 'disabled'">
+								<a class="page-link" th:href="@{/my-orders(page=0, status=${selectedStatus})}">First</a>
+							</li>
+							<li class="page-item" th:classappend="${ordersPage.number == 0} ? 'disabled'">
+								<a class="page-link" th:href="@{/my-orders(page=${ordersPage.number - 1}, status=${selectedStatus})}">Previous</a>
+							</li>
+							<li class="page-item active">
+								<span class="page-link" th:text="${ordersPage.number + 1} + ' / ' + ${ordersPage.totalPages}">1 / 5</span>
+							</li>
+							<li class="page-item" th:classappend="${ordersPage.number == ordersPage.totalPages - 1} ? 'disabled'">
+								<a class="page-link" th:href="@{/my-orders(page=${ordersPage.number + 1}, status=${selectedStatus})}">Next</a>
+							</li>
+							<li class="page-item" th:classappend="${ordersPage.number == ordersPage.totalPages - 1} ? 'disabled'">
+								<a class="page-link" th:href="@{/my-orders(page=${ordersPage.totalPages - 1}, status=${selectedStatus})}">Last</a>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</section>
+	<div th:replace="footer :: footer"></div>
+	<div th:replace="scripts :: scripts"></div>
+</body>
+</html>
