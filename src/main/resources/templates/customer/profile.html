@@ -29,21 +29,21 @@
 			<div class="row g-4">
 
 				<!-- LEFT SIDE -->
-				<div class="col-lg-4">
+				<div class="col-lg-4 mb-4 mb-lg-0">
 
 					<div class="card-soft p-4">
 
 						<div class="text-center mb-3">
 
 							<div class="rounded-circle bg-primary text-white
-                                        d-flex align-items-center justify-content-center mx-auto"
-								style="width: 80px; height: 80px; font-size: 2rem;">
+                                         d-flex align-items-center justify-content-center mx-auto"
+								style="width: 64px; height: 64px; font-size: 1.5rem;">
 								<i class="fa-solid fa-user"></i>
 							</div>
 
 							<h5 class="fw-bold mt-3" th:text="${(customer.firstName != null ? customer.firstName : '')
-                                    + ' '
-                                    + (customer.lastName != null ? customer.lastName : '')}">
+                                     + ' '
+                                     + (customer.lastName != null ? customer.lastName : '')}">
 								Customer Name
 							</h5>
 

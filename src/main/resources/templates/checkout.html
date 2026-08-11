@@ -16,9 +16,7 @@
 		<div class="container">
 			<h2 class="section-title mb-4">Checkout</h2>
 
-			<div th:if="${loggedInCustomer == null}" id="loginSection" class="row g-4">
-				<div class="col-lg-8 mx-auto">
-					<div class="card-soft p-4 mb-4">
+		<div th:if="${loggedInCustomer == null}" id="loginSection" class="card-soft p-4 mb-4">
 						<h5 class="fw-bold mb-3"><i class="fa-solid fa-user me-2"></i>Login to Continue</h5>
 						<p class="text-muted small mb-3">Enter your email to receive a one-time password (OTP).</p>
 
@@ -193,9 +191,10 @@
 													<small class="text-muted">Pay when you receive</small>
 												</div>
 											</label>
-										</div>
-									</div>
-								</div>
+					</div>
+				</div>
+
+			</div>
 								<div class="invalid-feedback d-block" id="paymentError">Please select a payment method</div>
 							</div>
 						</form>

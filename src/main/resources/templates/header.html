@@ -26,48 +26,48 @@
 	<link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 
-<nav th:fragment="navbar" class="navbar navbar-expand-lg sticky-top">
-	<div class="container">
-		<a class="navbar-brand" th:href="@{/}">
-			<i class="fa-solid fa-spa me-2"></i>Loomelle Crochet
-		</a>
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse" id="mainNav">
-			<ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-lg-2">
-				<li class="nav-item"><a class="nav-link" th:href="@{/}">Home</a></li>
-				<li class="nav-item"><a class="nav-link" th:href="@{/shop}">Shop</a></li>
-				<li class="nav-item"><a class="nav-link" th:href="@{/about}">About</a></li>
-				<li class="nav-item"><a class="nav-link" th:href="@{/contact}">Contact</a></li>
-				<li class="nav-item">
-					<a class="btn btn-primary btn-sm ms-lg-2" th:href="@{/cart}">
-						<i class="fa-solid fa-bag-shopping me-1"></i>Cart
-					</a>
-				</li>
-				<li class="nav-item" th:if="${navCustomer == null}">
-					<a class="btn btn-outline-primary btn-sm ms-lg-2" th:href="@{/customer/login(redirectAfterLogin='/')}">
-						<i class="fa-regular fa-user me-1"></i>Login
-					</a>
-				</li>
-				<li class="nav-item dropdown" th:if="${navCustomer != null}">
-					<a class="nav-link dropdown-toggle btn btn-outline-primary btn-sm ms-lg-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-						<i class="fa-regular fa-user me-1"></i><span th:text="${navCustomerName}">Customer</span>
-					</a>
-					<ul class="dropdown-menu dropdown-menu-end">
-						<li><a class="dropdown-item" th:href="@{/customer/profile}"><i class="fa-regular fa-user me-2"></i>My Profile</a></li>
-						<li><a class="dropdown-item" th:href="@{/my-orders}"><i class="fa-solid fa-box me-2"></i>My Orders</a></li>
-						<li><a class="dropdown-item" th:href="@{/customer/addresses}"><i class="fa-solid fa-location-dot me-2"></i>Addresses</a></li>
-						<li><hr class="dropdown-divider"></li>
-							<li><a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); handleNavbarLogout();">
-								<i class="fa-solid fa-right-from-bracket me-2"></i>Logout
-							</a></li>
-					</ul>
-					<form th:action="@{/api/customer/auth/logout}" method="post" id="logoutForm" class="d-none"></form>
-				</li>
-			</ul>
+	<nav th:fragment="navbar" class="navbar navbar-expand-lg sticky-top">
+		<div class="container">
+			<a class="navbar-brand" th:href="@{/}">
+				<i class="fa-solid fa-spa me-1"></i>Loomelle Crochet
+			</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="mainNav">
+				<ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-lg-2">
+					<li class="nav-item"><a class="nav-link" th:href="@{/}">Home</a></li>
+					<li class="nav-item"><a class="nav-link" th:href="@{/shop}">Shop</a></li>
+					<li class="nav-item"><a class="nav-link" th:href="@{/about}">About</a></li>
+					<li class="nav-item"><a class="nav-link" th:href="@{/contact}">Contact</a></li>
+					<li class="nav-item">
+						<a class="btn btn-primary btn-sm ms-lg-2" th:href="@{/cart}">
+							<i class="fa-solid fa-bag-shopping me-1"></i>Cart
+						</a>
+					</li>
+					<li class="nav-item" th:if="${navCustomer == null}">
+						<a class="btn btn-outline-primary btn-sm ms-lg-2" th:href="@{/customer/login(redirectAfterLogin='/')}">
+							<i class="fa-regular fa-user me-1"></i>Login
+						</a>
+					</li>
+					<li class="nav-item dropdown" th:if="${navCustomer != null}">
+						<a class="nav-link dropdown-toggle btn btn-outline-primary btn-sm ms-lg-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<i class="fa-regular fa-user me-1"></i><span th:text="${navCustomerName}">Customer</span>
+						</a>
+						<ul class="dropdown-menu dropdown-menu-end">
+							<li><a class="dropdown-item" th:href="@{/customer/profile}"><i class="fa-regular fa-user me-2"></i>My Profile</a></li>
+							<li><a class="dropdown-item" th:href="@{/my-orders}"><i class="fa-solid fa-box me-2"></i>My Orders</a></li>
+							<li><a class="dropdown-item" th:href="@{/customer/addresses}"><i class="fa-solid fa-location-dot me-2"></i>Addresses</a></li>
+							<li><hr class="dropdown-divider"></li>
+								<li><a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); handleNavbarLogout();">
+									<i class="fa-solid fa-right-from-bracket me-2"></i>Logout
+								</a></li>
+						</ul>
+						<form th:action="@{/api/customer/auth/logout}" method="post" id="logoutForm" class="d-none"></form>
+					</li>
+				</ul>
+			</div>
 		</div>
-	</div>
-</nav>
+	</nav>
 
 </html>
