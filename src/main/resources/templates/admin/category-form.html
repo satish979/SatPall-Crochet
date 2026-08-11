@@ -12,42 +12,65 @@
 				<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
 					<div>
 						<h1 class="section-title mb-1" th:text="${category.id != null ? 'Edit Category' : 'Add Category'}">Category Form</h1>
-						<p class="text-muted mb-0">Create or edit a category and assign a simple placeholder image if needed.</p>
+						<p class="text-muted mb-0">Create or edit a category and upload a cover image.</p>
 					</div>
 					<a th:href="@{/admin/categories}" class="btn btn-outline-secondary">Back</a>
 				</div>
 
-				<form th:action="@{/admin/categories/save}" th:object="${category}" method="post">
-					<input type="hidden" th:field="*{id}" />
+				<div th:if="${param.success}" class="alert alert-success">Category saved successfully.</div>
+				<div th:if="${param.error}" class="alert alert-danger">Please fix the errors and try again.</div>
+
+				<form th:action="@{/admin/categories/save}" method="post" enctype="multipart/form-data">
+					<input type="hidden" name="id" th:value="${category.id != null ? category.id : ''}" />
 
 					<div class="row g-3">
 						<div class="col-md-6">
 							<label class="form-label fw-semibold">Category Name</label>
-							<input type="text" class="form-control" th:field="*{name}" required>
+							<input type="text" class="form-control" name="name" th:value="${category.name}" required maxlength="100" />
 						</div>
 						<div class="col-md-6">
 							<label class="form-label fw-semibold">Display Order</label>
-							<input type="number" class="form-control" th:field="*{displayOrder}">
-						</div>
-						<div class="col-md-6">
-							<label class="form-label fw-semibold">Image URL</label>
-							<input type="text" class="form-control" th:field="*{imageUrl}" placeholder="/images/product-placeholder.jpg">
+							<input type="number" class="form-control" name="displayOrder" th:value="${category.displayOrder != null ? category.displayOrder : 0}" />
 						</div>
 						<div class="col-md-6">
 							<label class="form-label fw-semibold">Status</label>
-							<select class="form-select" th:field="*{active}">
-								<option th:value="true">Active</option>
-								<option th:value="false">Inactive</option>
+							<select class="form-select" name="active">
+								<option th:value="true" th:selected="${category.active == null || category.active}">Active</option>
+								<option th:value="false" th:selected="${category.active == false}">Inactive</option>
 							</select>
 						</div>
 						<div class="col-12">
 							<label class="form-label fw-semibold">Description</label>
-							<textarea class="form-control" rows="4" th:field="*{description}"></textarea>
+							<textarea class="form-control" rows="4" name="description" maxlength="500" th:text="${category.description}"></textarea>
+						</div>
+
+						<div class="col-12">
+							<label class="form-label fw-semibold">Category Image</label>
+							<input type="file" class="form-control" name="imageFile" id="categoryImageFile"
+								accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" />
+							<div class="form-text">Upload a category cover image. Leave blank to keep the current image.</div>
+						</div>
+
+						<div class="col-12" th:if="${category.imageUrl != null && !#strings.isEmpty(category.imageUrl)}">
+							<label class="form-label fw-semibold">Current Image</label>
+							<div class="d-flex align-items-center gap-3 mb-3">
+								<img th:src="${category.imageUrl}" alt="Category Image" class="img-thumbnail" style="max-width: 180px; max-height: 180px; object-fit: contain; background: #f8f9fa;" id="currentImagePreview" />
+								<div class="form-check mt-3">
+									<input class="form-check-input" type="checkbox" name="removeImage" id="removeImage" value="true" />
+									<label class="form-check-label" for="removeImage">Remove this image</label>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-12">
+							<label class="form-label fw-semibold">New Image Preview</label>
+							<img id="imagePreview" class="img-thumbnail d-none" style="max-width: 180px; max-height: 180px; object-fit: contain; background: #f8f9fa;" alt="Preview" />
 						</div>
 					</div>
 
-					<div class="mt-4 text-end">
+					<div class="mt-4 d-flex gap-2">
 						<button type="submit" class="btn btn-primary">Save Category</button>
+						<a th:href="@{/admin/categories}" class="btn btn-outline-secondary">Cancel</a>
 					</div>
 				</form>
 			</div>
@@ -56,5 +79,42 @@
 
 	<div th:replace="footer :: footer"></div>
 	<div th:replace="scripts :: scripts"></div>
+
+	<script>
+		(function() {
+			const fileInput = document.getElementById('categoryImageFile');
+			const preview = document.getElementById('imagePreview');
+			const removeCheckbox = document.getElementById('removeImage');
+
+			if (fileInput) {
+				fileInput.addEventListener('change', function() {
+					if (this.files && this.files[0]) {
+						const reader = new FileReader();
+						reader.onload = function(e) {
+							preview.src = e.target.result;
+							preview.classList.remove('d-none');
+							if (removeCheckbox) {
+								removeCheckbox.checked = false;
+							}
+						};
+						reader.readAsDataURL(this.files[0]);
+					}
+				});
+			}
+
+			if (removeCheckbox) {
+				removeCheckbox.addEventListener('change', function() {
+					if (this.checked && preview) {
+						preview.classList.add('d-none');
+						preview.src = '';
+						if (fileInput) {
+							fileInput.value = '';
+						}
+					}
+				});
+			}
+		})();
+	</script>
 </body>
+
 </html>

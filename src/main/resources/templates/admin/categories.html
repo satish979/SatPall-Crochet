@@ -16,41 +16,70 @@
 				<a th:href="@{/admin/dashboard}" class="btn btn-outline-primary">Back to Dashboard</a>
 			</div>
 
+			<div th:if="${param.success}" class="alert alert-success">Category saved successfully.</div>
+			<div th:if="${param.deleted}" class="alert alert-success">Category deleted successfully.</div>
+			<div th:if="${param.error}" class="alert alert-danger">Category not found or invalid data.</div>
+
 			<div class="card-soft p-4">
 				<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
 					<div>
 						<h4 class="fw-bold mb-1">Category List</h4>
 						<p class="text-muted mb-0">Use this section to manage all your store categories.</p>
 					</div>
+					<div class="d-flex gap-2 flex-wrap">
+						<input type="text" id="categorySearch" class="form-control" placeholder="Search categories..." style="min-width: 220px;" />
 						<a class="btn btn-primary" th:href="@{/admin/categories/new}">+ Add Category</a>
+					</div>
+				</div>
+
+				<div class="table-responsive">
+					<table class="table table-hover align-middle text-nowrap" id="categoriesTable">
+						<thead class="table-light">
 							<tr>
 								<th>#</th>
-								<th>Name</th>
+								<th>Category Name</th>
+								<th>Image</th>
 								<th>Status</th>
 								<th>Actions</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr th:if="${#lists.isEmpty(categories)}">
-								<td colspan="4" class="text-center text-muted py-4">No categories found yet.</td>
-							</tr>
 							<tr th:each="category, iterStat : ${categories}">
-								<td th:text="${iterStat.count}"></td>
+								<td th:text="${category.id}">1</td>
 								<td>
-									<img th:src="${category.imageUrl != null ? category.imageUrl : '/images/product-placeholder.jpg'}"
-										alt="Category"
-										style="width: 48px; height: 48px; object-fit: contain; border-radius: 8px; background: #f8f9fa;">
-									<span class="ms-2" th:text="${category.name}"></span>
+									<div class="d-flex align-items-center gap-3">
+										<img th:src="${category.imageUrl != null && !#strings.isEmpty(category.imageUrl) ? category.imageUrl : '/images/category-placeholder.jpg'}"
+											alt="Category"
+											style="width: 48px; height: 48px; object-fit: cover; border-radius: 8px; background: #f8f9fa;" />
+										<div>
+											<div class="fw-semibold" th:text="${category.name}">Category</div>
+											<div class="text-muted small" th:text="${#strings.isEmpty(category.description) ? '' : category.description}"></div>
+										</div>
+									</div>
+								</td>
+								<td>
+								<img th:src="${category.imageUrl != null && !#strings.isEmpty(category.imageUrl) ? category.imageUrl : '/images/category-placeholder.jpg'}"
+									alt="Category"
+									style="width: 56px; height: 56px; object-fit: cover; border-radius: 8px; background: #f8f9fa;" />
 								</td>
 								<td>
 									<span class="badge" th:classappend="${category.active} ? 'bg-success' : 'bg-secondary'"
-										th:text="${category.active ? 'Active' : 'Inactive'}"></span>
+										th:text="${category.active ? 'Active' : 'Inactive'}">Active</span>
 								</td>
 								<td>
-									<a class="btn btn-sm btn-outline-primary me-2" th:href="@{'/admin/categories/' + ${category.id} + '/edit'}">Edit</a>
-									<form th:action="@{'/admin/categories/' + ${category.id} + '/delete'}" method="post" class="d-inline">
-										<button class="btn btn-sm btn-outline-danger" type="submit" onclick="return confirm('Delete this category?');">Delete</button>
-									</form>
+									<div class="d-flex gap-2">
+										<a class="btn btn-sm btn-outline-primary" th:href="@{'/admin/categories/' + ${category.id} + '/edit'}">Edit</a>
+										<form th:action="@{'/admin/categories/' + ${category.id} + '/delete'}" method="post" class="d-inline"
+											onsubmit="return confirm('Delete this category? This action cannot be undone.');">
+											<button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+										</form>
+									</div>
+								</td>
+							</tr>
+							<tr th:if="${#lists.isEmpty(categories)}">
+								<td colspan="5" class="text-center text-muted py-5">
+									<i class="fa-solid fa-folder-open mb-2" style="font-size: 2rem;"></i>
+									<p class="mb-0">No categories found. Create your first category to get started.</p>
 								</td>
 							</tr>
 						</tbody>
@@ -62,5 +91,23 @@
 
 	<div th:replace="footer :: footer"></div>
 	<div th:replace="scripts :: scripts"></div>
+
+	<script>
+		(function() {
+			const searchInput = document.getElementById('categorySearch');
+			const table = document.getElementById('categoriesTable');
+			if (!searchInput || !table) return;
+
+			searchInput.addEventListener('input', function() {
+				const term = this.value.toLowerCase().trim();
+				const rows = table.querySelectorAll('tbody tr');
+				rows.forEach(function(row) {
+					const text = row.textContent.toLowerCase();
+					row.style.display = text.includes(term) ? '' : 'none';
+				});
+			});
+		})();
+	</script>
 </body>
+
 </html>

@@ -75,7 +75,7 @@ public class AdminController {
 	public String newProduct(Model model) {
 		model.addAttribute("pageTitle", "Add Product");
 		model.addAttribute("productForm", new ProductForm());
-		model.addAttribute("categories", productService.getAllProducts());
+		model.addAttribute("categories", categoryRepository.findByActiveOrderByDisplayOrderAscNameAsc(true));
 		return "admin/product-form";
 	}
 

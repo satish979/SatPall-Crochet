@@ -11,9 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.satpall.crochet.dto.CheckoutRequest;
 import com.satpall.crochet.dto.OrderSummaryDTO;
@@ -23,7 +21,6 @@ import com.satpall.crochet.entity.Customer;
 import com.satpall.crochet.entity.CustomerAddress;
 import com.satpall.crochet.entity.Order;
 import com.satpall.crochet.enums.OrderStatus;
-import com.satpall.crochet.exception.OrderException;
 import com.satpall.crochet.repository.CartItemRepository;
 import com.satpall.crochet.repository.CartRepository;
 import com.satpall.crochet.service.CustomerAddressService;
@@ -40,13 +37,19 @@ public class OrderController {
 	private final OrderService orderService;
 	private final CartRepository cartRepository;
 	private final CartItemRepository cartItemRepository;
-	private final EmailService emailService;
 	private final CustomerService customerService;
 	private final CustomerAddressService customerAddressService;
 
 	@GetMapping("/checkout")
-	public String checkout(Model model, HttpSession session) {
+	public String checkout(Model model, HttpSession session,
+			@RequestParam(required = false) String redirectAfterLogin) {
 		model.addAttribute("pageTitle", "Checkout");
+
+		if (redirectAfterLogin != null && !redirectAfterLogin.trim().isEmpty()) {
+			session.setAttribute("redirectAfterLogin", redirectAfterLogin.trim());
+		} else if (session.getAttribute("redirectAfterLogin") == null && session.getAttribute("customerId") == null) {
+			session.setAttribute("redirectAfterLogin", "/checkout");
+		}
 
 		Long customerId = (Long) session.getAttribute("customerId");
 		if (customerId != null) {
@@ -81,6 +84,16 @@ public class OrderController {
 
 		System.out.println("model " + model);
 		return "checkout";
+	}
+
+	@GetMapping("/customer/login")
+	public String customerLogin(HttpSession session, @RequestParam(required = false) String redirectAfterLogin) {
+		if (redirectAfterLogin != null && !redirectAfterLogin.trim().isEmpty()) {
+			session.setAttribute("redirectAfterLogin", redirectAfterLogin.trim());
+		} else if (session.getAttribute("redirectAfterLogin") == null) {
+			session.setAttribute("redirectAfterLogin", "/Loomellecrochet");
+		}
+		return "redirect:/checkout";
 	}
 
 	@GetMapping("/my-orders")
@@ -184,6 +197,5 @@ public class OrderController {
 		model.addAttribute("order", order);
 		return "invoice";
 	}
-	
 
 }

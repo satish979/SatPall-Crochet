@@ -31,14 +31,12 @@ public class Customer {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotBlank(message = "First name is required")
 	@Size(max = 50, message = "First name must be less than 50 characters")
-	@Column(name = "first_name", nullable = false)
+	@Column(name = "first_name")
 	private String firstName;
 
-	@NotBlank(message = "Last name is required")
 	@Size(max = 50, message = "Last name must be less than 50 characters")
-	@Column(name = "last_name", nullable = false)
+	@Column(name = "last_name")
 	private String lastName;
 
 	@NotBlank(message = "Email is required")

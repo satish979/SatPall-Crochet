@@ -108,8 +108,6 @@ public class OtpService {
 		if (customer == null) {
 			customer = new Customer();
 			customer.setEmail(normalized);
-			customer.setFirstName("");
-			customer.setLastName("");
 			customer.setEnabled(true);
 			customerRepository.save(customer);
 		}

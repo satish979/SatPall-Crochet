@@ -21,19 +21,38 @@ public class GlobalControllerAdvice {
 
 	@ModelAttribute
 	public void addCustomerToModel(HttpSession session, ModelMap model) {
+		if (session == null) {
+			return;
+		}
+
 		Long customerId = (Long) session.getAttribute("customerId");
-		if (customerId != null) {
+		if (customerId == null) {
+			return;
+		}
+
+		Customer customer = (Customer) session.getAttribute("customer");
+		if (customer == null) {
 			Optional<Customer> customerOpt = customerService.getCurrentCustomer(customerId);
 			if (customerOpt.isPresent()) {
-				Customer customer = customerOpt.get();
-				model.addAttribute("navCustomer", customer);
-				String fullName = customer.getFirstName();
-				if (customer.getLastName() != null && !customer.getLastName().isEmpty()) {
-					fullName += " " + customer.getLastName();
-				}
-				model.addAttribute("navCustomerName", fullName);
+				customer = customerOpt.get();
+				session.setAttribute("customer", customer);
+			} else {
+				session.removeAttribute("customerId");
+				session.removeAttribute("customerEmail");
+				session.removeAttribute("customer");
+				return;
 			}
 		}
+
+		model.addAttribute("navCustomer", customer);
+		String fullName = customer.getFirstName();
+		if (fullName == null || fullName.isEmpty()) {
+			fullName = customer.getEmail();
+		} else if (customer.getLastName() != null && !customer.getLastName().isEmpty()) {
+			fullName += " " + customer.getLastName();
+		}
+		model.addAttribute("navCustomerName", fullName);
 	}
 
 }
+

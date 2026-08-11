@@ -6,18 +6,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.satpall.crochet.entity.Category;
 import com.satpall.crochet.repository.CategoryRepository;
+import com.satpall.crochet.service.CategoryService;
 
 @Controller
 public class CategoryAdminController {
 
     private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
-    public CategoryAdminController(CategoryRepository categoryRepository) {
+    public CategoryAdminController(CategoryRepository categoryRepository, CategoryService categoryService) {
         this.categoryRepository = categoryRepository;
+        this.categoryService = categoryService;
     }
 
     @GetMapping("/admin/categories/new")
@@ -40,30 +45,22 @@ public class CategoryAdminController {
     }
 
     @PostMapping("/admin/categories/save")
-    public String saveCategory(@ModelAttribute Category category, RedirectAttributes redirectAttributes) {
-        if (category.getName() == null || category.getName().trim().isEmpty()) {
+    public String saveCategory(@ModelAttribute Category category,
+            @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
+            @RequestParam(value = "removeImage", required = false, defaultValue = "false") boolean removeImage,
+            RedirectAttributes redirectAttributes) {
+        try {
+            categoryService.saveCategory(category, imageFile, removeImage);
+            redirectAttributes.addFlashAttribute("success", true);
+        } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", true);
-            return "redirect:/admin/categories";
         }
-
-        if (category.getActive() == null) {
-            category.setActive(true);
-        }
-        if (category.getDisplayOrder() == null) {
-            category.setDisplayOrder(0);
-        }
-        if (category.getImageUrl() == null || category.getImageUrl().isBlank()) {
-            category.setImageUrl("/images/product-placeholder.jpg");
-        }
-
-        categoryRepository.save(category);
-        redirectAttributes.addFlashAttribute("success", true);
         return "redirect:/admin/categories";
     }
 
     @PostMapping("/admin/categories/{id}/delete")
     public String deleteCategory(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        categoryRepository.findById(id).ifPresent(categoryRepository::delete);
+        categoryService.deleteCategory(id);
         redirectAttributes.addFlashAttribute("deleted", true);
         return "redirect:/admin/categories";
     }

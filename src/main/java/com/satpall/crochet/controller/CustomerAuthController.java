@@ -32,8 +32,17 @@ public class CustomerAuthController {
 	private final CustomerService customerService;
 
 	@PostMapping("/send-otp")
-	public ResponseEntity<Map<String, Object>> sendOtp(@Valid @RequestBody OtpSendRequest request) {
+	public ResponseEntity<Map<String, Object>> sendOtp(@Valid @RequestBody OtpSendRequest request,
+			HttpSession session) {
 		Map<String, Object> response = new HashMap<>();
+
+		Long existingCustomerId = (Long) session.getAttribute("customerId");
+		if (existingCustomerId != null) {
+			response.put("success", true);
+			response.put("message", "You are already logged in");
+			response.put("authenticated", true);
+			return ResponseEntity.ok(response);
+		}
 
 		try {
 			otpService.sendOtp(request.getIdentifier(), request.getType());
@@ -57,6 +66,24 @@ public class CustomerAuthController {
 			HttpSession session) {
 		Map<String, Object> response = new HashMap<>();
 
+		Long existingCustomerId = (Long) session.getAttribute("customerId");
+		if (existingCustomerId != null) {
+			Customer existing = customerService.getCurrentCustomer(existingCustomerId).orElse(null);
+			if (existing != null) {
+				response.put("success", true);
+				response.put("message", "Already logged in");
+				response.put("authenticated", true);
+				CustomerAuthResponse authResponse = new CustomerAuthResponse();
+				authResponse.setId(existing.getId());
+				authResponse.setFirstName(existing.getFirstName());
+				authResponse.setLastName(existing.getLastName());
+				authResponse.setEmail(existing.getEmail());
+				authResponse.setPhone(existing.getPhone());
+				response.put("customer", authResponse);
+				return ResponseEntity.ok(response);
+			}
+		}
+
 		try {
 			boolean valid = otpService.verifyOtp(request.getIdentifier(), request.getOtp());
 			if (!valid) {
@@ -67,6 +94,13 @@ public class CustomerAuthController {
 
 			Customer customer = otpService.loginOrCreateCustomer(request.getIdentifier());
 			session.setAttribute("customerId", customer.getId());
+			session.setAttribute("customerEmail", customer.getEmail());
+
+			String redirectAfterLogin = (String) session.getAttribute("redirectAfterLogin");
+			if (redirectAfterLogin != null) {
+				session.removeAttribute("redirectAfterLogin");
+				response.put("redirectAfterLogin", redirectAfterLogin);
+			}
 
 			CustomerAuthResponse authResponse = new CustomerAuthResponse();
 			authResponse.setId(customer.getId());
@@ -80,6 +114,7 @@ public class CustomerAuthController {
 			response.put("customer", authResponse);
 			return ResponseEntity.ok(response);
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			response.put("success", false);
 			response.put("message", "Verification failed. Please try again.");
 			return ResponseEntity.status(500).body(response);
@@ -89,7 +124,7 @@ public class CustomerAuthController {
 	@PostMapping("/logout")
 	public ResponseEntity<Map<String, Object>> logout(HttpSession session) {
 		Map<String, Object> response = new HashMap<>();
-		session.removeAttribute("customerId");
+		session.invalidate();
 		response.put("success", true);
 		response.put("message", "Logged out successfully");
 		return ResponseEntity.ok(response);
@@ -105,12 +140,18 @@ public class CustomerAuthController {
 			return ResponseEntity.ok(response);
 		}
 
-		Customer customer = customerService.getCurrentCustomer(customerId).orElse(null);
+		Customer customer = (Customer) session.getAttribute("customer");
 		if (customer == null) {
-			session.removeAttribute("customerId");
-			response.put("success", false);
-			response.put("message", "Customer not found");
-			return ResponseEntity.ok(response);
+			customer = customerService.getCurrentCustomer(customerId).orElse(null);
+			if (customer == null) {
+				session.removeAttribute("customerId");
+				session.removeAttribute("customerEmail");
+				session.removeAttribute("customer");
+				response.put("success", false);
+				response.put("message", "Customer not found");
+				return ResponseEntity.ok(response);
+			}
+			session.setAttribute("customer", customer);
 		}
 
 		CustomerAuthResponse authResponse = new CustomerAuthResponse();

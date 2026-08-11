@@ -1,5 +1,6 @@
 package com.satpall.crochet.config;
 
+import com.satpall.crochet.controller.CustomerSessionFilter;
 import com.satpall.crochet.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,16 +10,24 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
 	private final CustomUserDetailsService customUserDetailsService;
+	private final CustomerSessionFilter customerSessionFilter;
+	private final DataSource dataSource;
 
-	public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+	public SecurityConfig(CustomUserDetailsService customUserDetailsService, CustomerSessionFilter customerSessionFilter, DataSource dataSource) {
 		this.customUserDetailsService = customUserDetailsService;
+		this.customerSessionFilter = customerSessionFilter;
+		this.dataSource = dataSource;
 	}
 
 	@Bean
@@ -50,13 +59,15 @@ public class SecurityConfig {
 				.formLogin(form -> form.loginPage("/admin/login").loginProcessingUrl("/admin/login")
 						.usernameParameter("username").passwordParameter("password")
 						.defaultSuccessUrl("/admin/dashboard", true).failureUrl("/admin/login?error=true").permitAll())
-			.rememberMe(remember -> remember.rememberMeParameter("remember-me")
-					.key("loomellecrochet-remember-key")
-					.tokenValiditySeconds(1209600)
-					.userDetailsService(customUserDetailsService)
-					.alwaysRemember(true))
+		.rememberMe(remember -> remember.rememberMeParameter("remember-me")
+				.key("loomellecrochet-remember-key")
+				.tokenValiditySeconds(1209600)
+				.userDetailsService(customUserDetailsService)
+				.tokenRepository(persistentTokenRepository()))
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/").permitAll())
 				.authenticationProvider(authenticationProvider());
+
+		http.addFilterBefore(customerSessionFilter, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
@@ -72,5 +83,12 @@ public class SecurityConfig {
 		provider.setUserDetailsService(customUserDetailsService);
 		provider.setPasswordEncoder(passwordEncoder());
 		return provider;
+	}
+
+	@Bean
+	public PersistentTokenRepository persistentTokenRepository() {
+		JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+		tokenRepository.setDataSource(dataSource);
+		return tokenRepository;
 	}
 }

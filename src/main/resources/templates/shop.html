@@ -62,13 +62,15 @@
 
 						<div class="col-md-6 col-xl-4" th:each="product : ${products}">
 
-							<div class="card-soft product-card h-100 position-relative">
+						<div class="card-soft product-card h-100 position-relative">
 
-								<span class="product-badge">New</span>
+							<span class="product-badge">New</span>
 
+							<div class="product-img-wrapper">
 								<img th:src="${product.imageUrl}" alt="Product">
+							</div>
 
-								<div class="p-3">
+							<div class="p-3">
 
 									<h6 class="fw-bold">
 										<span th:text="${product.name}"></span>

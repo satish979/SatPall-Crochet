@@ -1,6 +1,5 @@
 package com.satpall.crochet.controller;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -14,9 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import com.satpall.crochet.dto.OrderSummaryDTO;
 import com.satpall.crochet.entity.Cart;
 import com.satpall.crochet.entity.CartItem;
+import com.satpall.crochet.entity.Category;
 import com.satpall.crochet.entity.Product;
 import com.satpall.crochet.repository.CartItemRepository;
 import com.satpall.crochet.repository.CartRepository;
+import com.satpall.crochet.repository.CategoryRepository;
 import com.satpall.crochet.service.OrderService;
 import com.satpall.crochet.service.ProductService;
 
@@ -31,14 +32,15 @@ public class HomeController {
 	private CartItemRepository cartItemRepository;
 	@Autowired
 	private OrderService orderService;
+	@Autowired
+	private CategoryRepository categoryRepository;
 
 	@GetMapping("/")
 	public String home(Model model) {
 
 		model.addAttribute("pageTitle", "Home");
 
-		model.addAttribute("categories", Arrays.asList("Flowers", "Bouquets", "Teddy Bears", "Dolls", "Keychains",
-				"Bags", "Baby Items", "Home Decor"));
+		model.addAttribute("categories", categoryRepository.findByActiveOrderByDisplayOrderAscNameAsc(true));
 
 		model.addAttribute("bestSellers", productService.getBestSellerProducts());
 
