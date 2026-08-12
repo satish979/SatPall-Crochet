@@ -310,6 +310,8 @@ function initCartActions() {
             const qty = qtyInput ? qtyInput.value : '1';
 
             addBtn.disabled = true;
+            const originalText = addBtn.textContent;
+            addBtn.textContent = 'Adding...';
 
             fetch(CONTEXT_PATH + '/api/cart/add', {
                 method: 'POST',
@@ -325,15 +327,15 @@ function initCartActions() {
                     if (text.trim().startsWith('<')) throw new Error('Server returned HTML instead of JSON');
 
                     const data = JSON.parse(text);
+                    addBtn.textContent = 'Added to Cart';
                     showCartToast(data.message || 'Added to cart');
                     updateCartBadge(data.cartCount);
                 })
                 .catch(error => {
                     console.error(error);
-                    showToast(error.message, 'danger');
-                })
-                .finally(() => {
+                    addBtn.textContent = originalText;
                     addBtn.disabled = false;
+                    showToast(error.message, 'danger');
                 });
         });
     }
@@ -344,18 +346,18 @@ function initCartActions() {
             const qtyInput = document.getElementById('qty');
             const qty = qtyInput ? qtyInput.value : '1';
 
-            fetch(CONTEXT_PATH + '/api/cart/buy-now', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    productId: productId,
-                    quantity: qty
-                })
-            }).then(() => {
-                window.location.href = '/checkout';
-            });
+                fetch(CONTEXT_PATH + '/api/cart/buy-now', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        productId: productId,
+                        quantity: qty
+                    })
+                }).then(() => {
+                    window.location.href = CONTEXT_PATH + '/checkout';
+                });
         });
     }
 
@@ -376,8 +378,12 @@ function initCartActions() {
 }
 
 function showCartToast(message) {
-    const toastEl = document.getElementById('cartToast');
-    document.getElementById('cartToastMsg').textContent = message || 'Added to cart';
+    const toastEl = document.getElementById("cartToast");
+    const toastMsgEl = document.getElementById("cartToastMsg");
+    if (toastMsgEl) {
+        toastMsgEl.textContent = message || 'Added to cart';
+    }
+    if (!toastEl) return;
     const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 3500 });
     toast.show();
 }

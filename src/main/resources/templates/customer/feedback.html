@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
+<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
+<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
+<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
+<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
+
+<head th:replace="~{header :: head('Share Feedback')}"></head>
+
+<body>
+	<div th:replace="~{header :: navbar}"></div>
+	<section class="py-5">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-8 col-lg-6">
+					<div th:if="${order != null and product != null}" class="card-soft p-4">
+						<h2 class="section-title mb-3">Share Your Feedback</h2>
+						<p class="text-muted mb-4">How was your experience with this product?</p>
+
+						<div class="d-flex gap-3 align-items-center mb-4 p-3" style="background: var(--surface); border-radius: 12px;">
+							<img th:src="${product.imageUrl != null ? product.imageUrl : '/images/product-placeholder.jpg'}"
+								class="rounded-3" width="80" height="80" style="object-fit:cover;" alt="">
+							<div>
+								<h6 class="fw-bold mb-1" th:text="${product.name}">Product Name</h6>
+								<small class="text-muted">Order: <span th:text="${order.orderNumber}">ORD-001</span></small>
+							</div>
+						</div>
+
+						<form th:action="@{/customer/feedback/}" + ${order.orderNumber}" th:object="${feedbackForm}" method="post" novalidate>
+							<div class="mb-4">
+								<label class="form-label fw-bold">Your Rating</label>
+								<div class="d-flex gap-2" id="starRating">
+									<i class="fa-solid fa-star fa-2x text-muted" data-rating="1" style="cursor:pointer;"></i>
+									<i class="fa-solid fa-star fa-2x text-muted" data-rating="2" style="cursor:pointer;"></i>
+									<i class="fa-solid fa-star fa-2x text-muted" data-rating="3" style="cursor:pointer;"></i>
+									<i class="fa-solid fa-star fa-2x text-muted" data-rating="4" style="cursor:pointer;"></i>
+									<i class="fa-solid fa-star fa-2x text-muted" data-rating="5" style="cursor:pointer;"></i>
+								</div>
+								<input type="hidden" th:field="*{rating}" id="ratingInput">
+								<div class="invalid-feedback d-block" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></div>
+							</div>
+
+							<div class="mb-3">
+								<label class="form-label">Your Feedback</label>
+								<textarea th:field="*{comment}" class="form-control" rows="4"
+									placeholder="Share your experience with this product..."></textarea>
+								<div class="invalid-feedback d-block" th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}"></div>
+							</div>
+
+							<div class="d-flex gap-2">
+								<button type="submit" class="btn btn-primary">Submit Feedback</button>
+								<a th:href="@{/my-orders}" class="btn btn-outline-secondary">Cancel</a>
+							</div>
+						</form>
+					</div>
+
+					<div th:if="${order == null or product == null}" class="card-soft p-5 text-center">
+						<p class="text-muted">Invalid feedback request.</p>
+						<a th:href="@{/my-orders}" class="btn btn-primary">Back to Orders</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<div th:replace="~{footer :: footer}"></div>
+	<div th:replace="~{scripts :: scripts}"></div>
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			const stars = document.querySelectorAll("#starRating i");
+			const ratingInput = document.getElementById("ratingInput");
+
+			stars.forEach(star => {
+				star.addEventListener("click", function () {
+					const value = parseInt(this.dataset.rating);
+					ratingInput.value = value;
+					updateStars(value);
+				});
+
+				star.addEventListener("mouseenter", function () {
+					const value = parseInt(this.dataset.rating);
+					updateStars(value);
+				});
+			});
+
+			document.getElementById("starRating").addEventListener("mouseleave", function () {
+				const current = parseInt(ratingInput.value) || 0;
+				updateStars(current);
+			});
+
+			function updateStars(value) {
+				stars.forEach(star => {
+					const starValue = parseInt(star.dataset.rating);
+					if (starValue <= value) {
+						star.classList.remove("text-muted");
+						star.classList.add("text-warning");
+					} else {
+						star.classList.remove("text-warning");
+						star.classList.add("text-muted");
+					}
+				});
+			}
+
+			const current = parseInt(ratingInput.value) || 0;
+			updateStars(current);
+		});
+	</script>
+</body>
+</html>

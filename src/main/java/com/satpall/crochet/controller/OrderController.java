@@ -27,8 +27,12 @@ import com.satpall.crochet.service.CustomerAddressService;
 import com.satpall.crochet.service.CustomerService;
 import com.satpall.crochet.service.EmailService;
 import com.satpall.crochet.service.OrderService;
+import com.satpall.crochet.service.ReviewService;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -39,6 +43,7 @@ public class OrderController {
 	private final CartItemRepository cartItemRepository;
 	private final CustomerService customerService;
 	private final CustomerAddressService customerAddressService;
+	private final ReviewService reviewService;
 
 	@GetMapping("/checkout")
 	public String checkout(Model model, HttpSession session,
@@ -48,7 +53,7 @@ public class OrderController {
 		if (redirectAfterLogin != null && !redirectAfterLogin.trim().isEmpty()) {
 			session.setAttribute("redirectAfterLogin", redirectAfterLogin.trim());
 		} else if (session.getAttribute("redirectAfterLogin") == null && session.getAttribute("customerId") == null) {
-			session.setAttribute("redirectAfterLogin", "/checkout");
+			session.setAttribute("redirectAfterLogin", "/Loomellecrochet/checkout");
 		}
 
 		Long customerId = (Long) session.getAttribute("customerId");
@@ -82,7 +87,6 @@ public class OrderController {
 
 		model.addAttribute("checkoutRequest", new CheckoutRequest());
 
-		System.out.println("model " + model);
 		return "checkout";
 	}
 
@@ -129,10 +133,22 @@ public class OrderController {
 			}
 		}
 
+		Map<String, Boolean> orderFeedbackStatus = new HashMap<>();
+		if (customerId != null && ordersPage.getContent() != null) {
+			for (Order order : ordersPage.getContent()) {
+				boolean hasFeedback = false;
+				if (order.getCustomer() != null && customerId.equals(order.getCustomer().getId())) {
+					hasFeedback = reviewService.hasCustomerReviewedOrder(customerId, order.getId());
+				}
+				orderFeedbackStatus.put(order.getOrderNumber(), hasFeedback);
+			}
+		}
+
 		model.addAttribute("pageTitle", "My Orders");
 		model.addAttribute("ordersPage", ordersPage);
 		model.addAttribute("statuses", OrderStatus.values());
 		model.addAttribute("selectedStatus", status);
+		model.addAttribute("orderFeedbackStatus", orderFeedbackStatus);
 		return "my-orders";
 	}
 

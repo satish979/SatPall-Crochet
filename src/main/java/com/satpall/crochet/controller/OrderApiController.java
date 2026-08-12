@@ -11,8 +11,9 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -53,7 +54,11 @@ public class OrderApiController {
 	private final RazorpayService razorpayService;
 
 	@PostMapping("/create-cod")
-	public ResponseEntity<?> createCodOrder(@Valid @RequestBody CheckoutRequest request, HttpSession session) {
+	public ResponseEntity<?> createCodOrder(@Valid @ModelAttribute CheckoutRequest request, BindingResult bindingResult, HttpSession session) {
+		if (bindingResult.hasErrors()) {
+			String message = bindingResult.getFieldError() != null ? bindingResult.getFieldError().getDefaultMessage() : "Validation failed";
+			return ResponseEntity.badRequest().body(Map.of("success", false, "message", message));
+		}
 		try {
 			List<OrderItem> items = getOrderItems(session);
 			if (items.isEmpty()) {
@@ -73,7 +78,11 @@ public class OrderApiController {
 	}
 
 	@PostMapping("/create-razorpay")
-	public ResponseEntity<?> createRazorpayOrder(@Valid @RequestBody CheckoutRequest request, HttpSession session) {
+	public ResponseEntity<?> createRazorpayOrder(@Valid @ModelAttribute CheckoutRequest request, BindingResult bindingResult, HttpSession session) {
+		if (bindingResult.hasErrors()) {
+			String message = bindingResult.getFieldError() != null ? bindingResult.getFieldError().getDefaultMessage() : "Validation failed";
+			return ResponseEntity.badRequest().body(Map.of("success", false, "message", message));
+		}
 		try {
 			List<OrderItem> items = getOrderItems(session);
 			if (items.isEmpty()) {

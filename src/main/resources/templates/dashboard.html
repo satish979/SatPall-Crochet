@@ -10,10 +10,10 @@
 <link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
 
 
-<head th:replace="header :: head('Admin Dashboard')"></head>
+<head th:replace="~{header :: head('Admin Dashboard')}"></head>
 
 <body>
-	<div th:replace="header :: navbar"></div>
+	<div th:replace="~{header :: navbar}"></div>
 
 	<section class="py-5">
 		<div class="container">
@@ -63,8 +63,8 @@
 		</div>
 	</section>
 
-	<div th:replace="footer :: footer"></div>
-	<div th:replace="scripts :: scripts"></div>
+	<div th:replace="~{footer :: footer}"></div>
+	<div th:replace="~{scripts :: scripts}"></div>
 </body>
 
 </html>

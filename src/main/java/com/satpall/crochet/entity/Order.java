@@ -27,6 +27,8 @@ import com.satpall.crochet.enums.PaymentMethod;
 import com.satpall.crochet.enums.PaymentStatus;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Table(name = "orders")
@@ -42,9 +44,13 @@ public class Order {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_id", nullable = true)
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Customer customer;
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private List<OrderItem> orderItems = new ArrayList<>();
 
 	@Column(nullable = false, precision = 10, scale = 2)

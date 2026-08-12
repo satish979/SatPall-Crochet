@@ -113,6 +113,8 @@ public class OrderServiceImpl implements OrderService {
 			productRepository.save(product);
 		}
 
+		emailService.sendNewOrderToAdmin(savedOrder, items);
+
 		return savedOrder;
 	}
 
@@ -166,7 +168,9 @@ public class OrderServiceImpl implements OrderService {
 		} else if (status == OrderStatus.CANCELLED) {
 			order.setCancelledDate(LocalDateTime.now());
 		}
-		return orderRepository.save(order);
+		Order saved = orderRepository.save(order);
+		emailService.sendOrderStatusUpdateToCustomer(saved, status);
+		return saved;
 	}
 
 	@Override

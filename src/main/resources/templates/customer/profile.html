@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="header :: head('My Profile')"></head>
+<head th:replace="~{header :: head('My Profile')}"></head>
 
 <link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
 <link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
@@ -11,7 +11,7 @@
 
 <body>
 
-	<div th:replace="header :: navbar"></div>
+	<div th:replace="~{header :: navbar}"></div>
 
 	<section class="py-5">
 		<div class="container">
@@ -183,8 +183,8 @@
 	<form th:action="@{/api/customer/auth/logout}" method="post" id="logoutForm" class="d-none">
 	</form>
 
-	<div th:replace="footer :: footer"></div>
-	<div th:replace="scripts :: scripts"></div>
+	<div th:replace="~{footer :: footer}"></div>
+	<div th:replace="~{scripts :: scripts}"></div>
 
 </body>
 

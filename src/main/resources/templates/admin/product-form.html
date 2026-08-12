@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="header :: head('Product Form')"></head>
+<head th:replace="~{header :: head('Product Form')}"></head>
 
 
 <body>
-	<div th:replace="header :: navbar"></div>
+	<div th:replace="~{header :: navbar}"></div>
 
 	<section class="py-5">
 		<div class="container">
@@ -156,9 +156,9 @@
 		</div>
 	</section>
 
-	<div th:replace="footer :: footer"></div>
+	<div th:replace="~{footer :: footer}"></div>
 
-	<div th:replace="scripts :: scripts"></div>
+	<div th:replace="~{scripts :: scripts}"></div>
 </body>
 
 </html>

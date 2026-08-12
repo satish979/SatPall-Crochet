@@ -7,10 +7,10 @@
 <link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
 <link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
 
-<head th:replace="header :: head('My Addresses')"></head>
+<head th:replace="~{header :: head('My Addresses')}"></head>
 
 <body>
-	<div th:replace="header :: navbar"></div>
+	<div th:replace="~{header :: navbar}"></div>
 	<section class="py-5">
 		<div class="container">
 			<h2 class="section-title mb-4">My Addresses</h2>
@@ -114,7 +114,7 @@
 		</div>
 	</section>
 	<form th:action="@{/api/customer/auth/logout}" method="post" id="logoutForm" class="d-none"></form>
-	<div th:replace="footer :: footer"></div>
-	<div th:replace="scripts :: scripts"></div>
+	<div th:replace="~{footer :: footer}"></div>
+	<div th:replace="~{scripts :: scripts}"></div>
 </body>
 </html>

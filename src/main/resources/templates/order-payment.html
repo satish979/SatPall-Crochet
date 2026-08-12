@@ -7,10 +7,10 @@
 <link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
 <link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
 
-<head th:replace="header :: head('Payment Processing')"></head>
+<head th:replace="~{header :: head('Payment Processing')}"></head>
 
 <body>
-	<div th:replace="header :: navbar"></div>
+	<div th:replace="~{header :: navbar}"></div>
 	<section class="py-5 text-center">
 		<div class="container">
 			<div class="card-soft p-5">
@@ -21,7 +21,7 @@
 			</div>
 		</div>
 	</section>
-	<div th:replace="footer :: footer"></div>
-	<div th:replace="scripts :: scripts"></div>
+	<div th:replace="~{footer :: footer}"></div>
+	<div th:replace="~{scripts :: scripts}"></div>
 </body>
 </html>

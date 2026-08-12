@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Table(name = "wishlist_item", uniqueConstraints = { @UniqueConstraint(columnNames = { "customer_id", "product_id" }) })
@@ -27,10 +29,14 @@ public class WishlistItem {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_id", nullable = false)
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Customer customer;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id", nullable = false)
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Product product;
 
 	@Column(name = "created_date")

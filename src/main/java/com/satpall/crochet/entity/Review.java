@@ -18,6 +18,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Entity
 @Table(name = "review")
@@ -31,11 +33,21 @@ public class Review {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id", nullable = false)
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Product product;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_id")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
 	private Customer customer;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "order_id")
+	@ToString.Exclude
+	@EqualsAndHashCode.Exclude
+	private Order order;
 
 	@NotNull(message = "Rating is required")
 	@Min(value = 1, message = "Rating must be at least 1")
