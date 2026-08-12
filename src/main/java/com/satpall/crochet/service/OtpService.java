@@ -6,6 +6,8 @@ import java.util.Random;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.satpall.crochet.entity.Customer;
@@ -19,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class OtpService {
+
+	private static final Logger log = LoggerFactory.getLogger(OtpService.class);
 
 	private final OtpVerificationRepository otpVerificationRepository;
 	private final CustomerRepository customerRepository;
@@ -40,6 +44,8 @@ public class OtpService {
 		String otp = String.format("%06d", new Random().nextInt(1_000_000));
 		LocalDateTime expiry = LocalDateTime.now().plusMinutes(5);
 
+		log.info("Generating OTP for email: {} with expiry: {}", normalized, expiry);
+
 		OtpVerification verification = otpVerificationRepository.findByIdentifier(normalized)
 				.orElseGet(OtpVerification::new);
 
@@ -58,7 +64,14 @@ public class OtpService {
 				+ "<p>This code will expire in 5 minutes.</p>"
 				+ "<p>If you did not request this, please ignore this email.</p>" + "<p>Team Loomelle Crochet</p>";
 
-		emailService.sendHtmlEmail(normalized, subject, body);
+		log.info("Attempting to send OTP email to: {} via SMTP", normalized);
+		try {
+			emailService.sendHtmlEmail(normalized, subject, body);
+			log.info("OTP email sent successfully to: {}", normalized);
+		} catch (Exception e) {
+			log.error("Failed to send OTP email to: {}", normalized, e);
+			throw e;
+		}
 	}
 
 	public boolean verifyOtp(String identifier, String otp) {

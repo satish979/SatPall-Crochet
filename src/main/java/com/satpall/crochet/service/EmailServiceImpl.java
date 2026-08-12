@@ -1,5 +1,7 @@
 package com.satpall.crochet.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -15,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
+
+	private static final Logger log = LoggerFactory.getLogger(EmailServiceImpl.class);
 
 	private final JavaMailSender mailSender;
 
@@ -35,10 +39,11 @@ public class EmailServiceImpl implements EmailService {
 
 			mailSender.send(message);
 
-			System.out.println("Email sent successfully to: " + to);
+			log.info("Email sent successfully to: {}", to);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Failed to send email to: {}", to, e);
+			throw e;
 		}
 	}
 
