@@ -29,9 +29,9 @@
 	<nav th:fragment="navbar" class="navbar navbar-expand-lg sticky-top">
 		<div class="container">
 			<a class="navbar-brand" th:href="@{/}">
-				<i class="fa-solid fa-spa me-1"></i>Loomelle Crochet
+				<i class="fa-solid fa-spa me-1"></i><span class="brand-full">Loomelle Crochet</span><span class="brand-short d-none">Loomelle</span>
 			</a>
-			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 			<div class="collapse navbar-collapse" id="mainNav">

@@ -12,16 +12,16 @@
 <body>
 	<div th:replace="~{header :: navbar}"></div>
 
-	<section class="py-5">
+<section class="py-4">
 		<div class="container">
-			<h2 class="section-title mb-4">Checkout</h2>
+			<h2 class="section-title mb-3">Checkout</h2>
 
-			<div th:if="${loggedInCustomer == null}" id="loginSection" class="card-soft p-4 mb-4">
-				<h5 class="fw-bold mb-3"><i class="fa-solid fa-user me-2"></i>Login to Continue</h5>
-				<p class="text-muted small mb-3">Enter your email to receive a one-time password (OTP).</p>
+			<div th:if="${loggedInCustomer == null}" id="loginSection" class="card-soft p-3 mb-3">
+				<h5 class="fw-bold mb-2"><i class="fa-solid fa-user me-2"></i>Login to Continue</h5>
+				<p class="text-muted small mb-2">Enter your email to receive a one-time password (OTP).</p>
 
 				<div id="loginStep1">
-					<div class="row g-3">
+					<div class="row g-2">
 						<div class="col-12">
 							<label class="form-label">Email Address *</label>
 							<div class="input-group">
@@ -31,7 +31,7 @@
 							</div>
 						</div>
 						<div class="col-12">
-							<button type="button" class="btn btn-primary" id="sendOtpBtn" onclick="handleSendOtp()">
+							<button type="button" class="btn btn-primary w-100" id="sendOtpBtn" onclick="handleSendOtp()">
 								<i class="fa-solid fa-paper-plane me-1"></i> Send OTP
 							</button>
 						</div>
@@ -39,7 +39,7 @@
 				</div>
 
 				<div id="loginStep2" class="d-none">
-					<div class="row g-3">
+					<div class="row g-2">
 						<div class="col-12">
 							<label class="form-label">Enter OTP *</label>
 							<div class="input-group">
@@ -50,16 +50,16 @@
 							<small class="text-muted">OTP sent to <span id="otpEmailDisplay"></span></small>
 						</div>
 						<div class="col-12">
-							<button type="button" class="btn btn-primary" id="verifyOtpBtn" onclick="handleVerifyOtp()">
+							<button type="button" class="btn btn-primary w-100" id="verifyOtpBtn" onclick="handleVerifyOtp()">
 								<i class="fa-solid fa-check me-1"></i> Verify OTP
 							</button>
-							<button type="button" class="btn btn-outline-secondary ms-2" onclick="resendOtp()">Resend
+							<button type="button" class="btn btn-outline-secondary mt-2 w-100" onclick="resendOtp()">Resend
 								OTP</button>
 						</div>
 					</div>
 				</div>
 
-				<div id="loginError" class="alert alert-danger d-none mt-3"></div>
+				<div id="loginError" class="alert alert-danger d-none mt-2"></div>
 			</div>
 		</div>
 		</div>
@@ -73,11 +73,11 @@
 				data-last-name="${loggedInCustomer.lastName}" data-email="${loggedInCustomer.email}"
 				data-phone="${loggedInCustomer.phone}" class="d-none">
 			</div>
-			<div class="row g-4">
+			<div class="row g-3">
 				<div class="col-lg-7">
-					<div class="card-soft p-4 mb-4"
+					<div class="card-soft p-3 mb-3 checkout-section"
 						style="background: rgba(201,123,132,0.05); border: 1px solid rgba(201,123,132,0.15);">
-						<div class="d-flex justify-content-between align-items-center">
+						<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
 							<div>
 								<h6 class="fw-bold mb-1">Welcome, <span
 										th:text="${loggedInCustomer.firstName}">Customer</span>!</h6>
@@ -88,11 +88,11 @@
 						</div>
 					</div>
 
-					<div th:if="${!#lists.isEmpty(savedAddresses)}" class="card-soft p-4 mb-4">
+					<div th:if="${!#lists.isEmpty(savedAddresses)}" class="card-soft p-3 mb-3">
 						<h5 class="fw-bold mb-3"><i class="fa-solid fa-location-dot me-2"></i>Select Delivery Address
 						</h5>
-						<div class="row g-3" id="savedAddressesList">
-							<div th:each="addr, iter : ${savedAddresses}" class="col-md-6">
+						<div class="row g-2" id="savedAddressesList">
+							<div th:each="addr, iter : ${savedAddresses}" class="col-12 col-md-6">
 								<div class="card-soft p-3 address-card" th:id="'addr-' + ${addr.id}"
 									style="cursor:pointer; border: 2px solid var(--border);"
 									onclick="selectAddress(this, '${addr.fullName}', '${addr.mobile}', '${addr.addressLine1}', '${addr.addressLine2}', '${addr.city}', '${addr.state}', '${addr.pinCode}', '${addr.landmark}')">
@@ -112,9 +112,9 @@
 					</div>
 
 					<form id="checkoutForm" th:object="${checkoutRequest}" novalidate>
-						<div class="card-soft p-4 mb-4">
+						<div class="card-soft p-3 mb-3">
 							<h5 class="fw-bold mb-3"><i class="fa-solid fa-truck me-2"></i>Shipping Address</h5>
-							<div class="row g-3">
+							<div class="row g-2">
 								<div class="col-md-6">
 									<label class="form-label">Full Name *</label>
 									<input type="text" id="customerName" th:field="*{customerName}" class="form-control"
@@ -176,10 +176,10 @@
 							</div>
 						</div>
 
-						<div class="card-soft p-4">
+						<div class="card-soft p-3 mb-3">
 							<h5 class="fw-bold mb-3"><i class="fa-solid fa-credit-card me-2"></i>Payment Method</h5>
-							<div class="row g-3">
-								<div class="col-md-6">
+							<div class="row g-2">
+								<div class="col-12 col-md-6">
 									<div class="payment-card" data-method="RAZORPAY">
 										<input type="radio" name="paymentMethod" id="razorpay" value="RAZORPAY"
 											required>
@@ -194,7 +194,7 @@
 										</label>
 									</div>
 								</div>
-								<div class="col-md-6">
+								<div class="col-12 col-md-6">
 									<div class="payment-card" data-method="COD">
 										<input type="radio" name="paymentMethod" id="cod" value="COD" required>
 										<label for="cod" class="payment-label">
@@ -216,12 +216,12 @@
 				</div>
 
 				<div class="col-lg-5">
-					<div class="card-soft p-4 mb-3">
+					<div class="card-soft p-3 mb-3 order-summary-card">
 						<h5 class="fw-bold mb-3">Order Summary</h5>
-						<div th:each="item : ${items}" class="order-item mb-3 pb-3 border-bottom">
-							<div class="d-flex gap-3 align-items-center">
+						<div th:each="item : ${items}" class="order-item mb-2 pb-2 border-bottom">
+							<div class="d-flex gap-2 align-items-center">
 								<img th:src="${item.imageUrl != null ? item.imageUrl : '/images/product-placeholder.jpg'}"
-									class="rounded-3" width="70" height="70" style="object-fit:cover;" alt="">
+									class="rounded-2" width="60" height="60" style="object-fit:cover;" alt="">
 								<div class="flex-grow-1">
 									<h6 class="mb-1" th:text="${item.productName}">Product Name</h6>
 									<small class="text-muted">Qty: <span th:text="${item.quantity}">1</span></small>
@@ -258,7 +258,7 @@
 								<span>-₹<span id="discountAmount">0</span></span>
 							</div>
 							<hr>
-							<div class="d-flex justify-content-between fw-bold fs-5">
+							<div class="d-flex justify-content-between fw-bold">
 								<span>Grand Total</span>
 								<span class="text-primary">₹<span id="grandTotal">0</span></span>
 							</div>
@@ -276,7 +276,7 @@
 						</div>
 					</div>
 
-					<div class="card-soft p-3">
+					<div class="card-soft p-2">
 						<div class="d-flex align-items-center gap-2 text-muted small">
 							<i class="fa-solid fa-shield-halved"></i>
 							<span>Secure checkout powered by Razorpay</span>

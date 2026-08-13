@@ -14,45 +14,46 @@
 <body>
 	<div th:replace="~{header :: navbar}"></div>
 
-	<section class="py-5">
+	<section class="py-4">
 		<div class="container">
-			<div class="row g-5">
+			<div class="row g-3 g-md-4">
 				<div class="col-lg-6">
-					<div class="card-soft p-3">
+					<div class="card-soft p-2 p-md-3">
 						<img id="mainProductImage"
 							th:src="${product.imageUrl != null ? product.imageUrl : '/images/product-placeholder.jpg'}"
-							class="rounded-4 mb-3" alt="Product"
-							style="width: 100%; max-height: 340px; object-fit: contain; background: #f8f9fa;">
+							class="rounded-3 mb-2 product-details-img"
+							alt="Product"
+							style="width: 100%; max-height: 280px; object-fit: contain; background: #f8f9fa;">
 						<div class="row g-2" th:if="${product.additionalImages != null and !#lists.isEmpty(product.additionalImages)}">
 							<div class="col-4 col-sm-3" th:each="image : ${product.additionalImages}">
 								<img th:src="${image}"
-									class="rounded-3 thumb-image"
+									class="rounded-2 thumb-image"
 									alt="Product image"
-									style="width: 100%; height: 60px; object-fit: contain; background: #f8f9fa; cursor: pointer;"
+									style="width: 100%; height: 50px; object-fit: contain; background: #f8f9fa; cursor: pointer;"
 									th:attr="data-image=${image}">
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="col-lg-6">
-					<span class="badge-soft mb-3 d-inline-block">Handmade Crochet</span>
-					<h1 class="section-title" th:text="${product.name}">Crochet Product</h1>
+					<span class="badge-soft mb-2 d-inline-block">Handmade Crochet</span>
+					<h1 class="section-title mb-2" th:text="${product.name}">Crochet Product</h1>
 					<div class="rating my-2">
 						<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
 							class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
 							class="fa-regular fa-star"></i>
 						<span class="ms-2 text-muted">(24 reviews)</span>
 					</div>
-					<div class="price mb-3">₹<span th:text="${product.price}">799</span></div>
-					<p class="text-muted" th:text="${product.description != null ? product.description : 'Beautiful handmade crochet product crafted with premium yarn and elegant finishing.'}">Beautiful handmade crochet product crafted with premium yarn and elegant finishing.</p>
+					<div class="price mb-2">₹<span th:text="${product.price}">799</span></div>
+					<p class="text-muted mb-3" th:text="${product.description != null ? product.description : 'Beautiful handmade crochet product crafted with premium yarn and elegant finishing.'}">Beautiful handmade crochet product crafted with premium yarn and elegant finishing.</p>
 
-					<div class="row g-3 my-4">
+					<div class="row g-2 my-3">
 						<div class="col-md-4">
 							<label class="form-label">Quantity</label>
-							<div class="input-group">
-								<button class="btn btn-outline-primary" data-qty-minus="#qty">-</button>
+							<div class="input-group quantity-control">
+								<button class="btn btn-outline-primary btn-sm" data-qty-minus="#qty">-</button>
 								<input type="number" id="qty" class="form-control qty-input" value="1" min="1">
-								<button class="btn btn-outline-primary" data-qty-plus="#qty">+</button>
+								<button class="btn btn-outline-primary btn-sm" data-qty-plus="#qty">+</button>
 							</div>
 						</div>
 					</div>
@@ -71,8 +72,8 @@
 							</button>
 
 						</div>
-					<div class="card-soft p-4 mt-4">
-						<h5 class="fw-bold">Specifications</h5>
+					<div class="card-soft p-3 mt-3">
+						<h5 class="fw-bold mb-2">Specifications</h5>
 						<ul class="mb-0 text-muted">
 							<li>Material: Premium yarn</li>
 							<li>Handmade with care</li>

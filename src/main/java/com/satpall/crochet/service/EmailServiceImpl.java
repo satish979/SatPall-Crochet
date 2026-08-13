@@ -30,6 +30,9 @@ public class EmailServiceImpl implements EmailService {
 	@Value("${admin.mail.id}")
 	private String adminEmail;
 
+	@Value("${app.base-url}")
+	private String baseUrl;
+
 	@Value("${server.servlet.context-path:/Loomellecrochet}")
 	private String contextPath;
 
@@ -188,7 +191,7 @@ public class EmailServiceImpl implements EmailService {
 		if (newStatus == OrderStatus.DELIVERED) {
 			sb.append("<h3>Share Your Feedback</h3>");
 			sb.append("<p>We hope you love your order! Please share your feedback with us.</p>");
-			sb.append("<p><a href=\"").append(contextPath).append("/customer/feedback/").append(order.getOrderNumber()).append("\" style=\"background:#201a17;color:#fff;padding:10px 20px;text-decoration:none;border-radius:6px;\">Share Feedback</a></p>");
+			sb.append("<p><a href=\"").append(baseUrl).append(contextPath).append("/customer/feedback/").append(order.getOrderNumber()).append("\" style=\"background:#201a17;color:#fff;padding:10px 20px;text-decoration:none;border-radius:6px;\">Share Feedback</a></p>");
 		}
 
 		sb.append("<p>Thank you for shopping with Loomelle Crochet!</p>");

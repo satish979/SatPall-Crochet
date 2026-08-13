@@ -6,32 +6,32 @@
 <body>
 	<div th:replace="~{header :: navbar}"></div>
 
-	<section class="py-5">
+	<section class="py-4">
 		<div class="container">
-			<h2 class="section-title mb-4">Shopping Cart</h2>
-			<div class="row g-4">
+			<h2 class="section-title mb-3">Shopping Cart</h2>
+			<div class="row g-3">
 				<div class="col-lg-8">
-					<div class="card-soft p-4" th:if="${#lists.isEmpty(items)}">
-						<div class="text-center py-5">
-							<i class="fa-solid fa-cart-shopping fa-3x text-muted mb-3"></i>
-							<p class="text-muted">Your cart is empty</p>
-							<a th:href="@{/shop}" class="btn btn-primary">Continue
+					<div class="card-soft p-3" th:if="${#lists.isEmpty(items)}">
+						<div class="text-center py-4">
+							<i class="fa-solid fa-cart-shopping fa-2x text-muted mb-3"></i>
+							<p class="text-muted mb-3">Your cart is empty</p>
+							<a th:href="@{/shop}" class="btn btn-primary btn-sm">Continue
 								Shopping</a>
 						</div>
 					</div>
-					<div th:each="item : ${items}" class="card-soft p-4 mb-3" th:unless="${#lists.isEmpty(items)}">
-						<div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-3">
-							<div class="d-flex gap-3 align-items-center">
+					<div th:each="item : ${items}" class="card-soft p-3 mb-2" th:unless="${#lists.isEmpty(items)}">
+						<div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
+							<div class="d-flex gap-2 gap-md-3 align-items-center">
 								<img th:src="${item.imageUrl != null ? item.imageUrl : '/images/product-placeholder.jpg'}"
-									width="70" class="rounded-3" alt="">
+									width="55" class="rounded-2 cart-item-img" alt="">
 								<div>
-									<h6 class="mb-1" th:text="${item.productName}">Product
+									<h6 class="mb-1 cart-item-title" th:text="${item.productName}">Product
 										Name</h6>
 									<small class="text-muted">Price: ₹<span th:text="${item.price}">0</span></small>
 								</div>
 							</div>
 							<div class="text-md-end">
-								<div class="price mb-2">
+								<div class="price mb-1 cart-item-price">
 									₹<span th:text="${item.subtotal}">0</span>
 								</div>
 								<div class="d-flex align-items-center gap-2 justify-content-md-end">
@@ -42,7 +42,7 @@
 					</div>
 				</div>
 				<div class="col-lg-4" th:unless="${#lists.isEmpty(items)}">
-					<div class="card-soft p-4">
+					<div class="card-soft p-3">
 						<h5 class="fw-bold mb-3">Order Summary</h5>
 						<div class="d-flex justify-content-between mb-2">
 							<span>Subtotal</span><span>₹<span th:text="${subtotal}">0</span></span>
@@ -55,10 +55,10 @@
 							<span>Tax (5%)</span><span>₹<span id="cartTax">0</span></span>
 						</div>
 						<hr>
-						<div class="d-flex justify-content-between fw-bold fs-5">
+						<div class="d-flex justify-content-between fw-bold">
 							<span>Total</span><span>₹<span id="cartTotal">0</span></span>
 						</div>
-						<a th:href="@{/checkout}" class="btn btn-primary w-100 mt-3">Proceed
+						<a th:href="@{/checkout}" class="btn btn-primary w-100 mt-3 btn-lg">Proceed
 							to Checkout</a>
 					</div>
 				</div>

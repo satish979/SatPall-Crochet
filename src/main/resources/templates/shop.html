@@ -15,13 +15,12 @@
 
 	<div th:replace="~{header :: navbar}"></div>
 
-	<section class="py-5">
+	<section class="py-4">
 		<div class="container">
-			<div class="row g-4">
-
+			<div class="row g-3">
 				<!-- Filters -->
-				<div class="col-lg-3">
-					<div class="card-soft p-4 filters-panel">
+				<div class="col-lg-3 order-lg-1 order-2">
+					<div class="card-soft p-3 filters-panel">
 						<h5 class="fw-bold mb-3">Filters</h5>
 
 						<div class="mb-3">
@@ -49,18 +48,18 @@
 							</select>
 						</div>
 
-						<button class="btn btn-primary w-100">
+						<button class="btn btn-primary w-100 btn-sm">
 							Apply
 						</button>
 					</div>
 				</div>
 
 				<!-- Products -->
-				<div class="col-lg-9">
+				<div class="col-lg-9 order-1 order-lg-2">
 
-					<div class="row g-4">
+					<div class="row g-3">
 
-						<div class="col-md-6 col-xl-4" th:each="product : ${products}">
+						<div class="col-6 col-md-6 col-xl-4" th:each="product : ${products}">
 
 						<div class="card-soft product-card h-100 position-relative">
 
@@ -70,9 +69,9 @@
 								<img th:src="${product.imageUrl}" alt="Product">
 							</div>
 
-							<div class="p-3">
+							<div class="p-2 p-md-3">
 
-									<h6 class="fw-bold">
+									<h6 class="fw-bold mb-1">
 										<span th:text="${product.name}"></span>
 									</h6>
 
@@ -84,11 +83,11 @@
 										<i class="fa-regular fa-star"></i>
 									</div>
 
-									₹<span th:text="${product.price}"></span>
-									<div class="d-flex justify-content-between align-items-center mt-3">
+									<div class="price mb-2">₹<span th:text="${product.price}"></span></div>
+									<div class="d-flex justify-content-between align-items-center gap-2">
 
 										<a th:href="@{/product-details/{id}(id=${product.id})}"
-											class="btn btn-primary w-100">
+											class="btn btn-primary w-100 btn-sm">
 											View
 										</a>
 										<button class="wishlist-btn">
@@ -107,9 +106,9 @@
 
 					<!-- Pagination -->
 
-					<nav class="mt-4">
+					<nav class="mt-3">
 
-						<ul class="pagination justify-content-center">
+						<ul class="pagination justify-content-center mb-0">
 
 							<li class="page-item disabled">
 								<a class="page-link" href="#">Prev</a>

@@ -1,11 +1,14 @@
 package com.satpall.crochet.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,12 +37,19 @@ public class CustomerFeedbackController {
     private final OrderRepository orderRepository;
     private final ReviewService reviewService;
 
+    @Value("${server.servlet.context-path:/Loomellecrochet}")
+    private String contextPath;
+
     @GetMapping("/customer/feedback/{orderNumber}")
     public String feedbackForm(@PathVariable String orderNumber, HttpSession session, Model model, RedirectAttributes redirectAttributes) {
         Long customerId = (Long) session.getAttribute("customerId");
         if (customerId == null) {
-            redirectAttributes.addFlashAttribute("error", "Please login to submit feedback");
-            return "redirect:/customer/login";
+            try {
+                redirectAttributes.addFlashAttribute("error", "Please login to submit feedback");
+                return "redirect:/customer/login?redirectAfterLogin=" + URLEncoder.encode(contextPath + "/customer/feedback/" + orderNumber, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                return "redirect:/customer/login";
+            }
         }
 
         Order order = orderService.getOrderByOrderNumber(orderNumber);
@@ -54,8 +64,15 @@ public class CustomerFeedbackController {
         }
 
         if (reviewService.hasCustomerReviewedOrder(customerId, order.getId())) {
-            redirectAttributes.addFlashAttribute("info", "You have already submitted feedback for this order");
-            return "redirect:/my-orders";
+            Review existingReview = reviewService.getReviewByCustomerAndOrder(customerId, order.getId());
+            model.addAttribute("pageTitle", "Share Feedback");
+            model.addAttribute("order", order);
+            OrderItem firstItem = order.getOrderItems() != null && !order.getOrderItems().isEmpty()
+                    ? order.getOrderItems().get(0) : null;
+            model.addAttribute("product", firstItem != null ? firstItem.getProduct() : null);
+            model.addAttribute("feedbackSuccess", true);
+            model.addAttribute("existingReview", existingReview);
+            return "customer/feedback";
         }
 
         model.addAttribute("pageTitle", "Share Feedback");
@@ -97,8 +114,15 @@ public class CustomerFeedbackController {
         }
 
         if (reviewService.hasCustomerReviewedOrder(customerId, order.getId())) {
-            redirectAttributes.addFlashAttribute("info", "You have already submitted feedback for this order");
-            return "redirect:/my-orders";
+            Review existingReview = reviewService.getReviewByCustomerAndOrder(customerId, order.getId());
+            model.addAttribute("pageTitle", "Share Feedback");
+            model.addAttribute("order", order);
+            OrderItem firstItem = order.getOrderItems() != null && !order.getOrderItems().isEmpty()
+                    ? order.getOrderItems().get(0) : null;
+            model.addAttribute("product", firstItem != null ? firstItem.getProduct() : null);
+            model.addAttribute("feedbackSuccess", true);
+            model.addAttribute("existingReview", existingReview);
+            return "customer/feedback";
         }
 
         if (bindingResult.hasErrors()) {
@@ -120,7 +144,6 @@ public class CustomerFeedbackController {
         reviewService.submitReview(customerId, order.getId(), firstItem.getProduct().getId(),
                 feedbackForm.getRating(), feedbackForm.getComment());
 
-        redirectAttributes.addFlashAttribute("success", "Thank you for your feedback!");
-        return "redirect:/my-orders";
+        return "redirect:/customer/feedback/" + orderNumber;
     }
 }

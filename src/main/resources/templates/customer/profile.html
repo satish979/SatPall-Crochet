@@ -13,10 +13,10 @@
 
 	<div th:replace="~{header :: navbar}"></div>
 
-	<section class="py-5">
+<section class="py-4">
 		<div class="container">
 
-			<h2 class="section-title mb-4">My Profile</h2>
+			<h2 class="section-title mb-3">My Profile</h2>
 
 			<div th:if="${param.success}" class="alert alert-success">
 				Profile updated successfully
@@ -26,24 +26,24 @@
 				Error
 			</div>
 
-			<div class="row g-4">
+			<div class="row g-3">
 
 				<!-- LEFT SIDE -->
-				<div class="col-lg-4 mb-4 mb-lg-0">
+				<div class="col-lg-4 mb-3 mb-lg-0">
 
-					<div class="card-soft p-4">
+					<div class="card-soft p-3 profile-sidebar">
 
 						<div class="text-center mb-3">
 
 							<div class="rounded-circle bg-primary text-white
                                          d-flex align-items-center justify-content-center mx-auto"
-								style="width: 64px; height: 64px; font-size: 1.5rem;">
+								style="width: 56px; height: 56px; font-size: 1.3rem;">
 								<i class="fa-solid fa-user"></i>
 							</div>
 
-							<h5 class="fw-bold mt-3" th:text="${(customer.firstName != null ? customer.firstName : '')
-                                     + ' '
-                                     + (customer.lastName != null ? customer.lastName : '')}">
+							<h5 class="fw-bold mt-2" th:text="${(customer.firstName != null ? customer.firstName : '')
+                                      + ' '
+                                      + (customer.lastName != null ? customer.lastName : '')}">
 								Customer Name
 							</h5>
 
@@ -82,7 +82,7 @@
 				<!-- RIGHT SIDE -->
 				<div class="col-lg-8">
 
-					<div class="card-soft p-4">
+					<div class="card-soft p-3">
 
 						<h5 class="fw-bold mb-3">
 							Update Profile
@@ -99,7 +99,7 @@
 
 							</div>
 
-							<div class="row g-3">
+							<div class="row g-2">
 
 								<!-- FIRST NAME -->
 								<div class="col-md-6">
@@ -160,7 +160,7 @@
 								<!-- BUTTON -->
 								<div class="col-12">
 
-									<button type="submit" class="btn btn-primary">
+									<button type="submit" class="btn btn-primary btn-sm">
 										Update Profile
 									</button>
 

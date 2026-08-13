@@ -11,25 +11,43 @@
 
 <body>
 	<div th:replace="~{header :: navbar}"></div>
-	<section class="py-5">
+	<section class="py-4">
 		<div class="container">
 			<div class="row justify-content-center">
-				<div class="col-md-8 col-lg-6">
-					<div th:if="${order != null and product != null}" class="card-soft p-4">
-						<h2 class="section-title mb-3">Share Your Feedback</h2>
-						<p class="text-muted mb-4">How was your experience with this product?</p>
+				<div class="col-12 col-md-10 col-lg-8">
+					<div th:if="${order != null and product != null}" class="card-soft p-3">
+						<h2 class="section-title mb-2">Share Your Feedback</h2>
+						<p class="text-muted mb-3">How was your experience with this product?</p>
 
-						<div class="d-flex gap-3 align-items-center mb-4 p-3" style="background: var(--surface); border-radius: 12px;">
+						<div class="d-flex gap-2 align-items-center mb-3 p-2" style="background: var(--surface); border-radius: 12px;">
 							<img th:src="${product.imageUrl != null ? product.imageUrl : '/images/product-placeholder.jpg'}"
-								class="rounded-3" width="80" height="80" style="object-fit:cover;" alt="">
+								class="rounded-2" width="70" height="70" style="object-fit:cover;" alt="">
 							<div>
 								<h6 class="fw-bold mb-1" th:text="${product.name}">Product Name</h6>
 								<small class="text-muted">Order: <span th:text="${order.orderNumber}">ORD-001</span></small>
 							</div>
 						</div>
 
-						<form th:action="@{/customer/feedback/}" + ${order.orderNumber}" th:object="${feedbackForm}" method="post" novalidate>
-							<div class="mb-4">
+						<div th:if="${feedbackSuccess}" class="text-center py-3">
+							<div th:if="${existingReview != null}" class="card-soft p-3 mb-3 text-start">
+								<div class="text-warning small mb-2">
+									<span th:each="i : ${#numbers.sequence(1, existingReview.rating)}">★</span>
+								</div>
+								<p class="mb-0 text-muted" th:if="${existingReview.comment != null and !existingReview.comment.isEmpty()}" th:text="${existingReview.comment}"></p>
+								<p class="mb-0 text-muted" th:if="${existingReview.comment == null or existingReview.comment.isEmpty()}">No comment provided.</p>
+							</div>
+
+							<i class="fa-solid fa-circle-check fa-2x text-success mb-3"></i>
+							<h4 class="fw-bold mb-2">Thanks for your feedback!</h4>
+							<p class="text-muted mb-3">Your review helps us serve you better.</p>
+
+							<a th:href="@{/my-orders}" class="btn btn-primary btn-lg">
+								<i class="fa-solid fa-grid-2 me-2"></i>Go to Dashboard
+							</a>
+						</div>
+
+						<form th:unless="${feedbackSuccess}" th:action="@{'/customer/feedback/' + ${order.orderNumber}}" th:object="${feedbackForm}" method="post" novalidate>
+							<div class="mb-3">
 								<label class="form-label fw-bold">Your Rating</label>
 								<div class="d-flex gap-2" id="starRating">
 									<i class="fa-solid fa-star fa-2x text-muted" data-rating="1" style="cursor:pointer;"></i>
@@ -44,7 +62,7 @@
 
 							<div class="mb-3">
 								<label class="form-label">Your Feedback</label>
-								<textarea th:field="*{comment}" class="form-control" rows="4"
+								<textarea th:field="*{comment}" class="form-control" rows="3"
 									placeholder="Share your experience with this product..."></textarea>
 								<div class="invalid-feedback d-block" th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}"></div>
 							</div>
@@ -56,9 +74,9 @@
 						</form>
 					</div>
 
-					<div th:if="${order == null or product == null}" class="card-soft p-5 text-center">
+					<div th:if="${order == null or product == null}" class="card-soft p-4 text-center">
 						<p class="text-muted">Invalid feedback request.</p>
-						<a th:href="@{/my-orders}" class="btn btn-primary">Back to Orders</a>
+						<a th:href="@{/my-orders}" class="btn btn-primary btn-sm">Back to Orders</a>
 					</div>
 				</div>
 			</div>
@@ -72,39 +90,41 @@
 			const stars = document.querySelectorAll("#starRating i");
 			const ratingInput = document.getElementById("ratingInput");
 
-			stars.forEach(star => {
-				star.addEventListener("click", function () {
-					const value = parseInt(this.dataset.rating);
-					ratingInput.value = value;
-					updateStars(value);
+			if (stars.length > 0 && ratingInput) {
+				stars.forEach(star => {
+					star.addEventListener("click", function () {
+						const value = parseInt(this.dataset.rating);
+						ratingInput.value = value;
+						updateStars(value);
+					});
+
+					star.addEventListener("mouseenter", function () {
+						const value = parseInt(this.dataset.rating);
+						updateStars(value);
+					});
 				});
 
-				star.addEventListener("mouseenter", function () {
-					const value = parseInt(this.dataset.rating);
-					updateStars(value);
+				document.getElementById("starRating").addEventListener("mouseleave", function () {
+					const current = parseInt(ratingInput.value) || 0;
+					updateStars(current);
 				});
-			});
 
-			document.getElementById("starRating").addEventListener("mouseleave", function () {
+				function updateStars(value) {
+					stars.forEach(star => {
+						const starValue = parseInt(star.dataset.rating);
+						if (starValue <= value) {
+							star.classList.remove("text-muted");
+							star.classList.add("text-warning");
+						} else {
+							star.classList.remove("text-warning");
+							star.classList.add("text-muted");
+						}
+					});
+				}
+
 				const current = parseInt(ratingInput.value) || 0;
 				updateStars(current);
-			});
-
-			function updateStars(value) {
-				stars.forEach(star => {
-					const starValue = parseInt(star.dataset.rating);
-					if (starValue <= value) {
-						star.classList.remove("text-muted");
-						star.classList.add("text-warning");
-					} else {
-						star.classList.remove("text-warning");
-						star.classList.add("text-muted");
-					}
-				});
 			}
-
-			const current = parseInt(ratingInput.value) || 0;
-			updateStars(current);
 		});
 	</script>
 </body>
