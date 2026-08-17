@@ -1,19 +1,38 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-	<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
-	<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
-	<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
-	<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
-	<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
-<head th:replace="~{header :: head('404 Not Found')}"></head>
+<head th:replace="~{header :: head('Page Not Found')}"></head>
 
 <body>
-	<div class="container py-5 text-center">
-		<h1 class="display-1 fw-bold">404</h1>
-		<p class="lead">Page not found.</p>
-		<a th:href="@{/}" class="btn btn-primary">Go Home</a>
-	</div>
+	<div th:replace="~{header :: navbar}"></div>
+
+	<section class="py-5 text-center min-vh-75 d-flex align-items-center">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-8 col-lg-6">
+					<div class="card-soft p-5">
+						<div class="brand-icon-wrapper mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2.2rem; background: var(--primary-light); color: var(--primary-dark);">
+							<i class="fa-solid fa-spa"></i>
+						</div>
+						<h1 class="font-heading display-4 fw-bold text-dark mb-2">404</h1>
+						<h4 class="font-heading mb-2">Lost in the Yarn Stash?</h4>
+						<p class="text-muted small mb-4">
+							The page you are looking for might have been moved, renamed, or unraveled.
+						</p>
+						<div class="d-flex gap-2 justify-content-center">
+							<a th:href="@{/}" class="btn btn-primary">
+								<i class="fa-solid fa-house me-1"></i> Return Home
+							</a>
+							<a th:href="@{/shop}" class="btn btn-outline-secondary">Browse Shop</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<div th:replace="~{footer :: footer}"></div>
+	<div th:replace="~{scripts :: scripts}"></div>
 </body>
 
 </html>

@@ -1,21 +1,36 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
-<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
-<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
-<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
-<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
-
-<head th:replace="~{header :: head('500 Error')}"></head>
+<head th:replace="~{header :: head('Server Error')}"></head>
 
 <body>
-	<div class="container py-5 text-center">
-		<h1 class="display-1 fw-bold">500</h1>
-		<p class="lead">Something went wrong.</p>
-		<p th:text="${message}"></p>
-		<a th:href="@{/}" class="btn btn-primary">Go Home</a>
-	</div>
+	<div th:replace="~{header :: navbar}"></div>
+
+	<section class="py-5 text-center min-vh-75 d-flex align-items-center">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-8 col-lg-6">
+					<div class="card-soft p-5">
+						<div class="toast-icon-wrap mx-auto mb-3" style="width: 72px; height: 72px; font-size: 2.2rem; background: var(--danger-light); color: var(--danger);">
+							<i class="fa-solid fa-triangle-exclamation"></i>
+						</div>
+						<h1 class="font-heading display-4 fw-bold text-dark mb-2">500</h1>
+						<h4 class="font-heading mb-2">Something Went Awry</h4>
+						<p class="text-muted small mb-4">
+							A temporary tangle occurred in our system. Please refresh or try again in a moment.
+						</p>
+						<div class="d-flex gap-2 justify-content-center">
+							<a th:href="@{/}" class="btn btn-primary">Go to Homepage</a>
+							<button onclick="window.location.reload()" class="btn btn-outline-secondary">Refresh Page</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<div th:replace="~{footer :: footer}"></div>
+	<div th:replace="~{scripts :: scripts}"></div>
 </body>
 
 </html>

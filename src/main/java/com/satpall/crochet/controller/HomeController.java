@@ -1,6 +1,8 @@
 package com.satpall.crochet.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
 
@@ -9,6 +11,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.satpall.crochet.dto.OrderSummaryDTO;
 import com.satpall.crochet.entity.Cart;
@@ -18,6 +25,7 @@ import com.satpall.crochet.entity.Product;
 import com.satpall.crochet.repository.CartItemRepository;
 import com.satpall.crochet.repository.CartRepository;
 import com.satpall.crochet.repository.CategoryRepository;
+import com.satpall.crochet.service.EmailService;
 import com.satpall.crochet.service.OrderService;
 import com.satpall.crochet.service.ProductService;
 
@@ -34,6 +42,8 @@ public class HomeController {
 	private OrderService orderService;
 	@Autowired
 	private CategoryRepository categoryRepository;
+	@Autowired
+	private EmailService emailService;
 
 	@GetMapping("/")
 	public String home(Model model) {
@@ -67,6 +77,70 @@ public class HomeController {
 	public String contact(Model model) {
 		model.addAttribute("pageTitle", "Contact");
 		return "contact";
+	}
+
+	@PostMapping("/contact")
+	public String handleContactForm(
+			@RequestParam(required = false) String name,
+			@RequestParam(required = false) String email,
+			@RequestParam(required = false) String inquiryType,
+			@RequestParam(required = false) String message,
+			RedirectAttributes redirectAttributes) {
+
+		if (name == null || name.trim().isEmpty() || email == null || email.trim().isEmpty() || message == null || message.trim().isEmpty()) {
+			redirectAttributes.addFlashAttribute("error", "Please fill in all required fields (Name, Email, Message).");
+			return "redirect:/contact";
+		}
+
+		try {
+			emailService.sendContactUsEmail(name.trim(), email.trim(), inquiryType, message.trim());
+			redirectAttributes.addFlashAttribute("success", "Thank you for reaching out! Your message has been sent to our support team.");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Could not send your message at this moment. Please try again or reach out directly.");
+		}
+
+		return "redirect:/contact";
+	}
+
+	@PostMapping("/api/contact")
+	@ResponseBody
+	public Map<String, Object> handleContactApi(
+			@RequestBody(required = false) Map<String, String> payload,
+			@RequestParam(required = false) String name,
+			@RequestParam(required = false) String email,
+			@RequestParam(required = false) String inquiryType,
+			@RequestParam(required = false) String message) {
+
+		Map<String, Object> response = new HashMap<>();
+
+		String senderName = name;
+		String senderEmail = email;
+		String senderInquiry = inquiryType;
+		String senderMsg = message;
+
+		if (payload != null && !payload.isEmpty()) {
+			if (payload.containsKey("name")) senderName = payload.get("name");
+			if (payload.containsKey("email")) senderEmail = payload.get("email");
+			if (payload.containsKey("inquiryType")) senderInquiry = payload.get("inquiryType");
+			if (payload.containsKey("message")) senderMsg = payload.get("message");
+		}
+
+		if (senderName == null || senderName.trim().isEmpty() || senderEmail == null || senderEmail.trim().isEmpty() || senderMsg == null || senderMsg.trim().isEmpty()) {
+			response.put("success", false);
+			response.put("message", "Please fill in all required fields (Name, Email, and Message).");
+			return response;
+		}
+
+		try {
+			emailService.sendContactUsEmail(senderName.trim(), senderEmail.trim(), senderInquiry, senderMsg.trim());
+			response.put("success", true);
+			response.put("message", "Thank you for reaching out! Your message has been sent to our artisan support team.");
+		} catch (Exception e) {
+			response.put("success", false);
+			response.put("message", "Failed to send message. Please try again or email us directly at hello@loomellecrochet.in");
+		}
+
+		return response;
 	}
 
 	@GetMapping("/faq")

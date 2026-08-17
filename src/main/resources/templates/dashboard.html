@@ -1,62 +1,132 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
-
-
-<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
-<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
-<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
-<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
-<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
-
 
 <head th:replace="~{header :: head('Admin Dashboard')}"></head>
 
 <body>
 	<div th:replace="~{header :: navbar}"></div>
 
-	<section class="py-4">
+	<!-- Breadcrumb Banner -->
+	<section class="py-3 bg-warm-surface border-bottom border-light">
 		<div class="container">
-			<div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-3 gap-2">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0 small">
+					<li class="breadcrumb-item"><a th:href="@{/}" class="text-muted"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+					<li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">Admin Dashboard</li>
+				</ol>
+			</nav>
+		</div>
+	</section>
+
+	<section class="py-5">
+		<div class="container">
+			<div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center mb-4 gap-3">
 				<div>
-					<h1 class="section-title mb-1">Admin Dashboard</h1>
-					<p class="text-muted mb-0">Overview of store activity</p>
+					<span class="badge-soft mb-2 d-inline-block">Studio Management</span>
+					<h1 class="font-heading h2 mb-1">Admin Dashboard</h1>
+					<p class="text-muted mb-0 small">Overview of Loomelle Crochet products, orders, categories, and studio activity.</p>
 				</div>
-				<a th:href="@{/logout}" class="btn btn-outline-primary btn-sm">Logout</a>
+				<form th:action="@{/logout}" method="post">
+					<button type="submit" class="btn btn-outline-danger btn-sm">
+						<i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Sign Out
+					</button>
+				</form>
 			</div>
 
-			<div class="mb-3">
-				<div class="btn-group flex-wrap" role="group" aria-label="Admin actions">
-					<a th:href="@{/admin/products}" class="btn btn-primary btn-sm">Manage Products</a>
-					<a th:href="@{/admin/products/new}" class="btn btn-success btn-sm">Add Product</a>
-					<a th:href="@{/admin/categories}" class="btn btn-secondary btn-sm">Manage Categories</a>
-					<a th:href="@{/admin/orders}" class="btn btn-info text-white btn-sm">Manage Orders</a>
+			<!-- Admin Quick Navigation Bar -->
+			<div class="card-soft p-3 mb-4 bg-soft-cream border-light">
+				<div class="d-flex flex-wrap gap-2 align-items-center">
+					<strong class="small text-muted me-2"><i class="fa-solid fa-bolt text-accent me-1"></i>Quick Actions:</strong>
+					<a th:href="@{/admin/products}" class="btn btn-primary btn-sm">
+						<i class="fa-solid fa-boxes-stacked me-1"></i> Manage Products
+					</a>
+					<a th:href="@{/admin/products/new}" class="btn btn-outline-primary btn-sm">
+						<i class="fa-solid fa-plus me-1"></i> Add New Product
+					</a>
+					<a th:href="@{/admin/categories}" class="btn btn-outline-secondary btn-sm">
+						<i class="fa-solid fa-tags me-1"></i> Categories
+					</a>
+					<a th:href="@{/admin/orders}" class="btn btn-outline-secondary btn-sm">
+						<i class="fa-solid fa-cart-flatbed me-1"></i> Customer Orders
+					</a>
 				</div>
 			</div>
 
-			<div class="row g-3">
-				<div class="col-6 col-md-3">
-					<div class="card-soft p-2 p-md-3 dashboard-stat-card">
-						<h6 class="text-muted mb-1">Products</h6>
-						<h2 class="fw-bold mb-0">24</h2>
+			<!-- Stat Cards -->
+			<div class="row g-3 g-md-4 mb-4">
+				<div class="col-6 col-lg-3">
+					<div class="card-soft p-4 h-100">
+						<div class="d-flex justify-content-between align-items-start mb-3">
+							<div class="brand-icon-wrapper" style="width: 44px; height: 44px; font-size: 1.1rem;">
+								<i class="fa-solid fa-spa"></i>
+							</div>
+							<span class="badge-soft small">Active</span>
+						</div>
+						<small class="text-muted d-block mb-1">Catalog Items</small>
+						<h3 class="font-heading mb-0 text-dark" data-count="24">24</h3>
 					</div>
 				</div>
-				<div class="col-6 col-md-3">
-					<div class="card-soft p-2 p-md-3 dashboard-stat-card">
-						<h6 class="text-muted mb-1">Orders</h6>
-						<h2 class="fw-bold mb-0">18</h2>
+
+				<div class="col-6 col-lg-3">
+					<div class="card-soft p-4 h-100">
+						<div class="d-flex justify-content-between align-items-start mb-3">
+							<div class="brand-icon-wrapper" style="width: 44px; height: 44px; font-size: 1.1rem; background: var(--success-light); color: var(--success);">
+								<i class="fa-solid fa-box-open"></i>
+							</div>
+							<span class="badge-status-success small">Orders</span>
+						</div>
+						<small class="text-muted d-block mb-1">Total Orders</small>
+						<h3 class="font-heading mb-0 text-dark" data-count="18">18</h3>
 					</div>
 				</div>
-				<div class="col-6 col-md-3">
-					<div class="card-soft p-2 p-md-3 dashboard-stat-card">
-						<h6 class="text-muted mb-1">Revenue</h6>
-						<h2 class="fw-bold mb-0">₹45,000</h2>
+
+				<div class="col-6 col-lg-3">
+					<div class="card-soft p-4 h-100">
+						<div class="d-flex justify-content-between align-items-start mb-3">
+							<div class="brand-icon-wrapper" style="width: 44px; height: 44px; font-size: 1.1rem; background: var(--warning-light); color: var(--warning);">
+								<i class="fa-solid fa-indian-rupee-sign"></i>
+							</div>
+							<span class="badge-status-warning small">Revenue</span>
+						</div>
+						<small class="text-muted d-block mb-1">Gross Sales</small>
+						<h3 class="font-heading mb-0 text-dark" data-count="45000" data-prefix="₹">₹45,000</h3>
 					</div>
 				</div>
-				<div class="col-6 col-md-3">
-					<div class="card-soft p-2 p-md-3 dashboard-stat-card">
-						<h6 class="text-muted mb-1">Customers</h6>
-						<h2 class="fw-bold mb-0">132</h2>
+
+				<div class="col-6 col-lg-3">
+					<div class="card-soft p-4 h-100">
+						<div class="d-flex justify-content-between align-items-start mb-3">
+							<div class="brand-icon-wrapper" style="width: 44px; height: 44px; font-size: 1.1rem; background: var(--info-light); color: var(--info);">
+								<i class="fa-solid fa-users"></i>
+							</div>
+							<span class="badge bg-info-subtle text-info rounded-pill small">Members</span>
+						</div>
+						<small class="text-muted d-block mb-1">Registered Clients</small>
+						<h3 class="font-heading mb-0 text-dark" data-count="132">132</h3>
+					</div>
+				</div>
+			</div>
+
+			<!-- Studio Management Links -->
+			<div class="row g-4">
+				<div class="col-md-6">
+					<div class="card-soft p-4 h-100">
+						<h5 class="font-heading mb-3"><i class="fa-solid fa-boxes-stacked me-2 text-primary"></i>Product Catalog</h5>
+						<p class="text-muted small mb-3">Add new handmade items, update pricing, milk-cotton stock availability, and image galleries.</p>
+						<div class="d-flex gap-2">
+							<a th:href="@{/admin/products}" class="btn btn-primary btn-sm">View All Products</a>
+							<a th:href="@{/admin/products/new}" class="btn btn-outline-primary btn-sm">Add Item</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="card-soft p-4 h-100">
+						<h5 class="font-heading mb-3"><i class="fa-solid fa-cart-flatbed me-2 text-primary"></i>Customer Orders</h5>
+						<p class="text-muted small mb-3">Review incoming orders, verify payment slips, update fulfillment dispatch statuses, and view customer notes.</p>
+						<div class="d-flex gap-2">
+							<a th:href="@{/admin/orders}" class="btn btn-primary btn-sm">View Orders</a>
+							<a th:href="@{/admin/categories}" class="btn btn-outline-secondary btn-sm">Manage Categories</a>
+						</div>
 					</div>
 				</div>
 			</div>

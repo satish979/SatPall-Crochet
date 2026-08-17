@@ -1,191 +1,129 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{header :: head('My Profile')}"></head>
 
-<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
-<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
-<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
-<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
-<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
-
 <body>
-
 	<div th:replace="~{header :: navbar}"></div>
 
-<section class="py-4">
+	<!-- Breadcrumb Banner -->
+	<section class="py-3 bg-warm-surface border-bottom border-light">
 		<div class="container">
-
-			<h2 class="section-title mb-3">My Profile</h2>
-
-			<div th:if="${param.success}" class="alert alert-success">
-				Profile updated successfully
-			</div>
-
-			<div th:if="${param.error}" class="alert alert-danger" th:text="${param.error}">
-				Error
-			</div>
-
-			<div class="row g-3">
-
-				<!-- LEFT SIDE -->
-				<div class="col-lg-4 mb-3 mb-lg-0">
-
-					<div class="card-soft p-3 profile-sidebar">
-
-						<div class="text-center mb-3">
-
-							<div class="rounded-circle bg-primary text-white
-                                         d-flex align-items-center justify-content-center mx-auto"
-								style="width: 56px; height: 56px; font-size: 1.3rem;">
-								<i class="fa-solid fa-user"></i>
-							</div>
-
-							<h5 class="fw-bold mt-2" th:text="${(customer.firstName != null ? customer.firstName : '')
-                                      + ' '
-                                      + (customer.lastName != null ? customer.lastName : '')}">
-								Customer Name
-							</h5>
-
-							<p class="text-muted small mb-0" th:text="${customer.email}">
-								email@example.com
-							</p>
-
-						</div>
-
-						<div class="list-group list-group-flush">
-
-							<a th:href="@{/customer/profile}" class="list-group-item list-group-item-action active">
-								Profile
-							</a>
-
-							<a th:href="@{/my-orders}" class="list-group-item list-group-item-action">
-								My Orders
-							</a>
-
-							<a th:href="@{/customer/addresses}" class="list-group-item list-group-item-action">
-								Addresses
-							</a>
-
-							<a href="#" onclick="event.preventDefault();
-                               document.getElementById('logoutForm').submit();"
-								class="list-group-item list-group-item-action text-danger">
-								Logout
-							</a>
-
-						</div>
-
-					</div>
-
-				</div>
-
-				<!-- RIGHT SIDE -->
-				<div class="col-lg-8">
-
-					<div class="card-soft p-3">
-
-						<h5 class="fw-bold mb-3">
-							Update Profile
-						</h5>
-
-						<form th:action="@{/customer/profile/update}" method="post" th:object="${customer}">
-
-							<!-- Global validation errors MUST be inside form -->
-							<div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
-
-								<div th:each="err : ${#fields.globalErrors()}" th:text="${err}">
-									Error
-								</div>
-
-							</div>
-
-							<div class="row g-2">
-
-								<!-- FIRST NAME -->
-								<div class="col-md-6">
-
-									<label class="form-label">
-										First Name *
-									</label>
-
-									<input type="text" th:field="*{firstName}" class="form-control" required>
-
-									<div class="text-danger small" th:if="${#fields.hasErrors('firstName')}"
-										th:errors="*{firstName}">
-									</div>
-
-								</div>
-
-								<!-- LAST NAME -->
-								<div class="col-md-6">
-
-									<label class="form-label">
-										Last Name *
-									</label>
-
-									<input type="text" th:field="*{lastName}" class="form-control" required>
-
-									<div class="text-danger small" th:if="${#fields.hasErrors('lastName')}"
-										th:errors="*{lastName}">
-									</div>
-
-								</div>
-
-								<!-- EMAIL -->
-								<div class="col-md-6">
-
-									<label class="form-label">
-										Email
-									</label>
-
-									<input type="email" th:value="${customer.email}" class="form-control" disabled>
-
-								</div>
-
-								<!-- PHONE -->
-								<div class="col-md-6">
-
-									<label class="form-label">
-										Phone
-									</label>
-
-									<input type="tel" th:field="*{phone}" class="form-control">
-
-									<div class="text-danger small" th:if="${#fields.hasErrors('phone')}"
-										th:errors="*{phone}">
-									</div>
-
-								</div>
-
-								<!-- BUTTON -->
-								<div class="col-12">
-
-									<button type="submit" class="btn btn-primary btn-sm">
-										Update Profile
-									</button>
-
-								</div>
-
-							</div>
-
-						</form>
-
-					</div>
-
-				</div>
-
-			</div>
-
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0 small">
+					<li class="breadcrumb-item"><a th:href="@{/}" class="text-muted"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+					<li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">My Profile</li>
+				</ol>
+			</nav>
 		</div>
 	</section>
 
-	<!-- LOGOUT -->
-	<form th:action="@{/api/customer/auth/logout}" method="post" id="logoutForm" class="d-none">
-	</form>
+	<section class="py-5">
+		<div class="container">
+			<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+				<div>
+					<h1 class="font-heading h2 mb-1">Customer Dashboard</h1>
+					<p class="text-muted mb-0 small">Manage your personal details, addresses and orders.</p>
+				</div>
+			</div>
+
+			<!-- Status Alerts -->
+			<div th:if="${param.success}" class="alert alert-success d-flex align-items-center gap-2 small mb-4">
+				<i class="fa-solid fa-circle-check flex-shrink-0"></i>
+				<span>Profile details updated successfully.</span>
+			</div>
+
+			<div th:if="${param.error}" class="alert alert-danger d-flex align-items-center gap-2 small mb-4" th:text="${param.error}">
+				<i class="fa-solid fa-circle-exclamation flex-shrink-0"></i>
+				<span>Error updating profile.</span>
+			</div>
+
+			<div class="row g-4">
+				<!-- Left Sidebar -->
+				<div class="col-lg-4">
+					<div class="card-soft p-4">
+						<div class="text-center pb-3 mb-3 border-bottom border-light">
+							<div class="brand-icon-wrapper mx-auto mb-2" style="width: 64px; height: 64px; font-size: 1.6rem; background: var(--primary-light); color: var(--primary-dark);">
+								<i class="fa-solid fa-user"></i>
+							</div>
+							<h5 class="font-heading mb-0 text-dark" th:text="${(customer.firstName != null ? customer.firstName : '') + ' ' + (customer.lastName != null ? customer.lastName : '')}">
+								Customer Name
+							</h5>
+							<small class="text-muted" th:text="${customer.email}">email@example.com</small>
+						</div>
+
+						<div class="list-group list-group-flush gap-1">
+							<a th:href="@{/customer/profile}" class="list-group-item list-group-item-action rounded-3 border-0 active d-flex align-items-center gap-2 py-2">
+								<i class="fa-regular fa-id-badge text-primary"></i> <span>Profile Details</span>
+							</a>
+							<a th:href="@{/my-orders}" class="list-group-item list-group-item-action rounded-3 border-0 d-flex align-items-center gap-2 py-2">
+								<i class="fa-solid fa-box-open text-primary"></i> <span>My Orders</span>
+							</a>
+							<a th:href="@{/customer/addresses}" class="list-group-item list-group-item-action rounded-3 border-0 d-flex align-items-center gap-2 py-2">
+								<i class="fa-solid fa-location-dot text-primary"></i> <span>Delivery Addresses</span>
+							</a>
+							<a href="#" onclick="event.preventDefault(); document.getElementById('logoutForm').submit();"
+								class="list-group-item list-group-item-action rounded-3 border-0 text-danger d-flex align-items-center gap-2 py-2 mt-2">
+								<i class="fa-solid fa-arrow-right-from-bracket"></i> <span>Sign Out</span>
+							</a>
+						</div>
+					</div>
+				</div>
+
+				<!-- Right Form Card -->
+				<div class="col-lg-8">
+					<div class="card-soft p-4 p-md-5">
+						<h4 class="font-heading mb-1 text-dark">Personal Information</h4>
+						<p class="text-muted small mb-4">Keep your name and contact info up to date for order dispatches.</p>
+
+						<form th:action="@{/customer/profile/update}" method="post" th:object="${customer}">
+							<div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger small mb-3">
+								<div th:each="err : ${#fields.globalErrors()}" th:text="${err}">Error</div>
+							</div>
+
+							<div class="row g-3">
+								<div class="col-md-6">
+									<label class="form-label small">First Name *</label>
+									<input type="text" th:field="*{firstName}" class="form-control" placeholder="First name" required>
+									<div class="text-danger small mt-1" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
+								</div>
+
+								<div class="col-md-6">
+									<label class="form-label small">Last Name *</label>
+									<input type="text" th:field="*{lastName}" class="form-control" placeholder="Last name" required>
+									<div class="text-danger small mt-1" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
+								</div>
+
+								<div class="col-md-6">
+									<label class="form-label small">Email Address</label>
+									<input type="email" th:value="${customer.email}" class="form-control bg-light" disabled>
+									<small class="text-muted" style="font-size: 0.75rem;">Verified email used for login.</small>
+								</div>
+
+								<div class="col-md-6">
+									<label class="form-label small">Phone Number</label>
+									<input type="tel" th:field="*{phone}" class="form-control" placeholder="10-digit number">
+									<div class="text-danger small mt-1" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+								</div>
+
+								<div class="col-12 pt-3 border-top">
+									<button type="submit" class="btn btn-primary btn-lg">
+										<i class="fa-solid fa-floppy-disk me-1"></i> Save Changes
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- LOGOUT FORM -->
+	<form th:action="@{/api/customer/auth/logout}" method="post" id="logoutForm" class="d-none"></form>
 
 	<div th:replace="~{footer :: footer}"></div>
 	<div th:replace="~{scripts :: scripts}"></div>
-
 </body>
 
 </html>

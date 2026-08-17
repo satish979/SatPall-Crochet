@@ -1,141 +1,144 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-
-
-<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
-<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
-<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
-<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
-<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
-
-<head th:replace="~{header :: head('Shop')}"></head>
+<head th:replace="~{header :: head('Shop Collection')}"></head>
 
 <body>
-
 	<div th:replace="~{header :: navbar}"></div>
 
-	<section class="py-4">
+	<!-- Page Header Banner -->
+	<section class="py-4 bg-warm-surface border-bottom border-light">
 		<div class="container">
-			<div class="row g-3">
-				<!-- Filters -->
-				<div class="col-lg-3 order-lg-1 order-2">
-					<div class="card-soft p-3 filters-panel">
-						<h5 class="fw-bold mb-3">Filters</h5>
+			<nav aria-label="breadcrumb" class="mb-2">
+				<ol class="breadcrumb mb-0 small">
+					<li class="breadcrumb-item"><a th:href="@{/}" class="text-muted"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+					<li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">Shop Collection</li>
+				</ol>
+			</nav>
+			<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+				<div>
+					<h1 class="font-heading h2 mb-1">Handcrafted Collection</h1>
+					<p class="text-muted mb-0 small">Explore our complete catalog of bespoke crochet flowers, bags, plushies & gifts.</p>
+				</div>
+				<span class="badge-soft">
+					<i class="fa-solid fa-sparkles me-1"></i> 100% Artisan Made
+				</span>
+			</div>
+		</div>
+	</section>
 
-						<div class="mb-3">
-							<label class="form-label">Search</label>
-							<input type="text" class="form-control" placeholder="Search products">
+	<section class="py-5">
+		<div class="container">
+			<div class="row g-4">
+				<!-- Filters Sidebar -->
+				<div class="col-lg-3 order-2 order-lg-1">
+					<div class="card-soft p-4 filters-panel sticky-top" style="top: 90px;">
+						<div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+							<h5 class="font-heading mb-0"><i class="fa-solid fa-sliders me-2 text-primary"></i>Filters</h5>
+							<button type="button" class="btn btn-sm text-muted p-0" id="resetFiltersBtn" style="font-size: 0.8rem;">Reset</button>
 						</div>
 
 						<div class="mb-3">
-							<label class="form-label">Category</label>
-							<select class="form-select">
-								<option>All Categories</option>
-								<option>Flowers</option>
-								<option>Bouquets</option>
-								<option>Teddy Bears</option>
+							<label class="form-label small">Search Products</label>
+							<div class="position-relative">
+								<input type="text" id="shopSearchInput" class="form-control form-control-sm" placeholder="e.g. Rose, Bag, Bear...">
+								<i class="fa-solid fa-magnifying-glass position-absolute end-0 top-50 translate-middle-y me-3 text-muted small pointer-none"></i>
+							</div>
+						</div>
+
+						<div class="mb-3">
+							<label class="form-label small">Sort Collection</label>
+							<select class="form-select form-select-sm" id="shopSortSelect">
+								<option value="featured">Featured / Best Sellers</option>
+								<option value="price-asc">Price: Low to High</option>
+								<option value="price-desc">Price: High to Low</option>
+								<option value="name-asc">Alphabetical: A-Z</option>
 							</select>
 						</div>
 
-						<div class="mb-3">
-							<label class="form-label">Sort By</label>
-							<select class="form-select">
-								<option>Latest</option>
-								<option>Price Low to High</option>
-								<option>Price High to Low</option>
-								<option>Popular</option>
-							</select>
+						<!-- Boutique Promise box in sidebar -->
+						<div class="p-3 bg-soft-cream rounded-3 mt-4 border border-light">
+							<div class="d-flex align-items-center gap-2 mb-2">
+								<i class="fa-solid fa-hands-holding-heart text-accent"></i>
+								<strong class="small">Bespoke Orders</strong>
+							</div>
+							<p class="small text-muted mb-2">Need a custom flower color or specific size?</p>
+							<a th:href="@{/contact}" class="btn btn-sm btn-outline-primary w-100">Request Custom Piece</a>
 						</div>
-
-						<button class="btn btn-primary w-100 btn-sm">
-							Apply
-						</button>
 					</div>
 				</div>
 
-				<!-- Products -->
+				<!-- Products Grid -->
 				<div class="col-lg-9 order-1 order-lg-2">
+					<div class="row g-3 g-md-4" id="productsGrid" th:if="${!#lists.isEmpty(products)}">
+						<div class="col-6 col-md-6 col-xl-4 product-grid-item" th:each="product : ${products}">
+							<div class="product-card h-100">
+								<span class="product-badge">
+									<i class="fa-solid fa-heart text-accent me-1"></i> Handcrafted
+								</span>
 
-					<div class="row g-3">
+								<div class="product-img-wrapper">
+									<img th:src="${product.imageUrl}" th:alt="${product.name}" loading="lazy">
+								</div>
 
-						<div class="col-6 col-md-6 col-xl-4" th:each="product : ${products}">
-
-						<div class="card-soft product-card h-100 position-relative">
-
-							<span class="product-badge">New</span>
-
-							<div class="product-img-wrapper">
-								<img th:src="${product.imageUrl}" alt="Product">
-							</div>
-
-							<div class="p-2 p-md-3">
-
-									<h6 class="fw-bold mb-1">
-										<span th:text="${product.name}"></span>
-									</h6>
-
+								<div class="product-card-body">
 									<div class="rating mb-1">
 										<i class="fa-solid fa-star"></i>
 										<i class="fa-solid fa-star"></i>
 										<i class="fa-solid fa-star"></i>
 										<i class="fa-solid fa-star"></i>
-										<i class="fa-regular fa-star"></i>
+										<i class="fa-solid fa-star"></i>
+										<span class="text-muted small ms-1">(5.0)</span>
 									</div>
 
-									<div class="price mb-2">₹<span th:text="${product.price}"></span></div>
-									<div class="d-flex justify-content-between align-items-center gap-2">
+									<h6 class="product-title" th:text="${product.name}">Product Name</h6>
 
-										<a th:href="@{/product-details/{id}(id=${product.id})}"
-											class="btn btn-primary w-100 btn-sm">
-											View
+									<div class="price mb-3">
+										₹<span th:text="${product.price}">0</span>
+									</div>
+
+									<div class="d-flex justify-content-between align-items-center gap-2 mt-auto">
+										<a th:href="@{/product-details/{id}(id=${product.id})}" class="btn btn-primary btn-sm flex-grow-1">
+											<i class="fa-regular fa-eye me-1"></i> View Details
 										</a>
-										<button class="wishlist-btn">
+										<button type="button" class="wishlist-btn" th:data-product-id="${product.id}" aria-label="Add to Wishlist">
 											<i class="fa-regular fa-heart"></i>
 										</button>
-
 									</div>
-
 								</div>
-
 							</div>
-
 						</div>
+					</div>
 
+					<!-- Empty state -->
+					<div th:if="${#lists.isEmpty(products)}" class="card-soft text-center p-5 my-4">
+						<div class="brand-icon-wrapper mx-auto mb-3" style="width: 64px; height: 64px; font-size: 1.8rem;">
+							<i class="fa-solid fa-bag-shopping"></i>
+						</div>
+						<h4 class="font-heading mb-2">No Products Available</h4>
+						<p class="text-muted mb-4">Our artisans are currently crafting new inventory. Please check back soon!</p>
+						<a th:href="@{/}" class="btn btn-primary">Return to Home</a>
 					</div>
 
 					<!-- Pagination -->
-
-					<nav class="mt-3">
-
+					<nav class="mt-5" th:if="${!#lists.isEmpty(products)}">
 						<ul class="pagination justify-content-center mb-0">
-
 							<li class="page-item disabled">
-								<a class="page-link" href="#">Prev</a>
+								<a class="page-link" href="#" aria-label="Previous">
+									<i class="fa-solid fa-chevron-left small"></i>
+								</a>
 							</li>
-
-							<li class="page-item active">
-								<a class="page-link" href="#">1</a>
-							</li>
-
+							<li class="page-item active"><a class="page-link" href="#">1</a></li>
+							<li class="page-item"><a class="page-link" href="#">2</a></li>
+							<li class="page-item"><a class="page-link" href="#">3</a></li>
 							<li class="page-item">
-								<a class="page-link" href="#">2</a>
+								<a class="page-link" href="#" aria-label="Next">
+									<i class="fa-solid fa-chevron-right small"></i>
+								</a>
 							</li>
-
-							<li class="page-item">
-								<a class="page-link" href="#">3</a>
-							</li>
-
-							<li class="page-item">
-								<a class="page-link" href="#">Next</a>
-							</li>
-
 						</ul>
-
 					</nav>
-
 				</div>
-
 			</div>
 		</div>
 	</section>
@@ -143,6 +146,62 @@
 	<div th:replace="~{footer :: footer}"></div>
 	<div th:replace="~{scripts :: scripts}"></div>
 
+	<!-- Instant Filter Script -->
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const searchInput = document.getElementById('shopSearchInput');
+			const sortSelect = document.getElementById('shopSortSelect');
+			const resetBtn = document.getElementById('resetFiltersBtn');
+			const grid = document.getElementById('productsGrid');
+
+			if (!grid) return;
+			const items = Array.from(grid.querySelectorAll('.product-grid-item'));
+
+			function filterAndSort() {
+				const query = (searchInput?.value || '').toLowerCase().trim();
+				const sortMode = sortSelect?.value || 'featured';
+
+				let visibleItems = items.filter(item => {
+					const title = item.querySelector('.product-title')?.textContent.toLowerCase() || '';
+					const matches = !query || title.includes(query);
+					item.style.display = matches ? '' : 'none';
+					return matches;
+				});
+
+				if (sortMode === 'price-asc') {
+					visibleItems.sort((a, b) => {
+						const pA = parseFloat(a.querySelector('.price span')?.textContent || '0');
+						const pB = parseFloat(b.querySelector('.price span')?.textContent || '0');
+						return pA - pB;
+					});
+				} else if (sortMode === 'price-desc') {
+					visibleItems.sort((a, b) => {
+						const pA = parseFloat(a.querySelector('.price span')?.textContent || '0');
+						const pB = parseFloat(b.querySelector('.price span')?.textContent || '0');
+						return pB - pA;
+					});
+				} else if (sortMode === 'name-asc') {
+					visibleItems.sort((a, b) => {
+						const tA = a.querySelector('.product-title')?.textContent.trim() || '';
+						const tB = b.querySelector('.product-title')?.textContent.trim() || '';
+						return tA.localeCompare(tB);
+					});
+				}
+
+				visibleItems.forEach(el => grid.appendChild(el));
+			}
+
+			if (searchInput) searchInput.addEventListener('input', filterAndSort);
+			if (sortSelect) sortSelect.addEventListener('change', filterAndSort);
+			if (resetBtn) {
+				resetBtn.addEventListener('click', function () {
+					if (searchInput) searchInput.value = '';
+					if (sortSelect) sortSelect.value = 'featured';
+					filterAndSort();
+				});
+			}
+		});
+	</script>
 </body>
 
 </html>

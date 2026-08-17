@@ -1,48 +1,125 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-
-
-<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
-<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
-<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
-<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
-<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
-
-<head th:replace="~{header :: head('Contact')}"></head>
+<head th:replace="~{header :: head('Contact Us')}"></head>
 
 <body>
 	<div th:replace="~{header :: navbar}"></div>
 
-	<section class="py-4">
+	<!-- Hero Banner -->
+	<section class="py-5 bg-warm-surface border-bottom border-light text-center">
 		<div class="container">
-			<div class="row g-3">
-				<div class="col-lg-6">
-					<div class="card-soft p-3">
-						<h2 class="section-title mb-2">Contact Us</h2>
-						<form>
-							<div class="mb-2">
-								<label class="form-label">Name</label>
-								<input type="text" class="form-control">
+			<span class="hero-pill mb-3">Connect With Our Artisans</span>
+			<h1 class="hero-title mb-3">Get in Touch with Loomelle</h1>
+			<p class="section-subtitle mx-auto">
+				Have questions about a custom order, specific colorway, bulk wedding hampers, or corporate gifting? We'd love to hear from you.
+			</p>
+		</div>
+	</section>
+
+	<section class="py-5">
+		<div class="container">
+			<!-- Flash Messages (Server Side) -->
+			<div th:if="${success}" class="alert alert-success d-flex align-items-center gap-2 small mb-4 shadow-sm">
+				<i class="fa-solid fa-circle-check flex-shrink-0 text-success"></i>
+				<span th:text="${success}">Thank you for reaching out!</span>
+			</div>
+			<div th:if="${error}" class="alert alert-danger d-flex align-items-center gap-2 small mb-4 shadow-sm">
+				<i class="fa-solid fa-circle-exclamation flex-shrink-0 text-danger"></i>
+				<span th:text="${error}">Error sending message.</span>
+			</div>
+
+			<div class="row g-4 g-lg-5">
+				<!-- Contact Form -->
+				<div class="col-lg-7">
+					<div class="card-soft p-4 p-md-5">
+						<span class="badge-soft mb-2 d-inline-block">Send a Message</span>
+						<h3 class="font-heading mb-3">Custom Inquiries & Support</h3>
+						
+						<!-- Dynamic status alert for AJAX -->
+						<div id="contactStatusAlert" class="alert d-none small mb-3"></div>
+
+						<form id="contactForm" th:action="@{/contact}" method="post">
+							<div class="row g-3">
+								<div class="col-md-6">
+									<label class="form-label small">Your Name *</label>
+									<input type="text" name="name" id="contactName" class="form-control" placeholder="Jane Doe" required>
+								</div>
+								<div class="col-md-6">
+									<label class="form-label small">Email Address *</label>
+									<input type="email" name="email" id="contactEmail" class="form-control" placeholder="jane@example.com" required>
+								</div>
+								<div class="col-12">
+									<label class="form-label small">Inquiry Type</label>
+									<select name="inquiryType" id="contactInquiryType" class="form-select">
+										<option value="Bespoke / Custom Crochet Request">Bespoke / Custom Crochet Request</option>
+										<option value="Existing Order Status">Existing Order Status</option>
+										<option value="Bulk / Wedding / Event Gifting">Bulk / Wedding / Event Gifting</option>
+										<option value="General Question / Feedback">General Question / Feedback</option>
+									</select>
+								</div>
+								<div class="col-12">
+									<label class="form-label small">Message / Custom Requirements *</label>
+									<textarea name="message" id="contactMessage" class="form-control" rows="4" placeholder="Tell us what you have in mind (colors, sizes, event dates)..." required></textarea>
+								</div>
+								<div class="col-12">
+									<button type="submit" id="contactSubmitBtn" class="btn btn-primary btn-lg w-100">
+										<span id="contactBtnText"><i class="fa-regular fa-paper-plane me-1"></i> Send Message</span>
+										<span id="contactBtnSpinner" class="spinner-border spinner-border-sm d-none ms-2" role="status" aria-hidden="true"></span>
+									</button>
+								</div>
 							</div>
-							<div class="mb-2">
-								<label class="form-label">Email</label>
-								<input type="email" class="form-control">
-							</div>
-							<div class="mb-2">
-								<label class="form-label">Message</label>
-								<textarea class="form-control" rows="3"></textarea>
-							</div>
-							<button class="btn btn-primary btn-sm">Send Message</button>
 						</form>
 					</div>
 				</div>
-				<div class="col-lg-6">
-					<div class="card-soft p-3 h-100">
-						<h2 class="section-title mb-2">Store Details</h2>
-						<p class="text-muted"><strong>Email:</strong> hello@loomellecrochet.in</p>
-						<p class="text-muted"><strong>Phone:</strong> +91 98765 43210</p>
-						<p class="text-muted"><strong>Location:</strong> Bengaluru, Karnataka</p>
+
+				<!-- Studio Info Cards -->
+				<div class="col-lg-5">
+					<div class="d-flex flex-column gap-3 h-100">
+						<!-- Studio Details Card -->
+						<div class="card-soft p-4">
+							<h5 class="font-heading mb-3"><i class="fa-solid fa-location-dot me-2 text-primary"></i>Studio & Contact</h5>
+							<ul class="list-unstyled mb-0">
+								<li class="d-flex align-items-start gap-3 mb-3">
+									<div class="brand-icon-wrapper flex-shrink-0" style="width: 38px; height: 38px; font-size: 0.95rem;">
+										<i class="fa-solid fa-envelope"></i>
+									</div>
+									<div>
+										<small class="text-muted d-block">Support Email</small>
+										<a href="mailto:hello@loomellecrochet.in" class="text-dark fw-bold text-decoration-none">hello@loomellecrochet.in</a>
+									</div>
+								</li>
+								<!--<li class="d-flex align-items-start gap-3 mb-3">
+									<div class="brand-icon-wrapper flex-shrink-0" style="width: 38px; height: 38px; font-size: 0.95rem;">
+										<i class="fa-solid fa-phone"></i>
+									</div>
+									<div>
+										<small class="text-muted d-block">WhatsApp / Call</small>
+										<strong class="text-dark">+91 98765 43210</strong>
+									</div>
+								</li>-->
+								<li class="d-flex align-items-start gap-3">
+									<div class="brand-icon-wrapper flex-shrink-0" style="width: 38px; height: 38px; font-size: 0.95rem;">
+										<i class="fa-solid fa-clock"></i>
+									</div>
+									<div>
+										<small class="text-muted d-block">Studio Hours</small>
+										<strong class="text-dark">Mon – Sat: 10:00 AM – 7:00 PM</strong>
+									</div>
+								</li>
+							</ul>
+						</div>
+
+						<!-- Custom Orders Perk Card -->
+						<div class="card-soft p-4 bg-soft-cream border-light flex-grow-1">
+							<div class="d-flex align-items-center gap-2 mb-2">
+								<i class="fa-solid fa-wand-magic-sparkles text-accent"></i>
+								<h6 class="font-heading mb-0">Custom Order Turnaround</h6>
+							</div>
+							<p class="small text-muted mb-0" style="line-height: 1.6;">
+								Custom flowers, keychains, and amigurumi typically take <strong>2 to 4 working days</strong> to craft before dispatch. For urgent wedding or birthday dates, let us know and we'll prioritize your order!
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -51,6 +128,102 @@
 
 	<div th:replace="~{footer :: footer}"></div>
 	<div th:replace="~{scripts :: scripts}"></div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const form = document.getElementById('contactForm');
+			const submitBtn = document.getElementById('contactSubmitBtn');
+			const btnText = document.getElementById('contactBtnText');
+			const btnSpinner = document.getElementById('contactBtnSpinner');
+			const statusAlert = document.getElementById('contactStatusAlert');
+
+			if (!form) return;
+
+			form.addEventListener('submit', function (e) {
+				e.preventDefault();
+
+				const name = document.getElementById('contactName')?.value.trim();
+				const email = document.getElementById('contactEmail')?.value.trim();
+				const inquiryType = document.getElementById('contactInquiryType')?.value;
+				const message = document.getElementById('contactMessage')?.value.trim();
+
+				if (!name || !email || !message) {
+					if (statusAlert) {
+						statusAlert.className = 'alert alert-danger small mb-3';
+						statusAlert.textContent = 'Please fill in all required fields (Name, Email, Message).';
+						statusAlert.classList.remove('d-none');
+					}
+					return;
+				}
+
+				// Loading state
+				if (submitBtn) submitBtn.disabled = true;
+				if (btnText) btnText.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Sending Message...';
+				if (btnSpinner) btnSpinner.classList.remove('d-none');
+				if (statusAlert) statusAlert.classList.add('d-none');
+
+				fetch(CONTEXT_PATH + '/api/contact', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'Accept': 'application/json'
+					},
+					body: JSON.stringify({
+						name: name,
+						email: email,
+						inquiryType: inquiryType,
+						message: message
+					})
+				})
+				.then(async response => {
+					const text = await response.text();
+					let data;
+					try {
+						data = JSON.parse(text);
+					} catch (e) {
+						data = { success: response.ok, message: text || 'Message submitted' };
+					}
+
+					if (data.success) {
+						if (statusAlert) {
+							statusAlert.className = 'alert alert-success small mb-3 d-flex align-items-center gap-2';
+							statusAlert.innerHTML = '<i class="fa-solid fa-circle-check text-success flex-shrink-0"></i><span>' + (data.message || 'Thank you! Your message has been sent.') + '</span>';
+							statusAlert.classList.remove('d-none');
+						}
+						form.reset();
+						if (window.showToast) {
+							window.showToast(data.message || 'Thank you! Your message has been sent to our support team.', 'success');
+						}
+					} else {
+						if (statusAlert) {
+							statusAlert.className = 'alert alert-danger small mb-3 d-flex align-items-center gap-2';
+							statusAlert.innerHTML = '<i class="fa-solid fa-circle-exclamation text-danger flex-shrink-0"></i><span>' + (data.message || 'Failed to send message.') + '</span>';
+							statusAlert.classList.remove('d-none');
+						}
+						if (window.showToast) {
+							window.showToast(data.message || 'Failed to send message.', 'danger');
+						}
+					}
+				})
+				.catch(err => {
+					console.error('Contact form error:', err);
+					if (statusAlert) {
+						statusAlert.className = 'alert alert-danger small mb-3';
+						statusAlert.textContent = 'Could not send message. Please check your connection or email hello@loomellecrochet.in directly.';
+						statusAlert.classList.remove('d-none');
+					}
+					if (window.showToast) {
+						window.showToast('Could not send message. Please try again.', 'danger');
+					}
+				})
+				.finally(() => {
+					if (submitBtn) submitBtn.disabled = false;
+					if (btnText) btnText.innerHTML = '<i class="fa-regular fa-paper-plane me-1"></i> Send Message';
+					if (btnSpinner) btnSpinner.classList.add('d-none');
+				});
+			});
+		});
+	</script>
 </body>
 
 </html>

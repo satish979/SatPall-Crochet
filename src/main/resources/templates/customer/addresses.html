@@ -1,110 +1,139 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
-<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
-<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
-<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
-<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
-<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
 
 <head th:replace="~{header :: head('My Addresses')}"></head>
 
 <body>
 	<div th:replace="~{header :: navbar}"></div>
-	<section class="py-4">
+
+	<!-- Breadcrumb Banner -->
+	<section class="py-3 bg-warm-surface border-bottom border-light">
 		<div class="container">
-			<h2 class="section-title mb-3">My Addresses</h2>
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0 small">
+					<li class="breadcrumb-item"><a th:href="@{/}" class="text-muted"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+					<li class="breadcrumb-item"><a th:href="@{/customer/profile}" class="text-muted">Dashboard</a></li>
+					<li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">Saved Addresses</li>
+				</ol>
+			</nav>
+		</div>
+	</section>
 
-			<div th:if="${param.success}" class="alert alert-success">Action completed successfully</div>
-			<div th:if="${param.error}" class="alert alert-danger" th:text="${param.error}">Error</div>
+	<section class="py-5">
+		<div class="container">
+			<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+				<div>
+					<h1 class="font-heading h2 mb-1">Saved Addresses</h1>
+					<p class="text-muted mb-0 small">Manage your delivery destinations for quick checkout.</p>
+				</div>
+			</div>
 
-			<div class="row g-3">
-				<div class="col-lg-4 mb-3 mb-lg-0">
-					<div class="card-soft p-3 addresses-form-card">
-						<h5 class="fw-bold mb-3">Add New Address</h5>
+			<!-- Status Alerts -->
+			<div th:if="${param.success}" class="alert alert-success d-flex align-items-center gap-2 small mb-4">
+				<i class="fa-solid fa-circle-check flex-shrink-0"></i>
+				<span>Address updated successfully.</span>
+			</div>
+
+			<div th:if="${param.error}" class="alert alert-danger d-flex align-items-center gap-2 small mb-4" th:text="${param.error}">
+				<i class="fa-solid fa-circle-exclamation flex-shrink-0"></i>
+				<span>Error processing address.</span>
+			</div>
+
+			<div class="row g-4">
+				<!-- Left Column: Add Address Form -->
+				<div class="col-lg-5">
+					<div class="card-soft p-4">
+						<h5 class="font-heading mb-3"><i class="fa-solid fa-plus text-primary me-2"></i>Add New Address</h5>
 						<form th:action="@{/customer/addresses/add}" method="post" th:object="${addressRequest}">
-							<div class="mb-2">
-								<label class="form-label">Full Name *</label>
-								<input type="text" name="fullName" class="form-control" required>
+							<div class="mb-3">
+								<label class="form-label small">Full Name *</label>
+								<input type="text" name="fullName" class="form-control" placeholder="Recipient's name" required>
 							</div>
-							<div class="mb-2">
-								<label class="form-label">Mobile *</label>
-								<input type="tel" name="mobile" class="form-control" required>
+							<div class="mb-3">
+								<label class="form-label small">Mobile Phone *</label>
+								<input type="tel" name="mobile" class="form-control" placeholder="10-digit number" required>
 							</div>
-							<div class="mb-2">
-								<label class="form-label">Address Line 1 *</label>
-								<input type="text" name="addressLine1" class="form-control" required>
+							<div class="mb-3">
+								<label class="form-label small">Address Line 1 *</label>
+								<input type="text" name="addressLine1" class="form-control" placeholder="House no, Street" required>
 							</div>
-							<div class="mb-2">
-								<label class="form-label">Address Line 2</label>
-								<input type="text" name="addressLine2" class="form-control">
+							<div class="mb-3">
+								<label class="form-label small">Address Line 2 (Optional)</label>
+								<input type="text" name="addressLine2" class="form-control" placeholder="Apartment, Area">
 							</div>
-							<div class="row g-2 mb-2">
+							<div class="row g-2 mb-3">
 								<div class="col-6">
-									<label class="form-label">City *</label>
-									<input type="text" name="city" class="form-control" required>
+									<label class="form-label small">City *</label>
+									<input type="text" name="city" class="form-control" placeholder="City" required>
 								</div>
 								<div class="col-6">
-									<label class="form-label">State *</label>
-									<input type="text" name="state" class="form-control" required>
+									<label class="form-label small">State *</label>
+									<input type="text" name="state" class="form-control" placeholder="State" required>
 								</div>
 							</div>
-							<div class="row g-2 mb-2">
+							<div class="row g-2 mb-3">
 								<div class="col-6">
-									<label class="form-label">Pincode *</label>
-									<input type="text" name="pinCode" class="form-control" required>
+									<label class="form-label small">Pincode *</label>
+									<input type="text" name="pinCode" class="form-control" placeholder="6-digit PIN" required>
 								</div>
 								<div class="col-6">
-									<label class="form-label">Landmark</label>
-									<input type="text" name="landmark" class="form-control">
+									<label class="form-label small">Landmark</label>
+									<input type="text" name="landmark" class="form-control" placeholder="Nearby place">
 								</div>
 							</div>
-							<div class="mb-2">
-								<label class="form-label">Type</label>
+							<div class="mb-3">
+								<label class="form-label small">Address Type</label>
 								<select name="type" class="form-select">
-									<option value="HOME">Home</option>
-									<option value="WORK">Work</option>
+									<option value="HOME">Home (7am-9pm)</option>
+									<option value="WORK">Work / Office</option>
 									<option value="OTHER">Other</option>
 								</select>
 							</div>
 							<div class="mb-3 form-check">
 								<input type="checkbox" name="isDefault" value="true" class="form-check-input" id="isDefault">
-								<label class="form-check-label" for="isDefault">Set as default</label>
+								<label class="form-check-label small text-muted" for="isDefault">Make this my default shipping address</label>
 							</div>
-							<button type="submit" class="btn btn-primary w-100 btn-sm">Add Address</button>
+							<button type="submit" class="btn btn-primary w-100">
+								<i class="fa-solid fa-location-arrow me-1"></i> Save Address
+							</button>
 						</form>
 					</div>
 				</div>
 
-				<div class="col-lg-8">
-					<div th:if="${#lists.isEmpty(addresses)}" class="card-soft p-4 text-center">
-						<i class="fa-solid fa-location-dot fa-2x text-muted mb-3"></i>
-						<p class="text-muted">No addresses saved yet.</p>
+				<!-- Right Column: Saved Addresses Grid -->
+				<div class="col-lg-7">
+					<div th:if="${#lists.isEmpty(addresses)}" class="card-soft p-5 text-center">
+						<div class="brand-icon-wrapper mx-auto mb-3" style="width: 56px; height: 56px; font-size: 1.5rem;">
+							<i class="fa-solid fa-location-dot"></i>
+						</div>
+						<h5 class="font-heading mb-1">No Addresses Saved Yet</h5>
+						<p class="text-muted small mb-0">Use the form to save your home or work delivery address.</p>
 					</div>
 
-					<div th:unless="${#lists.isEmpty(addresses)}" class="row g-2">
+					<div th:unless="${#lists.isEmpty(addresses)}" class="row g-3">
 						<div th:each="addr : ${addresses}" class="col-12 col-md-6">
-							<div class="card-soft p-3">
+							<div class="card-soft p-3 h-100 position-relative">
 								<div class="d-flex justify-content-between align-items-start mb-2">
-									<span class="badge badge-soft" th:text="${addr.type}">HOME</span>
+									<span class="badge-soft small" th:text="${addr.type}">HOME</span>
 									<div class="dropdown">
-										<button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+										<button class="btn btn-sm text-muted p-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
 											<i class="fa-solid fa-ellipsis-vertical"></i>
 										</button>
-										<ul class="dropdown-menu">
-											<li><a class="dropdown-item" th:href="@{'/customer/addresses/set-default/' + ${addr.id}}">Set as Default</a></li>
-											<li><hr class="dropdown-divider"></li>
-											<li><a class="dropdown-item text-danger" th:href="@{'/customer/addresses/delete/' + ${addr.id}}" onclick="return confirm('Delete this address?')">Delete</a></li>
+										<ul class="dropdown-menu dropdown-menu-end luxury-dropdown shadow-sm">
+											<li><a class="dropdown-item small" th:href="@{'/customer/addresses/set-default/' + ${addr.id}}"><i class="fa-solid fa-star me-2 text-warning"></i>Set as Default</a></li>
+											<li><hr class="dropdown-divider my-1"></li>
+											<li><a class="dropdown-item small text-danger" th:href="@{'/customer/addresses/delete/' + ${addr.id}}" onclick="return confirm('Delete this address?')"><i class="fa-solid fa-trash me-2"></i>Delete</a></li>
 										</ul>
 									</div>
 								</div>
-								<h6 class="fw-bold mb-1" th:text="${addr.fullName}">Name</h6>
-								<small class="text-muted d-block mb-1" th:text="${addr.mobile}">Mobile</small>
+								<h6 class="fw-bold mb-1 text-dark" th:text="${addr.fullName}">Name</h6>
+								<small class="text-muted d-block mb-1"><i class="fa-solid fa-phone me-1 small"></i><span th:text="${addr.mobile}">Mobile</span></small>
 								<small class="text-muted d-block mb-1" th:text="${addr.addressLine1 + (addr.addressLine2 != null and !addr.addressLine2.isEmpty() ? ', ' + addr.addressLine2 : '')}">Address</small>
 								<small class="text-muted d-block mb-1" th:text="${addr.city + ', ' + addr.state + ' - ' + addr.pinCode}">City</small>
 								<small class="text-muted d-block" th:if="${addr.landmark != null and !addr.landmark.isEmpty()}" th:text="${'Landmark: ' + addr.landmark}">Landmark</small>
-								<div class="mt-2" th:if="${addr.isDefault}">
-									<span class="badge bg-success">Default</span>
+								
+								<div class="mt-3 pt-2 border-top" th:if="${addr.isDefault}">
+									<span class="badge bg-success small"><i class="fa-solid fa-check me-1"></i>Default Shipping Address</span>
 								</div>
 							</div>
 						</div>
@@ -113,8 +142,10 @@
 			</div>
 		</div>
 	</section>
+
 	<form th:action="@{/api/customer/auth/logout}" method="post" id="logoutForm" class="d-none"></form>
 	<div th:replace="~{footer :: footer}"></div>
 	<div th:replace="~{scripts :: scripts}"></div>
 </body>
+
 </html>

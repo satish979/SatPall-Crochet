@@ -1,28 +1,48 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-
-
-<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
-<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
-<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
-<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
-<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
-
-
-<head th:replace="~{header :: head('Terms')}"></head>
+<head th:replace="~{header :: head('Terms & Conditions')}"></head>
 
 <body>
 	<div th:replace="~{header :: navbar}"></div>
-	<section class="py-4">
+
+	<!-- Hero Banner -->
+	<section class="py-5 bg-warm-surface border-bottom border-light text-center">
 		<div class="container">
-			<div class="card-soft p-3">
-				<h1 class="section-title">Terms & Conditions</h1>
-				<p class="text-muted">All orders are handmade and may vary slightly in appearance due to craftsmanship.
+			<span class="hero-pill mb-3">Legal & Policies</span>
+			<h1 class="hero-title mb-3">Terms & Conditions</h1>
+			<p class="section-subtitle mx-auto">
+				Please review our terms of service regarding handcrafted items, custom orders, and payments.
+			</p>
+		</div>
+	</section>
+
+	<section class="py-5">
+		<div class="container" style="max-width: 820px;">
+			<div class="card-soft p-4 p-md-5">
+				<h5 class="font-heading mb-3">1. Nature of Handmade Creations</h5>
+				<p class="text-muted small mb-4" style="line-height: 1.7;">
+					Every item at Loomelle Crochet is made individually by hand. Slight variations in stitch tension, dimensions (&plusmn;1-2 cm), or color shades due to different yarn dye lots are natural hallmarks of handmade art and make each piece uniquely yours.
+				</p>
+
+				<h5 class="font-heading mb-3">2. Order Acceptance & Customization</h5>
+				<p class="text-muted small mb-4" style="line-height: 1.7;">
+					Custom color requests are subject to yarn availability. Once custom production has begun, changes or cancellations may not be possible. We will always communicate with you regarding processing times.
+				</p>
+
+				<h5 class="font-heading mb-3">3. Pricing & Payments</h5>
+				<p class="text-muted small mb-4" style="line-height: 1.7;">
+					All prices are listed in Indian Rupees (₹). Payments are securely processed through encrypted payment gateways (Razorpay) or verified Cash on Delivery (COD).
+				</p>
+
+				<h5 class="font-heading mb-3">4. Shipping & Damaged Deliveries</h5>
+				<p class="text-muted small mb-0" style="line-height: 1.7;">
+					We inspect and gift-pack every order thoroughly. If an item arrives damaged due to postal transit, please notify us within 48 hours of delivery with photo proof for immediate resolution.
 				</p>
 			</div>
 		</div>
 	</section>
+
 	<div th:replace="~{footer :: footer}"></div>
 	<div th:replace="~{scripts :: scripts}"></div>
 </body>

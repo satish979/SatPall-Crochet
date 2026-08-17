@@ -1,73 +1,132 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-	
-
-<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
-<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
-<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
-<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
-<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
 
 <head th:fragment="head(pageTitle)">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title th:text="${pageTitle} + ' | Loomelle Crochet'">Loomelle Crochet</title>
-	<meta name="description" content="Premium handmade crochet products">
+	<title th:text="${pageTitle} + ' | Loomelle Crochet'">Loomelle Crochet - Handcrafted with Love</title>
+	<meta name="description" content="Loomelle Crochet - Premium handmade crochet flowers, bags, toys, home decor, and custom gift boxes.">
 	<meta property="og:title" content="Loomelle Crochet">
-	<meta property="og:description" content="Premium handmade crochet products">
+	<meta property="og:description" content="Premium handcrafted crochet gifts & accessories">
 	<meta property="og:type" content="website">
-	<link rel="icon" type="image/png" href="/images/favicon.png">
+
+	<!-- Favicon -->
+	<link rel="icon" type="image/jpeg" th:href="@{/uploads/Favicon-copy.jpg}" href="/uploads/Favicon-copy.jpg">
+	<link rel="shortcut icon" type="image/jpeg" th:href="@{/uploads/Favicon-copy.jpg}" href="/uploads/Favicon-copy.jpg">
+	<link rel="apple-touch-icon" th:href="@{/uploads/Favicon-copy.jpg}">
+
+	<!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-		rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+
+	<!-- Bootstrap & FontAwesome -->
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+	<!-- Custom Design System -->
 	<link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 
-	<nav th:fragment="navbar" class="navbar navbar-expand-lg sticky-top">
+<nav th:fragment="navbar" class="header-wrapper sticky-top">
+	<!-- Top Boutique Announcement Bar -->
+	<div class="top-announcement-bar py-1 d-none d-md-block">
+		<div class="container text-center">
+			<span class="announcement-text">
+				<i class="fa-solid fa-wand-magic-sparkles me-1 text-accent"></i> 100% Handcrafted with Love &bull; Free Shipping over ₹999 &bull; Bespoke Custom Orders Open
+			</span>
+		</div>
+	</div>
+
+	<!-- Main Navigation Bar -->
+	<div class="navbar navbar-expand-lg loomelle-navbar">
 		<div class="container">
-			<a class="navbar-brand" th:href="@{/}">
-				<i class="fa-solid fa-spa me-1"></i><span class="brand-full">Loomelle Crochet</span><span class="brand-short d-none">Loomelle</span>
+			<!-- Brand Logo -->
+			<a class="navbar-brand d-flex align-items-center gap-2" th:href="@{/}">
+				<span class="brand-icon-wrapper">
+					<i class="fa-solid fa-spa brand-icon"></i>
+				</span>
+				<div class="brand-text-block">
+					<span class="brand-name">Loomelle</span>
+					<span class="brand-sub">Crochet</span>
+				</div>
 			</a>
-			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
+
+			<!-- Mobile Quick Actions & Toggler -->
+			<div class="d-flex align-items-center gap-2 d-lg-none">
+				<a th:href="@{/cart}" class="btn btn-cart-nav p-2" aria-label="Cart">
+					<i class="fa-solid fa-bag-shopping"></i>
+				</a>
+				<button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+			</div>
+
+			<!-- Collapsible Navigation Items -->
 			<div class="collapse navbar-collapse" id="mainNav">
-				<ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-lg-2">
+				<!-- Center Navigation Links -->
+				<ul class="navbar-nav mx-auto mb-2 mb-lg-0 nav-center-links gap-lg-1">
 					<li class="nav-item"><a class="nav-link" th:href="@{/}">Home</a></li>
-					<li class="nav-item"><a class="nav-link" th:href="@{/shop}">Shop</a></li>
-					<li class="nav-item"><a class="nav-link" th:href="@{/about}">About</a></li>
-					<li class="nav-item"><a class="nav-link" th:href="@{/contact}">Contact</a></li>
-					<li class="nav-item">
-						<a class="btn btn-primary btn-sm ms-lg-2" th:href="@{/cart}">
-							<i class="fa-solid fa-bag-shopping me-1"></i>Cart
+					<li class="nav-item"><a class="nav-link" th:href="@{/shop}">Shop Collection</a></li>
+					<li class="nav-item"><a class="nav-link" th:href="@{/about}">Our Story</a></li>
+					<li class="nav-item"><a class="nav-link" th:href="@{/contact}">Contact Us</a></li>
+				</ul>
+
+				<!-- Right Navigation Actions -->
+				<div class="nav-actions d-flex align-items-center gap-2 flex-wrap">
+					<!-- Search Button / Bar -->
+					<div class="nav-search-wrapper position-relative d-none d-xl-block">
+						<div class="search-input-group">
+							<i class="fa-solid fa-magnifying-glass search-icon"></i>
+							<input type="text" class="form-control nav-search-input" placeholder="Search crochet gifts..." data-search-input>
+						</div>
+						<div class="search-suggestions-box d-none" data-search-suggestions></div>
+					</div>
+
+					<!-- Cart Button -->
+					<a class="btn btn-cart-nav d-inline-flex align-items-center gap-2" th:href="@{/cart}">
+						<i class="fa-solid fa-bag-shopping"></i>
+						<span class="d-none d-sm-inline">Cart</span>
+						<span id="cartCountBadge" class="cart-pill-badge d-none">0</span>
+					</a>
+
+					<!-- Guest User: Sign In -->
+					<div th:if="${navCustomer == null}" class="d-inline-flex">
+						<a class="btn btn-login-nav d-inline-flex align-items-center gap-1" th:href="@{/customer/login(redirectAfterLogin='/Loomellecrochet')}">
+							<i class="fa-regular fa-user"></i>
+							<span>Sign In</span>
 						</a>
-					</li>
-					<li class="nav-item" th:if="${navCustomer == null}">
-						<a class="btn btn-outline-primary btn-sm ms-lg-2" th:href="@{/customer/login(redirectAfterLogin='/Loomellecrochet')}">
-							<i class="fa-regular fa-user me-1"></i>Login
+					</div>
+
+					<!-- Logged-in Customer -->
+					<div class="nav-item dropdown user-dropdown" th:if="${navCustomer != null}">
+						<a class="nav-link dropdown-toggle btn btn-user-nav d-inline-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<span class="user-avatar-initials">
+								<i class="fa-regular fa-user"></i>
+							</span>
+							<span class="nav-username text-truncate" style="max-width: 100px;" th:text="${navCustomerName}">Account</span>
 						</a>
-					</li>
-					<li class="nav-item dropdown" th:if="${navCustomer != null}">
-						<a class="nav-link dropdown-toggle btn btn-outline-primary btn-sm ms-lg-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-							<i class="fa-regular fa-user me-1"></i><span th:text="${navCustomerName}">Customer</span>
-						</a>
-						<ul class="dropdown-menu dropdown-menu-end">
-							<li><a class="dropdown-item" th:href="@{/customer/profile}"><i class="fa-regular fa-user me-2"></i>My Profile</a></li>
-							<li><a class="dropdown-item" th:href="@{/my-orders}"><i class="fa-solid fa-box me-2"></i>My Orders</a></li>
-							<li><a class="dropdown-item" th:href="@{/customer/addresses}"><i class="fa-solid fa-location-dot me-2"></i>Addresses</a></li>
-							<li><hr class="dropdown-divider"></li>
-								<li><a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); handleNavbarLogout();">
-									<i class="fa-solid fa-right-from-bracket me-2"></i>Logout
-								</a></li>
+						<ul class="dropdown-menu dropdown-menu-end luxury-dropdown shadow-lg">
+							<li class="dropdown-header-custom px-3 py-2 border-bottom">
+								<small class="text-muted d-block">Signed in as</small>
+								<strong class="text-dark d-block text-truncate" th:text="${navCustomerName}">Customer</strong>
+							</li>
+							<li><a class="dropdown-item" th:href="@{/customer/profile}"><i class="fa-regular fa-id-badge me-2 text-primary"></i>My Profile</a></li>
+							<li><a class="dropdown-item" th:href="@{/my-orders}"><i class="fa-solid fa-box-open me-2 text-primary"></i>My Orders</a></li>
+							<li><a class="dropdown-item" th:href="@{/customer/addresses}"><i class="fa-solid fa-location-dot me-2 text-primary"></i>Saved Addresses</a></li>
+							<li><hr class="dropdown-divider my-1"></li>
+							<li>
+								<a class="dropdown-item text-danger" href="#" onclick="event.preventDefault(); handleNavbarLogout();">
+									<i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Sign Out
+								</a>
+							</li>
 						</ul>
 						<form th:action="@{/api/customer/auth/logout}" method="post" id="logoutForm" class="d-none"></form>
-					</li>
-				</ul>
+					</div>
+				</div>
 			</div>
 		</div>
-	</nav>
+	</div>
+</nav>
 
 </html>

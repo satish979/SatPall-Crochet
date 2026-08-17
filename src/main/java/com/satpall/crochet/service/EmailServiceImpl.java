@@ -37,6 +37,7 @@ public class EmailServiceImpl implements EmailService {
 	private String contextPath;
 
 	@Override
+	@Async
 	public void sendHtmlEmail(String to, String subject, String htmlBody) {
 		try {
 			MimeMessage message = mailSender.createMimeMessage();
@@ -54,6 +55,7 @@ public class EmailServiceImpl implements EmailService {
 
 		} catch (Exception e) {
 			log.error("Failed to send email to: {}", to, e);
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -197,6 +199,93 @@ public class EmailServiceImpl implements EmailService {
 		sb.append("<p>Thank you for shopping with Loomelle Crochet!</p>");
 		sb.append("</body></html>");
 		return sb.toString();
+	}
+
+	@Override
+	@Async
+	public void sendContactUsEmail(String name, String email, String inquiryType, String message) {
+		try {
+			// 1. Send detailed inquiry email to Admin / Support team
+			String adminSubject = "[Loomelle Crochet Support] New Contact Inquiry: " + (inquiryType != null && !inquiryType.trim().isEmpty() ? inquiryType : "General Inquiry");
+			String adminHtml = buildContactAdminHtml(name, email, inquiryType, message);
+
+			MimeMessage adminMsg = mailSender.createMimeMessage();
+			MimeMessageHelper adminHelper = new MimeMessageHelper(adminMsg, true, "UTF-8");
+			adminHelper.setFrom(fromEmail, "Loomelle Crochet Contact");
+			adminHelper.setTo(adminEmail);
+			if (email != null && !email.trim().isEmpty() && email.contains("@")) {
+				try {
+					adminHelper.setReplyTo(email, name != null ? name : "Customer");
+				} catch (Exception e) {
+					adminHelper.setReplyTo(email);
+				}
+			}
+			adminHelper.setSubject(adminSubject);
+			adminHelper.setText(adminHtml, true);
+			mailSender.send(adminMsg);
+			log.info("Contact inquiry email successfully sent to admin ({}) from customer: {}", adminEmail, email);
+
+			// 2. Send acknowledgment email to customer if email is valid
+			if (email != null && email.contains("@")) {
+				try {
+					String customerSubject = "We have received your message! - Loomelle Crochet";
+					String customerHtml = buildContactCustomerAckHtml(name, inquiryType, message);
+
+					MimeMessage custMsg = mailSender.createMimeMessage();
+					MimeMessageHelper custHelper = new MimeMessageHelper(custMsg, true, "UTF-8");
+					custHelper.setFrom(fromEmail, "Loomelle Crochet");
+					custHelper.setTo(email);
+					custHelper.setSubject(customerSubject);
+					custHelper.setText(customerHtml, true);
+					mailSender.send(custMsg);
+					log.info("Contact inquiry acknowledgment sent to customer: {}", email);
+				} catch (Exception ce) {
+					log.warn("Could not send acknowledgment to customer: {}", email, ce);
+				}
+			}
+		} catch (Exception e) {
+			log.error("Failed to process and send contact us email from: {}", email, e);
+		}
+	}
+
+	private String buildContactAdminHtml(String name, String email, String inquiryType, String message) {
+		return "<!DOCTYPE html><html><body style=\"font-family: 'Helvetica Neue', Arial, sans-serif; color: #2C2320; background-color: #FAF6F2; padding: 24px;\">"
+				+ "<div style=\"max-width: 600px; margin: 0 auto; background: #FFFFFF; border-radius: 12px; padding: 28px; border: 1px solid #EDE4DC;\">"
+				+ "<div style=\"border-bottom: 2px solid #C27D86; padding-bottom: 12px; margin-bottom: 20px;\">"
+				+ "<h2 style=\"color: #8E4C55; margin: 0; font-size: 22px;\">✨ Loomelle Crochet Support</h2>"
+				+ "<p style=\"color: #786C66; margin: 4px 0 0; font-size: 14px;\">New Contact Form Submission</p>"
+				+ "</div>"
+				+ "<table style=\"width: 100%; border-collapse: collapse; margin-bottom: 20px;\">"
+				+ "<tr><td style=\"padding: 8px 0; color: #786C66; width: 140px; font-weight: bold;\">Customer Name:</td><td style=\"padding: 8px 0; color: #2C2320;\">" + (name != null ? name : "Anonymous") + "</td></tr>"
+				+ "<tr><td style=\"padding: 8px 0; color: #786C66; font-weight: bold;\">Email Address:</td><td style=\"padding: 8px 0;\"><a href=\"mailto:" + (email != null ? email : "") + "\" style=\"color: #C27D86; text-decoration: none;\">" + (email != null ? email : "N/A") + "</a></td></tr>"
+				+ "<tr><td style=\"padding: 8px 0; color: #786C66; font-weight: bold;\">Inquiry Topic:</td><td style=\"padding: 8px 0; color: #2C2320;\"><span style=\"background: #FBF0F1; color: #8E4C55; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: bold;\">" + (inquiryType != null ? inquiryType : "General") + "</span></td></tr>"
+				+ "</table>"
+				+ "<div style=\"background: #FAF6F2; border-left: 4px solid #C27D86; padding: 16px; border-radius: 6px; margin-bottom: 24px;\">"
+				+ "<h4 style=\"margin: 0 0 8px; color: #2C2320; font-size: 14px;\">Message Content:</h4>"
+				+ "<p style=\"margin: 0; color: #4A3E39; font-size: 14px; line-height: 1.6; white-space: pre-wrap;\">" + (message != null ? message : "") + "</p>"
+				+ "</div>"
+				+ "<p style=\"font-size: 13px; color: #A59891; margin: 0; border-top: 1px solid #EDE4DC; padding-top: 12px;\">You can directly reply to this email to get in touch with " + (name != null ? name : "the customer") + ".</p>"
+				+ "</div>"
+				+ "</body></html>";
+	}
+
+	private String buildContactCustomerAckHtml(String name, String inquiryType, String message) {
+		return "<!DOCTYPE html><html><body style=\"font-family: 'Helvetica Neue', Arial, sans-serif; color: #2C2320; background-color: #FAF6F2; padding: 24px;\">"
+				+ "<div style=\"max-width: 600px; margin: 0 auto; background: #FFFFFF; border-radius: 12px; padding: 28px; border: 1px solid #EDE4DC;\">"
+				+ "<div style=\"text-align: center; border-bottom: 1px solid #EDE4DC; padding-bottom: 16px; margin-bottom: 20px;\">"
+				+ "<h2 style=\"color: #8E4C55; margin: 0; font-size: 22px;\">Loomelle Crochet</h2>"
+				+ "<p style=\"color: #786C66; margin: 4px 0 0; font-size: 13px;\">Artisanal Handcrafted Creations</p>"
+				+ "</div>"
+				+ "<p style=\"font-size: 15px; color: #2C2320;\">Dear <strong>" + (name != null ? name : "Valued Customer") + "</strong>,</p>"
+				+ "<p style=\"font-size: 14px; color: #4A3E39; line-height: 1.6;\">Thank you for reaching out to <strong>Loomelle Crochet</strong>! We have received your inquiry regarding <em>" + (inquiryType != null ? inquiryType : "your message") + "</em>.</p>"
+				+ "<p style=\"font-size: 14px; color: #4A3E39; line-height: 1.6;\">Our artisan support team is reviewing your details and will get back to you within <strong>24 business hours</strong>.</p>"
+				+ "<div style=\"background: #FAF6F2; border-radius: 8px; padding: 14px; margin: 20px 0;\">"
+				+ "<strong style=\"font-size: 13px; color: #786C66; display: block; margin-bottom: 6px;\">Your Message Summary:</strong>"
+				+ "<p style=\"margin: 0; font-size: 13px; color: #4A3E39; line-height: 1.5; white-space: pre-wrap;\">" + (message != null ? message : "") + "</p>"
+				+ "</div>"
+				+ "<p style=\"font-size: 14px; color: #4A3E39;\">Warm regards,<br/><strong>The Loomelle Crochet Studio Team</strong></p>"
+				+ "</div>"
+				+ "</body></html>";
 	}
 
 }

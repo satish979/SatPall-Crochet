@@ -1,52 +1,124 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-
-<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
-<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
-<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
-<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
-<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
-
-<footer th:fragment="footer" class="footer mt-5 pt-5 pb-4">
-	<div class="container">
-		<div class="row g-4">
-			<div class="col-lg-4">
-				<h4 class="fw-bold">Loomelle Crochet</h4>
-				<p class="text-white-50">Premium handmade crochet products crafted with love and care.</p>
-				<div class="mt-3">
-					<a href="#" class="social-link"><i class="fa-brands fa-instagram"></i></a>
-					<a href="#" class="social-link"><i class="fa-brands fa-facebook-f"></i></a>
-					<a href="#" class="social-link"><i class="fa-brands fa-whatsapp"></i></a>
+<footer th:fragment="footer" class="loomelle-footer mt-5 pt-5 pb-4">
+	<!-- Trust Features Banner above footer columns -->
+	<div class="footer-perks-section mb-5 pb-4 border-bottom border-light border-opacity-10">
+		<div class="container">
+			<div class="row g-4 justify-content-center text-center">
+				<div class="col-6 col-md-3">
+					<div class="footer-perk-item">
+						<div class="perk-icon-wrap mb-2">
+							<i class="fa-solid fa-hands-holding-circle"></i>
+						</div>
+						<h6 class="perk-title mb-1">100% Handmade</h6>
+						<p class="perk-desc mb-0">Crafted one stitch at a time</p>
+					</div>
+				</div>
+				<div class="col-6 col-md-3">
+					<div class="footer-perk-item">
+						<div class="perk-icon-wrap mb-2">
+							<i class="fa-solid fa-feather-pointed"></i>
+						</div>
+						<h6 class="perk-title mb-1">Premium Soft Yarn</h6>
+						<p class="perk-desc mb-0">Gentle, durable & colorfast</p>
+					</div>
+				</div>
+				<div class="col-6 col-md-3">
+					<div class="footer-perk-item">
+						<div class="perk-icon-wrap mb-2">
+							<i class="fa-solid fa-gift"></i>
+						</div>
+						<h6 class="perk-title mb-1">Bespoke Customization</h6>
+						<p class="perk-desc mb-0">Personalized colors & sizes</p>
+					</div>
+				</div>
+				<div class="col-6 col-md-3">
+					<div class="footer-perk-item">
+						<div class="perk-icon-wrap mb-2">
+							<i class="fa-solid fa-shield-heart"></i>
+						</div>
+						<h6 class="perk-title mb-1">Secure Checkout</h6>
+						<p class="perk-desc mb-0">Trusted payment options</p>
+					</div>
 				</div>
 			</div>
-			<div class="col-md-4 col-lg-2">
-				<h6 class="fw-bold mb-3">Quick Links</h6>
-				<ul class="list-unstyled">
-					<li class="mb-2"><a th:href="@{/shop}">Shop</a></li>
-					<li class="mb-2"><a th:href="@{/about}">About</a></li>
-					<li class="mb-2"><a th:href="@{/faq}">FAQ</a></li>
-					<li class="mb-2"><a th:href="@{/contact}">Contact</a></li>
+		</div>
+	</div>
+
+	<!-- Main Footer Content -->
+	<div class="container">
+		<div class="row g-4 g-lg-5">
+			<!-- Brand Column -->
+			<div class="col-lg-4 col-md-12">
+				<div class="footer-brand mb-3">
+					<a th:href="@{/}" class="d-inline-flex align-items-center gap-2 text-white text-decoration-none">
+						<span class="footer-brand-icon">
+							<i class="fa-solid fa-spa"></i>
+						</span>
+						<span class="footer-brand-title font-heading">Loomelle Crochet</span>
+					</a>
+				</div>
+				<p class="footer-about-text">
+					Creating timeless handmade crochet treasures — from everlasting floral bouquets and plush amigurumi
+					to chic bags and cozy home accents. Woven with warmth, patience, and love.
+				</p>
+				<div class="footer-social-links mt-3 d-flex gap-2">
+					<a href="https://www.instagram.com/loomellecrochet?igsh=aGlnNWtmZzMyOHpk" class="social-icon-btn"
+						aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+						<i class="fa-brands fa-instagram"></i>
+					</a>
+					<a href="#" class="social-icon-btn" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+				</div>
+			</div>
+
+			<!-- Quick Links -->
+			<div class="col-6 col-md-4 col-lg-2">
+				<h6 class="footer-column-heading font-heading">Explore</h6>
+				<ul class="list-unstyled footer-nav-list">
+					<li><a th:href="@{/shop}">Shop All</a></li>
+					<li><a th:href="@{/about}">Our Story</a></li>
+					<li><a th:href="@{/faq}">FAQ & Custom Care</a></li>
+					<li><a th:href="@{/contact}">Contact Studio</a></li>
 				</ul>
 			</div>
-			<div class="col-md-4 col-lg-3">
-				<h6 class="fw-bold mb-3">Policies</h6>
-				<ul class="list-unstyled">
-					<li class="mb-2"><a th:href="@{/privacy-policy}">Privacy Policy</a></li>
-					<li class="mb-2"><a th:href="@{/terms}">Terms</a></li>
+
+			<!-- Policies & Help -->
+			<div class="col-6 col-md-4 col-lg-3">
+				<h6 class="footer-column-heading font-heading">Customer Care</h6>
+				<ul class="list-unstyled footer-nav-list">
+					<li><a th:href="@{/my-orders}">Track My Orders</a></li>
+					<li><a th:href="@{/privacy-policy}">Privacy Policy</a></li>
+					<li><a th:href="@{/terms}">Terms of Service</a></li>
+					<li><a th:href="@{/contact}">Custom Order Inquiry</a></li>
 				</ul>
 			</div>
+
+			<!-- Studio & Contact Info -->
 			<div class="col-md-4 col-lg-3">
-				<h6 class="fw-bold mb-3">Contact</h6>
-				<p class="text-white-50 mb-1"><i class="fa-solid fa-phone me-2"></i>+91 98765 43210</p>
-				<p class="text-white-50 mb-1"><i class="fa-solid fa-envelope me-2"></i>hello@loomellecrochet.in</p>
-				<p class="text-white-50"><i class="fa-solid fa-location-dot me-2"></i>Bengaluru, India</p>
+				<h6 class="footer-column-heading font-heading">Studio Contact</h6>
+				<ul class="list-unstyled footer-contact-list">
+					<li class="d-flex align-items-start gap-2 mb-2">
+						<i class="fa-solid fa-phone mt-1 text-accent"></i>
+						<span>+91 98765 43210</span>
+					</li>
+					<li class="d-flex align-items-start gap-2 mb-2">
+						<i class="fa-solid fa-envelope mt-1 text-accent"></i>
+						<span>loomellecrochet.support@gmail.com</span>
+					</li>
+					<li class="d-flex align-items-start gap-2">
+						<i class="fa-solid fa-location-dot mt-1 text-accent"></i>
+						<span>Bengaluru, Karnataka, India</span>
+					</li>
+				</ul>
 			</div>
 		</div>
-		<hr class="border-light opacity-25 my-4">
-		<div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
-			<small class="text-white-50">© 2026 Loomelle Crochet. All rights reserved.</small>
-			<small class="text-white-50">Made with care for handcrafted crochet lovers.</small>
+
+		<!-- Footer Bottom Bar -->
+		<hr class="footer-divider my-4">
+		<div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 footer-bottom-text">
+			<small>&copy; 2026 Loomelle Crochet. All rights reserved. Handcrafted with heart.</small>
+			<small class="text-white-50">Every piece tells a handmade story.</small>
 		</div>
 	</div>
 </footer>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{header :: head('Admin Orders')}"></head>
@@ -6,86 +6,117 @@
 <body>
 	<div th:replace="~{header :: navbar}"></div>
 
+	<!-- Breadcrumb Banner -->
+	<section class="py-3 bg-warm-surface border-bottom border-light">
+		<div class="container">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0 small">
+					<li class="breadcrumb-item"><a th:href="@{/}" class="text-muted"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+					<li class="breadcrumb-item"><a th:href="@{/dashboard}" class="text-muted">Dashboard</a></li>
+					<li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">Orders</li>
+				</ol>
+			</nav>
+		</div>
+	</section>
+
 	<section class="py-5">
 		<div class="container">
-			<div class="d-flex justify-content-between align-items-center mb-4">
+			<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
 				<div>
-					<h1 class="mb-1">Order Management</h1>
-					<p class="text-muted mb-0">View and manage all orders.</p>
+					<span class="badge-soft mb-2 d-inline-block">Fulfillment & Sales</span>
+					<h1 class="font-heading h2 mb-1">Customer Orders</h1>
+					<p class="text-muted mb-0 small">Monitor payments, track parcels, and update delivery statuses.</p>
 				</div>
 			</div>
 
-			<div class="card-soft p-3 mb-4">
-				<form th:action="@{/admin/orders}" method="get" class="row g-3">
+			<!-- Search & Filter Card -->
+			<div class="card-soft p-4 mb-4">
+				<form th:action="@{/admin/orders}" method="get" class="row g-3 align-items-end">
 					<div class="col-md-4">
-						<input type="text" name="search" class="form-control"
-							placeholder="Search order #, name, phone, email" th:value="${param.search}">
+						<label class="form-label small">Search Keyword</label>
+						<input type="text" name="search" class="form-control form-control-sm"
+							placeholder="Order #, name, mobile, email" th:value="${param.search}">
 					</div>
 					<div class="col-md-3">
-						<select name="status" class="form-select">
-							<option value="">All Statuses</option>
+						<label class="form-label small">Order Status</label>
+						<select name="status" class="form-select form-select-sm">
+							<option value="">All Fulfillment Statuses</option>
 							<option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"
 								th:selected="${param.status == s}"></option>
 						</select>
 					</div>
-					<div class="col-md-2">
-						<select name="paymentStatus" class="form-select">
-							<option value="">All Payments</option>
+					<div class="col-md-3">
+						<label class="form-label small">Payment Status</label>
+						<select name="paymentStatus" class="form-select form-select-sm">
+							<option value="">All Payment States</option>
 							<option th:each="ps : ${paymentStatuses}" th:value="${ps}" th:text="${ps}"
 								th:selected="${param.paymentStatus == ps}"></option>
 						</select>
 					</div>
-					<div class="col-md-1">
-						<button type="submit" class="btn btn-primary w-100">Search</button>
-					</div>
-					<div class="col-md-2">
-						<a th:href="@{/admin/orders}" class="btn btn-outline-secondary w-100">Reset</a>
+					<div class="col-md-2 d-flex gap-2">
+						<button type="submit" class="btn btn-primary btn-sm flex-grow-1">
+							<i class="fa-solid fa-magnifying-glass me-1"></i> Search
+						</button>
+						<a th:href="@{/admin/orders}" class="btn btn-outline-secondary btn-sm">Reset</a>
 					</div>
 				</form>
 			</div>
 
-			<div class="card-soft p-0 overflow-hidden">
+			<!-- Orders Table Card -->
+			<div class="card-soft p-0 overflow-hidden shadow-sm">
 				<div class="table-responsive">
-					<table class="table table-bordered align-middle text-nowrap mb-0">
-						<thead class="table-light">
+					<table class="table align-middle text-nowrap mb-0">
+						<thead>
 							<tr>
 								<th>Order #</th>
-								<th>Customer</th>
-								<th>Date</th>
-								<th>Total</th>
-								<th>Payment</th>
-								<th>Status</th>
-								<th>Action</th>
+								<th>Customer Details</th>
+								<th>Date Placed</th>
+								<th>Amount</th>
+								<th>Payment Method & Status</th>
+								<th>Fulfillment</th>
+								<th class="text-end">Action</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr th:each="order : ${ordersPage.content}">
-								<td th:text="${order.orderNumber}">ORD-001</td>
 								<td>
-									<div th:text="${order.customerName}">John Doe</div>
-									<small class="text-muted" th:text="${order.phone}">9876543210</small>
+									<strong class="font-heading text-dark" th:text="${order.orderNumber}">ORD-001</strong>
+								</td>
+								<td>
+									<div class="fw-semibold text-dark" th:text="${order.customerName}">John Doe</div>
+									<small class="text-muted"><i class="fa-solid fa-phone small me-1"></i><span th:text="${order.phone}">9876543210</span></small>
 								</td>
 								<td th:text="${#temporals.format(order.createdDate, 'dd MMM yyyy')}">01 Jan 2025</td>
-								<td class="fw-bold">₹<span th:text="${order.total}">0</span></td>
+								<td class="fw-bold price">₹<span th:text="${order.total}">0</span></td>
 								<td>
-									<div th:text="${order.paymentMethod}">COD</div>
-									<span th:text="${order.paymentStatus}">PENDING</span>
+									<div class="small fw-semibold text-dark" th:text="${order.paymentMethod}">COD</div>
+									<span th:if="${order.paymentStatus == 'SUCCESS' or order.paymentStatus == 'PAID'}" class="badge-status-success small">PAID</span>
+									<span th:if="${order.paymentStatus == 'FAILED'}" class="badge-status-danger small">FAILED</span>
+									<span th:if="${order.paymentStatus != 'SUCCESS' and order.paymentStatus != 'PAID' and order.paymentStatus != 'FAILED'}" class="badge-status-warning small" th:text="${order.paymentStatus}">PENDING</span>
 								</td>
 								<td>
-									<span th:text="${order.status}">PENDING</span>
+									<span th:if="${order.status == 'DELIVERED'}" class="badge-status-success small">DELIVERED</span>
+									<span th:if="${order.status == 'CANCELLED'}" class="badge-status-danger small">CANCELLED</span>
+									<span th:if="${order.status != 'DELIVERED' and order.status != 'CANCELLED'}" class="badge-status-warning small" th:text="${order.status}">PENDING</span>
 								</td>
-								<td>
-									<a th:href="@{'/admin/orders/' + ${order.id}}"
-										class="btn btn-sm btn-outline-primary">Manage</a>
+								<td class="text-end">
+									<a th:href="@{'/admin/orders/' + ${order.id}}" class="btn btn-sm btn-outline-primary">
+										<i class="fa-solid fa-sliders me-1"></i> Manage
+									</a>
 								</td>
 							</tr>
 							<tr th:if="${ordersPage.empty}">
-								<td colspan="7" class="text-center text-muted">No orders found.</td>
+								<td colspan="7" class="text-center text-muted py-5">
+									<i class="fa-solid fa-box-open mb-2 text-muted" style="font-size: 2rem;"></i>
+									<p class="mb-0 small">No customer orders found matching your search filter.</p>
+								</td>
 							</tr>
 						</tbody>
 					</table>
 				</div>
-				<div class="p-3" th:if="${ordersPage.totalPages > 1}">
+
+				<!-- Pagination -->
+				<div class="p-3 border-top bg-light bg-opacity-50" th:if="${ordersPage.totalPages > 1}">
 					<nav>
 						<ul class="pagination justify-content-center mb-0">
 							<li class="page-item" th:classappend="${ordersPage.number == 0} ? 'disabled'">

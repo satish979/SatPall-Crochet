@@ -1,84 +1,163 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-
-
-<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
-<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
-<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
-<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
-<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
-
-<head th:replace="~{header :: head('Product Details')}"></head>
+<head th:replace="~{header :: head(${product.name} + ' - Details')}"></head>
 
 <body>
 	<div th:replace="~{header :: navbar}"></div>
 
-	<section class="py-4">
+	<!-- Breadcrumb Section -->
+	<section class="py-3 bg-warm-surface border-bottom border-light">
 		<div class="container">
-			<div class="row g-3 g-md-4">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0 small">
+					<li class="breadcrumb-item"><a th:href="@{/}" class="text-muted"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+					<li class="breadcrumb-item"><a th:href="@{/shop}" class="text-muted">Shop</a></li>
+					<li class="breadcrumb-item active text-dark fw-semibold text-truncate" style="max-width: 300px;" aria-current="page" th:text="${product.name}">Product Name</li>
+				</ol>
+			</nav>
+		</div>
+	</section>
+
+	<!-- Main Product Detail View -->
+	<section class="py-5">
+		<div class="container">
+			<div class="row g-4 g-lg-5">
+				<!-- Left Column: Gallery -->
 				<div class="col-lg-6">
-					<div class="card-soft p-2 p-md-3">
-						<img id="mainProductImage"
-							th:src="${product.imageUrl != null ? product.imageUrl : '/images/product-placeholder.jpg'}"
-							class="rounded-3 mb-2 product-details-img"
-							alt="Product"
-							style="width: 100%; max-height: 280px; object-fit: contain; background: #f8f9fa;">
-						<div class="row g-2" th:if="${product.additionalImages != null and !#lists.isEmpty(product.additionalImages)}">
-							<div class="col-4 col-sm-3" th:each="image : ${product.additionalImages}">
-								<img th:src="${image}"
-									class="rounded-2 thumb-image"
-									alt="Product image"
-									style="width: 100%; height: 50px; object-fit: contain; background: #f8f9fa; cursor: pointer;"
-									th:attr="data-image=${image}">
+					<div class="product-gallery-container">
+						<!-- Main showcase viewport -->
+						<div class="main-image-viewport position-relative">
+							<span class="product-badge">
+								<i class="fa-solid fa-hands-holding-heart text-accent me-1"></i> 100% Handcrafted
+							</span>
+							<img id="mainProductImage"
+								th:src="${product.imageUrl != null ? product.imageUrl : '/images/product-placeholder.jpg'}"
+								class="product-details-img"
+								th:alt="${product.name}">
+						</div>
+
+						<!-- Thumbnail Gallery -->
+						<div class="thumbnails-row" th:if="${product.additionalImages != null and !#lists.isEmpty(product.additionalImages)}">
+							<!-- Main Image Thumbnail -->
+							<div class="thumbnail-wrapper active" th:data-image="${product.imageUrl}">
+								<img th:src="${product.imageUrl}" class="thumb-image" alt="Primary thumbnail">
+							</div>
+							<!-- Additional Thumbnails -->
+							<div class="thumbnail-wrapper" th:each="image : ${product.additionalImages}" th:data-image="${image}">
+								<img th:src="${image}" class="thumb-image" alt="Gallery thumbnail" th:attr="data-image=${image}">
+							</div>
+						</div>
+					</div>
+
+					<!-- Trust badges below gallery -->
+					<div class="row g-2 mt-3 text-center">
+						<div class="col-4">
+							<div class="p-2 bg-soft-cream rounded-3 border border-light">
+								<i class="fa-solid fa-gift text-accent mb-1 d-block"></i>
+								<small class="fw-semibold text-dark d-block">Gift Boxed</small>
+								<small class="text-muted" style="font-size: 0.72rem;">Ready to present</small>
+							</div>
+						</div>
+						<div class="col-4">
+							<div class="p-2 bg-soft-cream rounded-3 border border-light">
+								<i class="fa-solid fa-feather text-accent mb-1 d-block"></i>
+								<small class="fw-semibold text-dark d-block">Soft Yarn</small>
+								<small class="text-muted" style="font-size: 0.72rem;">Premium cotton</small>
+							</div>
+						</div>
+						<div class="col-4">
+							<div class="p-2 bg-soft-cream rounded-3 border border-light">
+								<i class="fa-solid fa-shield-heart text-accent mb-1 d-block"></i>
+								<small class="fw-semibold text-dark d-block">Made with Love</small>
+								<small class="text-muted" style="font-size: 0.72rem;">Artisan quality</small>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="col-lg-6">
-					<span class="badge-soft mb-2 d-inline-block">Handmade Crochet</span>
-					<h1 class="section-title mb-2" th:text="${product.name}">Crochet Product</h1>
-					<div class="rating my-2">
-						<i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-							class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-							class="fa-regular fa-star"></i>
-						<span class="ms-2 text-muted">(24 reviews)</span>
-					</div>
-					<div class="price mb-2">₹<span th:text="${product.price}">799</span></div>
-					<p class="text-muted mb-3" th:text="${product.description != null ? product.description : 'Beautiful handmade crochet product crafted with premium yarn and elegant finishing.'}">Beautiful handmade crochet product crafted with premium yarn and elegant finishing.</p>
 
-					<div class="row g-2 my-3">
-						<div class="col-md-4">
-							<label class="form-label">Quantity</label>
-							<div class="input-group quantity-control">
-								<button class="btn btn-outline-primary btn-sm" data-qty-minus="#qty">-</button>
-								<input type="number" id="qty" class="form-control qty-input" value="1" min="1">
-								<button class="btn btn-outline-primary btn-sm" data-qty-plus="#qty">+</button>
+				<!-- Right Column: Product Information -->
+				<div class="col-lg-6">
+					<div class="product-info-panel">
+						<span class="badge-soft mb-2 d-inline-block">
+							<i class="fa-solid fa-spa me-1"></i> Loomelle Artisan Exclusive
+						</span>
+
+						<h1 class="font-heading mb-2" style="font-size: clamp(1.6rem, 2.8vw, 2.2rem);" th:text="${product.name}">Crochet Product</h1>
+
+						<div class="d-flex align-items-center gap-2 mb-3">
+							<div class="rating">
+								<i class="fa-solid fa-star"></i>
+								<i class="fa-solid fa-star"></i>
+								<i class="fa-solid fa-star"></i>
+								<i class="fa-solid fa-star"></i>
+								<i class="fa-solid fa-star"></i>
+							</div>
+							<span class="small fw-semibold text-dark">5.0</span>
+							<span class="text-muted small">&bull; (24 verified handcrafted reviews)</span>
+						</div>
+
+						<div class="price-section d-flex align-items-baseline gap-2 mb-4">
+							<span class="price font-heading text-dark" style="font-size: 1.85rem;">₹<span th:text="${product.price}">799</span></span>
+							<span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill small px-2 py-1">In Stock &bull; Ready to Ship</span>
+						</div>
+
+						<div class="mb-4">
+							<h6 class="fw-bold small text-uppercase text-muted letter-spacing-1 mb-2">Description</h6>
+							<p class="text-muted mb-0" style="line-height: 1.7;" th:text="${product.description != null ? product.description : 'Beautiful handmade crochet piece crafted with premium milk cotton yarn, delicate stitching, and timeless artisanal finishing.'}">
+								Beautiful handmade crochet piece crafted with premium milk cotton yarn, delicate stitching, and timeless artisanal finishing.
+							</p>
+						</div>
+
+						<!-- Quantity Selector -->
+						<div class="mb-4">
+							<label class="form-label small text-muted text-uppercase fw-bold mb-2">Quantity</label>
+							<div class="d-flex align-items-center gap-3">
+								<div class="quantity-control">
+									<button type="button" class="btn" data-qty-minus="#qty" aria-label="Decrease quantity">-</button>
+									<input type="number" id="qty" class="qty-input" value="1" min="1" max="50" readonly>
+									<button type="button" class="btn" data-qty-plus="#qty" aria-label="Increase quantity">+</button>
+								</div>
+								<span class="small text-muted">Bespoke batch limits apply</span>
 							</div>
 						</div>
-					</div>
 
-					<div class="d-flex gap-2 flex-wrap">
-
-							<button class="btn btn-primary" id="addToCartBtn" th:data-product-id="${product.id}">
-								<i class="fa-solid fa-cart-shopping"></i>
-								Add to Cart
+						<!-- Action Buttons -->
+						<div class="d-flex gap-3 flex-wrap mb-4 pb-2">
+							<button type="button" class="btn btn-primary btn-lg flex-grow-1" id="addToCartBtn" th:data-product-id="${product.id}">
+								<i class="fa-solid fa-bag-shopping"></i>
+								<span>Add to Cart</span>
 							</button>
-
-							<button class="btn btn-outline-primary" id="buyNowBtn"
-								th:data-product-id="${product.id}">
+							<button type="button" class="btn btn-outline-primary btn-lg flex-grow-1" id="buyNowBtn" th:data-product-id="${product.id}">
 								<i class="fa-solid fa-bolt"></i>
-								Buy Now
+								<span>Buy Now</span>
 							</button>
-
+							<button type="button" class="wishlist-btn" style="width: 48px; height: 48px; font-size: 1.1rem;" th:data-product-id="${product.id}" aria-label="Wishlist">
+								<i class="fa-regular fa-heart"></i>
+							</button>
 						</div>
-					<div class="card-soft p-3 mt-3">
-						<h5 class="fw-bold mb-2">Specifications</h5>
-						<ul class="mb-0 text-muted">
-							<li>Material: Premium yarn</li>
-							<li>Handmade with care</li>
-							<li>Custom colors available</li>
-						</ul>
+
+						<!-- Specifications Accordion/Card -->
+						<div class="product-specs-card mb-3">
+							<h6 class="font-heading mb-3"><i class="fa-solid fa-circle-info me-2 text-primary"></i>Artisan Specifications & Care</h6>
+							<ul class="list-unstyled specs-list mb-0">
+								<li><i class="fa-solid fa-check"></i><strong>Material:</strong> 100% Premium Milk Cotton & Soft Fiber Fill</li>
+								<li><i class="fa-solid fa-check"></i><strong>Technique:</strong> Hand crocheted single/double loop stitch</li>
+								<li><i class="fa-solid fa-check"></i><strong>Care Instructions:</strong> Spot clean with cold water or gentle hand wash, dry flat</li>
+								<li><i class="fa-solid fa-check"></i><strong>Customization:</strong> Custom colorways available upon message</li>
+							</ul>
+						</div>
+
+						<!-- Delivery & Shipping info -->
+						<div class="p-3 bg-white rounded-3 border border-light">
+							<div class="d-flex align-items-start gap-3">
+								<i class="fa-solid fa-truck-fast text-primary mt-1" style="font-size: 1.2rem;"></i>
+								<div>
+									<strong class="d-block small text-dark">Fast Dispatch & Safe Delivery</strong>
+									<span class="small text-muted">Orders packed in protective corrugated gift boxes and dispatched within 24-48 hours.</span>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

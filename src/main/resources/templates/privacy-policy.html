@@ -1,25 +1,48 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
-<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
-<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
-<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
-<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
-<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
 
 <head th:replace="~{header :: head('Privacy Policy')}"></head>
 
 <body>
 	<div th:replace="~{header :: navbar}"></div>
-	<section class="py-4">
+
+	<!-- Hero Banner -->
+	<section class="py-5 bg-warm-surface border-bottom border-light text-center">
 		<div class="container">
-			<div class="card-soft p-3">
-				<h1 class="section-title">Privacy Policy</h1>
-				<p class="text-muted">We respect customer privacy and only collect information necessary to process
-					orders.</p>
+			<span class="hero-pill mb-3">Privacy & Trust</span>
+			<h1 class="hero-title mb-3">Privacy Policy</h1>
+			<p class="section-subtitle mx-auto">
+				How Loomelle Crochet respects, protects, and handles your personal data.
+			</p>
+		</div>
+	</section>
+
+	<section class="py-5">
+		<div class="container" style="max-width: 820px;">
+			<div class="card-soft p-4 p-md-5">
+				<h5 class="font-heading mb-3">1. Information We Collect</h5>
+				<p class="text-muted small mb-4" style="line-height: 1.7;">
+					We only collect essential details required to process, fulfill, and deliver your orders — such as your name, delivery address, email, and phone number.
+				</p>
+
+				<h5 class="font-heading mb-3">2. How We Use Your Data</h5>
+				<p class="text-muted small mb-4" style="line-height: 1.7;">
+					Your information is used strictly to send order status updates, OTP login codes, shipping notifications, and custom inquiry replies. We never sell, rent, or trade your personal data to third-party marketers.
+				</p>
+
+				<h5 class="font-heading mb-3">3. Payment Security</h5>
+				<p class="text-muted small mb-4" style="line-height: 1.7;">
+					We do not store your credit card, debit card, or net banking passwords. All online payments are securely processed through industry-standard encrypted channels (Razorpay).
+				</p>
+
+				<h5 class="font-heading mb-3">4. Contacting Us</h5>
+				<p class="text-muted small mb-0" style="line-height: 1.7;">
+					If you have questions regarding your stored profile data or wish to delete your account, please reach out to us at <strong class="text-dark">loomellecrochet.support@gmail.com</strong>.
+				</p>
 			</div>
 		</div>
 	</section>
+
 	<div th:replace="~{footer :: footer}"></div>
 	<div th:replace="~{scripts :: scripts}"></div>
 </body>

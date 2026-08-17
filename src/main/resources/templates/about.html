@@ -1,30 +1,131 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-
-
-<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
-<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
-<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
-<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
-<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
-
-<head th:replace="~{header :: head('About')}"></head>
+<head th:replace="~{header :: head('Our Story')}"></head>
 
 <body>
 	<div th:replace="~{header :: navbar}"></div>
 
-	<section class="py-4">
+	<!-- Hero Story Banner -->
+	<section class="py-5 bg-warm-surface border-bottom border-light">
+		<div class="container text-center">
+			<span class="hero-pill mb-3">Our Artisanal Journey</span>
+			<h1 class="hero-title mb-3">Handmade with Heart, Stitched with Care</h1>
+			<p class="section-subtitle mx-auto">
+				At Loomelle Crochet, we believe that true luxury lies in patience, slow craftsmanship, and genuine human warmth.
+			</p>
+		</div>
+	</section>
+
+	<!-- Main Story Section -->
+	<section class="py-5">
 		<div class="container">
-			<div class="card-soft p-3">
-				<h1 class="section-title mb-2">About Loomelle Crochet</h1>
-				<p class="text-muted">
-					Loomelle Crochet creates premium handmade crochet gifts crafted with love, detail, and quality.
-				</p>
-				<p class="text-muted">
-					Our products are designed for birthdays, anniversaries, baby gifting, home decor, and custom
-					celebrations.
-				</p>
+			<div class="row align-items-center g-4 g-lg-5 mb-5">
+				<div class="col-lg-6">
+					<div class="p-4 p-md-5 bg-soft-cream rounded-4 border border-light text-center position-relative">
+						<div class="brand-icon-wrapper mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2.2rem;">
+							<i class="fa-solid fa-spa"></i>
+						</div>
+						<h3 class="font-heading mb-2">The Loomelle Philosophy</h3>
+						<p class="text-muted small mb-0">
+							"Every single crochet stitch holds time, gentle rhythm, and genuine affection — turning simple strands of yarn into lifelong memories."
+						</p>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<span class="badge-soft mb-2 d-inline-block">Where It Began</span>
+					<h2 class="section-title mb-3">A Celebration of Slow Artistry</h2>
+					<p class="text-muted mb-3" style="line-height: 1.7;">
+						Loomelle Crochet was born out of an enduring love for fiber craft. In a fast-paced world dominated by mass factory production, we set out to build a sanctuary for slow, intentional, and heartfelt gifting.
+					</p>
+					<p class="text-muted mb-4" style="line-height: 1.7;">
+						From our everlasting botanical bouquets that never wither to our whimsical amigurumi stuffed companions and chic everyday market totes, every creation is woven one single stitch at a time.
+					</p>
+					<div class="d-flex gap-3">
+						<a th:href="@{/shop}" class="btn btn-primary">Browse Handcrafted Pieces</a>
+						<a th:href="@{/contact}" class="btn btn-outline-secondary">Custom Order</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Pillars of Craftsmanship -->
+			<div class="text-center mb-4 pt-3">
+				<span class="hero-pill mb-2">Our Core Values</span>
+				<h2 class="section-title mb-2">What Sets Loomelle Apart</h2>
+			</div>
+
+			<div class="row g-4 mb-5">
+				<div class="col-md-4">
+					<div class="card-soft p-4 h-100 text-center">
+						<div class="perk-icon-wrap mx-auto mb-3" style="width: 56px; height: 56px; font-size: 1.4rem;">
+							<i class="fa-solid fa-hands-holding-heart"></i>
+						</div>
+						<h5 class="font-heading mb-2">100% Genuine Handcraft</h5>
+						<p class="text-muted small mb-0">
+							No industrial knitting machines or automated shortcuts. Every loop is hooked by our artisan hands.
+						</p>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card-soft p-4 h-100 text-center">
+						<div class="perk-icon-wrap mx-auto mb-3" style="width: 56px; height: 56px; font-size: 1.4rem;">
+							<i class="fa-solid fa-feather"></i>
+						</div>
+						<h5 class="font-heading mb-2">Hypoallergenic Milk Cotton</h5>
+						<p class="text-muted small mb-0">
+							We carefully source ultra-soft, colorfast, skin-friendly yarn that stays vibrant and soft for years.
+						</p>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card-soft p-4 h-100 text-center">
+						<div class="perk-icon-wrap mx-auto mb-3" style="width: 56px; height: 56px; font-size: 1.4rem;">
+							<i class="fa-solid fa-gift"></i>
+						</div>
+						<h5 class="font-heading mb-2">Thoughtful Presentation</h5>
+						<p class="text-muted small mb-0">
+							Each item is nestled in eco-friendly tissue, tied with satin ribbon, and accompanied by hand-stamped care cards.
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- How It's Made / Step by step -->
+			<div class="card-soft p-4 p-lg-5 bg-warm-surface border-light">
+				<div class="text-center mb-4">
+					<h3 class="font-heading mb-1">Our 4-Stage Making Process</h3>
+					<p class="text-muted small">From a simple skein of yarn to your doorstep</p>
+				</div>
+				<div class="row g-3 text-center">
+					<div class="col-6 col-lg-3">
+						<div class="p-3 bg-white rounded-3 border border-light h-100">
+							<span class="badge-soft mb-2 d-inline-block">01</span>
+							<h6 class="font-heading mb-1">Design & Color</h6>
+							<small class="text-muted">Palette selection and custom pattern draft</small>
+						</div>
+					</div>
+					<div class="col-6 col-lg-3">
+						<div class="p-3 bg-white rounded-3 border border-light h-100">
+							<span class="badge-soft mb-2 d-inline-block">02</span>
+							<h6 class="font-heading mb-1">Artisan Stitching</h6>
+							<small class="text-muted">Hours of precision looping & shaping</small>
+						</div>
+					</div>
+					<div class="col-6 col-lg-3">
+						<div class="p-3 bg-white rounded-3 border border-light h-100">
+							<span class="badge-soft mb-2 d-inline-block">03</span>
+							<h6 class="font-heading mb-1">Quality Inspection</h6>
+							<small class="text-muted">Tension checks, weave locks & finishing</small>
+						</div>
+					</div>
+					<div class="col-6 col-lg-3">
+						<div class="p-3 bg-white rounded-3 border border-light h-100">
+							<span class="badge-soft mb-2 d-inline-block">04</span>
+							<h6 class="font-heading mb-1">Gift Packaging</h6>
+							<small class="text-muted">Boxed with love and insured dispatch</small>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</section>

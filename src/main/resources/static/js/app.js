@@ -1,9 +1,6 @@
-const CONTEXT_PATH = '/Loomellecrochet';
+﻿const CONTEXT_PATH = '/Loomellecrochet';
 
 document.addEventListener('DOMContentLoaded', function() {
-    document.body.classList.add('page-loading');
-
-    initSkeletonLoader();
     initNavbarActiveLink();
     initSpinner();
     initImagePreview();
@@ -12,12 +9,10 @@ document.addEventListener('DOMContentLoaded', function() {
     initTooltips();
     initToastContainers();
     initButtons();
-    initLazyImages();
     initScrollReveal();
     initDashboardStats();
     initProgressBars();
     initRazorpayScript();
-
     initCartActions();
 });
 
@@ -25,7 +20,7 @@ function initNavbarActiveLink() {
     const path = window.location.pathname;
     document.querySelectorAll('.nav-link').forEach((link) => {
         const href = link.getAttribute('href');
-        if (href && href !== '#' && path.includes(href.replace('/', ''))) {
+        if (href && href !== '#' && path.includes(href.replace('/', '')) && href !== '/' && href !== CONTEXT_PATH + '/') {
             link.classList.add('active');
         }
     });
@@ -80,7 +75,7 @@ function initSearchSuggestions() {
         }
 
         timer = setTimeout(function() {
-            fetch(`/search/suggestions?keyword=${encodeURIComponent(keyword)}`)
+            fetch(CONTEXT_PATH + `/search/suggestions?keyword=${encodeURIComponent(keyword)}`)
                 .then((res) => res.json())
                 .then((items) => {
                     box.innerHTML = '';
@@ -91,7 +86,7 @@ function initSearchSuggestions() {
 
                     items.forEach((item) => {
                         const el = document.createElement('a');
-                        el.href = `/products/${item.id}`;
+                        el.href = `${CONTEXT_PATH}/product-details/${item.id}`;
                         el.className = 'dropdown-item';
                         el.textContent = item.name;
                         box.appendChild(el);
@@ -136,7 +131,7 @@ function initQuantityButtons() {
 }
 
 function initTooltips() {
-    if (window.bootstrap) {
+    if (window.bootstrap && bootstrap.Tooltip) {
         document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => {
             new bootstrap.Tooltip(el);
         });
@@ -148,19 +143,29 @@ function initToastContainers() {
         let container = document.querySelector('.toast-container');
         if (!container) {
             container = document.createElement('div');
-            container.className = 'toast-container';
+            container.className = 'toast-container position-fixed top-0 end-0 p-3';
+            container.style.zIndex = '1090';
             document.body.appendChild(container);
         }
 
         const toast = document.createElement('div');
-        toast.className = `alert alert-${type} shadow`;
-        toast.style.minWidth = '280px';
-        toast.innerHTML = message;
+        toast.className = `toast luxury-toast align-items-center show mb-2 border-0 shadow-lg`;
+        toast.innerHTML = `
+            <div class="d-flex align-items-center p-2">
+                <div class="toast-icon-wrap me-2">
+                    <i class="fa-solid ${type === 'danger' ? 'fa-circle-exclamation text-danger' : 'fa-circle-check text-success'}"></i>
+                </div>
+                <div class="toast-body flex-grow-1 p-1">
+                    <span class="fw-semibold">${message}</span>
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" onclick="this.closest('.toast').remove()"></button>
+            </div>
+        `;
         container.appendChild(toast);
 
         setTimeout(() => {
             toast.remove();
-        }, 3000);
+        }, 3500);
     };
 }
 
@@ -178,76 +183,13 @@ function initButtons() {
             ripple.style.top = `${event.clientY - rect.top}px`;
             button.appendChild(ripple);
             setTimeout(() => ripple.remove(), 700);
-            button.classList.add('is-loading');
-            setTimeout(() => button.classList.remove('is-loading'), 850);
         });
     });
-}
-
-function initLazyImages() {
-    const placeholder = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="640" height="480" viewBox="0 0 640 480"%3E%3Cdefs%3E%3ClinearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"%3E%3Cstop offset="0%" stop-color="%23f6ecee"/%3E%3Cstop offset="100%" stop-color="%23efe3e6"/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width="640" height="480" fill="url(%23g)"/%3E%3Ccircle cx="160" cy="200" r="70" fill="%23ffffff" fill-opacity="0.3"/%3E%3Crect x="130" y="300" width="380" height="24" rx="12" fill="%23ffffff" fill-opacity="0.3"/%3E%3C/svg%3E';
-
-    const observer = new IntersectionObserver((entries, obs) => {
-        entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            const img = entry.target;
-            obs.unobserve(img);
-            revealImage(img, placeholder);
-        });
-    }, { rootMargin: '120px 0px' });
-
-    document.querySelectorAll('img').forEach((img) => {
-        if (img.closest('.image-shell') || img.classList.contains('lazy-image')) return;
-
-        const actualSrc = img.getAttribute('src');
-        const shell = document.createElement('div');
-        shell.className = 'image-shell';
-        img.parentNode.insertBefore(shell, img);
-        shell.appendChild(img);
-
-        img.classList.add('lazy-image');
-        img.setAttribute('loading', 'lazy');
-        img.setAttribute('decoding', 'async');
-        img.setAttribute('src', placeholder);
-        img.setAttribute('data-actual-src', actualSrc || '');
-        img.setAttribute('alt', img.getAttribute('alt') || 'Product image');
-
-        if (img.complete && img.naturalWidth > 0) {
-            revealImage(img, placeholder);
-        } else {
-            observer.observe(img);
-        }
-    });
-}
-
-function revealImage(img, placeholder) {
-    if (img.dataset.revealed === 'true') return;
-    img.dataset.revealed = 'true';
-    const actualSrc = img.getAttribute('data-actual-src') || img.getAttribute('src');
-    const shell = img.closest('.image-shell');
-
-    if (actualSrc && actualSrc !== placeholder) {
-        img.setAttribute('src', actualSrc);
-    }
-
-    img.addEventListener('load', function() {
-        if (shell) {
-            shell.classList.add('is-loaded');
-        }
-        img.classList.add('is-loaded');
-    });
-
-    if (img.complete && img.naturalWidth > 0) {
-        if (shell) shell.classList.add('is-loaded');
-        img.classList.add('is-loaded');
-    }
 }
 
 function initScrollReveal() {
-    document.querySelectorAll('.hero-title, .hero-subtitle, .section-title, .section-subtitle, .card-soft, .product-card, .category-card, .footer, .dashboard-stat-card, .dashboard-action, .table, .form-card, .page-section, .btn').forEach((el, index) => {
-        el.classList.add('reveal-on-scroll');
-        el.style.setProperty('--reveal-delay', `${index * 70}ms`);
-    });
+    const revealElements = document.querySelectorAll('.card-soft, .product-card, .category-card, .footer-perk-item, .dashboard-stat-card');
+    if (!('IntersectionObserver' in window)) return;
 
     const observer = new IntersectionObserver((entries, obs) => {
         entries.forEach((entry) => {
@@ -255,18 +197,13 @@ function initScrollReveal() {
             entry.target.classList.add('is-visible');
             obs.unobserve(entry.target);
         });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.1 });
 
-    document.querySelectorAll('.reveal-on-scroll').forEach((el) => observer.observe(el));
+    revealElements.forEach((el) => observer.observe(el));
 }
 
 function initDashboardStats() {
-    document.querySelectorAll('[data-count]').forEach((el, index) => {
-        const card = el.closest('.dashboard-stat-card');
-        if (card) {
-            card.classList.add('reveal-on-scroll');
-            card.style.setProperty('--reveal-delay', `${index * 90}ms`);
-        }
+    document.querySelectorAll('[data-count]').forEach((el) => {
         const target = parseFloat(el.dataset.count || '0');
         const prefix = el.dataset.prefix || '';
         const suffix = el.dataset.suffix || '';
@@ -289,8 +226,7 @@ function initDashboardStats() {
 
 function initProgressBars() {
     document.querySelectorAll('.progress-bar[data-progress]').forEach((bar) => {
-        const fill = bar.querySelector('span');
-        if (!fill) return;
+        const fill = bar.querySelector('span') || bar;
         const target = parseFloat(bar.dataset.progress || '0');
         requestAnimationFrame(() => {
             fill.style.width = `${Math.max(0, Math.min(100, target))}%`;
@@ -301,7 +237,7 @@ function initProgressBars() {
 function initCartActions() {
     const addBtn = document.getElementById('addToCartBtn');
     const buyBtn = document.getElementById('buyNowBtn');
-    const wishlistBtn = document.getElementById('wishlistBtn');
+    const wishlistBtns = document.querySelectorAll('.wishlist-btn');
 
     if (addBtn) {
         addBtn.addEventListener('click', function() {
@@ -310,8 +246,8 @@ function initCartActions() {
             const qty = qtyInput ? qtyInput.value : '1';
 
             addBtn.disabled = true;
-            const originalText = addBtn.textContent;
-            addBtn.textContent = 'Adding...';
+            const originalHtml = addBtn.innerHTML;
+            addBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Adding...';
 
             fetch(CONTEXT_PATH + '/api/cart/add', {
                 method: 'POST',
@@ -324,16 +260,21 @@ function initCartActions() {
                 .then(async response => {
                     const text = await response.text();
                     if (!response.ok) throw new Error('HTTP ' + response.status);
-                    if (text.trim().startsWith('<')) throw new Error('Server returned HTML instead of JSON');
+                    let data;
+                    try { data = JSON.parse(text); } catch(e) { throw new Error('Invalid server response'); }
 
-                    const data = JSON.parse(text);
-                    addBtn.textContent = 'Added to Cart';
-                    showCartToast(data.message || 'Added to cart');
+                    addBtn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Added!';
+                    setTimeout(() => {
+                        addBtn.innerHTML = originalHtml;
+                        addBtn.disabled = false;
+                    }, 2000);
+
+                    showCartToast(data.message || 'Added to cart successfully');
                     updateCartBadge(data.cartCount);
                 })
                 .catch(error => {
                     console.error(error);
-                    addBtn.textContent = originalText;
+                    addBtn.innerHTML = originalHtml;
                     addBtn.disabled = false;
                     showToast(error.message, 'danger');
                 });
@@ -346,24 +287,27 @@ function initCartActions() {
             const qtyInput = document.getElementById('qty');
             const qty = qtyInput ? qtyInput.value : '1';
 
-                fetch(CONTEXT_PATH + '/api/cart/buy-now', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        productId: productId,
-                        quantity: qty
-                    })
-                }).then(() => {
-                    window.location.href = CONTEXT_PATH + '/checkout';
-                });
+            fetch(CONTEXT_PATH + '/api/cart/buy-now', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    productId: productId,
+                    quantity: qty
+                })
+            }).then(() => {
+                window.location.href = CONTEXT_PATH + '/checkout';
+            });
         });
     }
 
-    if (wishlistBtn) {
-        wishlistBtn.addEventListener('click', function() {
+    wishlistBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             const productId = this.dataset.productId;
+            if (!productId) return;
 
             fetch(CONTEXT_PATH + '/api/wishlist/add/' + productId, {
                 method: 'POST'
@@ -371,10 +315,23 @@ function initCartActions() {
                 .then(res => res.json())
                 .then(() => {
                     this.classList.toggle('active');
+                    const icon = this.querySelector('i');
+                    if (icon) {
+                        if (this.classList.contains('active')) {
+                            icon.classList.remove('fa-regular');
+                            icon.classList.add('fa-solid');
+                        } else {
+                            icon.classList.remove('fa-solid');
+                            icon.classList.add('fa-regular');
+                        }
+                    }
                     showToast('Wishlist updated.');
+                })
+                .catch(() => {
+                    this.classList.toggle('active');
                 });
         });
-    }
+    });
 }
 
 function showCartToast(message) {
@@ -383,61 +340,27 @@ function showCartToast(message) {
     if (toastMsgEl) {
         toastMsgEl.textContent = message || 'Added to cart';
     }
-    if (!toastEl) return;
+    if (!toastEl) {
+        window.showToast(message, 'success');
+        return;
+    }
     const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 3500 });
     toast.show();
 }
 
 function updateCartBadge(count) {
     const badge = document.getElementById('cartCountBadge');
-    if (badge && typeof count === 'number') {
-        badge.textContent = count;
-        badge.classList.remove('d-none');
+    const mobileBadge = document.getElementById('mobileCartCount');
+    if (typeof count === 'number') {
+        if (badge) {
+            badge.textContent = count;
+            if (count > 0) badge.classList.remove('d-none');
+        }
+        if (mobileBadge) {
+            mobileBadge.textContent = count;
+            if (count > 0) mobileBadge.classList.remove('d-none');
+        }
     }
-}
-function initSkeletonLoader() {
-    const loader = document.createElement('div');
-    loader.className = 'page-loader';
-
-    loader.innerHTML = `
-        <div class="loader-card">
-            <div class="d-flex align-items-center gap-3 mb-4">
-                <div class="skeleton-circle" style="width:48px;height:48px;"></div>
-                <div class="flex-grow-1">
-                    <div class="skeleton-line mb-2" style="height:14px;width:55%;"></div>
-                    <div class="skeleton-line" style="height:12px;width:80%;"></div>
-                </div>
-            </div>
-
-            <div class="skeleton-block mb-3" style="height:140px;"></div>
-
-            <div class="row g-3">
-                <div class="col-6">
-                    <div class="skeleton-block" style="height:96px;"></div>
-                </div>
-                <div class="col-6">
-                    <div class="skeleton-block" style="height:96px;"></div>
-                </div>
-                <div class="col-12">
-                    <div class="skeleton-block" style="height:48px;"></div>
-                </div>
-            </div>
-        </div>
-    `;
-
-    document.body.appendChild(loader);
-
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            loader.classList.add('is-hidden');
-            document.body.classList.remove('page-loading');
-            document.body.classList.add('page-ready');
-
-            setTimeout(() => {
-                loader.remove();
-            }, 350);
-        }, 400);
-    });
 }
 
 function initRazorpayScript() {
@@ -505,10 +428,14 @@ function handleNavbarLogout() {
 }
 
 function fillAddress(address) {
-    document.getElementById("addressLine1").value = address.addressLine1 || "";
+    const el1 = document.getElementById("addressLine1");
+    if (el1) el1.value = address.addressLine1 || "";
     const addr2 = document.getElementById("addressLine2");
     if (addr2) addr2.value = address.addressLine2 || "";
-    document.getElementById("city").value = address.city || "";
-    document.getElementById("state").value = address.state || "";
-    document.getElementById("pinCode").value = address.pinCode || "";
+    const city = document.getElementById("city");
+    if (city) city.value = address.city || "";
+    const state = document.getElementById("state");
+    if (state) state.value = address.state || "";
+    const pin = document.getElementById("pinCode");
+    if (pin) pin.value = address.pinCode || "";
 }

@@ -65,13 +65,8 @@ public class OtpService {
 				+ "<p>If you did not request this, please ignore this email.</p>" + "<p>Team Loomelle Crochet</p>";
 
 		log.info("Attempting to send OTP email to: {} via SMTP", normalized);
-		try {
-			emailService.sendHtmlEmail(normalized, subject, body);
-			log.info("OTP email sent successfully to: {}", normalized);
-		} catch (Exception e) {
-			log.error("Failed to send OTP email to: {}", normalized, e);
-			throw e;
-		}
+		emailService.sendHtmlEmail(normalized, subject, body);
+		log.info("OTP email send triggered for: {}", normalized);
 	}
 
 	public boolean verifyOtp(String identifier, String otp) {

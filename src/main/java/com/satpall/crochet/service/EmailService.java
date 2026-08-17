@@ -16,4 +16,6 @@ public interface EmailService {
 
 	void sendOrderStatusUpdateToCustomer(Order order, OrderStatus newStatus);
 
+	void sendContactUsEmail(String name, String email, String inquiryType, String message);
+
 }

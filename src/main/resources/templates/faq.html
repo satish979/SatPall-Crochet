@@ -1,26 +1,91 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-
-<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
-<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
-<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
-<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
-<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
-
-<head th:replace="~{header :: head('FAQ')}"></head>
+<head th:replace="~{header :: head('Frequently Asked Questions')}"></head>
 
 <body>
 	<div th:replace="~{header :: navbar}"></div>
-	<section class="py-4">
+
+	<!-- Hero Banner -->
+	<section class="py-5 bg-warm-surface border-bottom border-light text-center">
 		<div class="container">
-			<div class="card-soft p-3">
-				<h1 class="section-title">Frequently Asked Questions</h1>
-				<p class="text-muted">Custom crochet orders are available with personalized colors, sizes, and gift
-					options.</p>
+			<span class="hero-pill mb-3">Help & Guidance</span>
+			<h1 class="hero-title mb-3">Frequently Asked Questions</h1>
+			<p class="section-subtitle mx-auto">
+				Everything you need to know about our handcrafted crochet items, custom orders, and care tips.
+			</p>
+		</div>
+	</section>
+
+	<section class="py-5">
+		<div class="container" style="max-width: 820px;">
+			<div class="accordion custom-accordion" id="faqAccordion">
+				<!-- FAQ 1 -->
+				<div class="card-soft mb-3 overflow-hidden">
+					<h2 class="accordion-header" id="headingOne">
+						<button class="accordion-button bg-white fw-bold text-dark p-3 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+							<i class="fa-solid fa-wand-magic-sparkles text-primary me-2"></i> How do custom / personalized orders work?
+						</button>
+					</h2>
+					<div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+						<div class="accordion-body pt-0 text-muted small" style="line-height: 1.7;">
+							You can customize the yarn colors, flower combinations, bouquet wrapping, or size of almost all our products. Simply drop us a message on the Contact page or via WhatsApp with your preferred color palette or occasion details.
+						</div>
+					</div>
+				</div>
+
+				<!-- FAQ 2 -->
+				<div class="card-soft mb-3 overflow-hidden">
+					<h2 class="accordion-header" id="headingTwo">
+						<button class="accordion-button collapsed bg-white fw-bold text-dark p-3 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+							<i class="fa-solid fa-soap text-primary me-2"></i> How should I wash or clean my crochet item?
+						</button>
+					</h2>
+					<div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+						<div class="accordion-body pt-0 text-muted small" style="line-height: 1.7;">
+							For flowers and home decor, gently dust with a soft brush or hairdryer on cool setting. For bags and amigurumi plushies, spot clean with mild detergent and cold water, or hand wash gently without wringing. Lay flat on a clean towel to air dry.
+						</div>
+					</div>
+				</div>
+
+				<!-- FAQ 3 -->
+				<div class="card-soft mb-3 overflow-hidden">
+					<h2 class="accordion-header" id="headingThree">
+						<button class="accordion-button collapsed bg-white fw-bold text-dark p-3 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+							<i class="fa-solid fa-truck text-primary me-2"></i> How long does shipping take?
+						</button>
+					</h2>
+					<div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+						<div class="accordion-body pt-0 text-muted small" style="line-height: 1.7;">
+							Ready-to-ship items are dispatched within 24-48 hours. Custom crafted pieces take 2-4 working days before dispatch. Shipping across India typically takes 3-6 business days depending on your pincode.
+						</div>
+					</div>
+				</div>
+
+				<!-- FAQ 4 -->
+				<div class="card-soft mb-3 overflow-hidden">
+					<h2 class="accordion-header" id="headingFour">
+						<button class="accordion-button collapsed bg-white fw-bold text-dark p-3 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+							<i class="fa-solid fa-gift text-primary me-2"></i> Can I add a personalized gift message?
+						</button>
+					</h2>
+					<div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+						<div class="accordion-body pt-0 text-muted small" style="line-height: 1.7;">
+							Yes, absolutely! During checkout in the "Order / Gift Notes" field, write your message and we will hand-write it onto an artisanal gift card at no extra cost.
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Still have questions banner -->
+			<div class="card-soft p-4 text-center mt-5 bg-soft-cream border-light">
+				<h5 class="font-heading mb-2">Still Have Questions?</h5>
+				<p class="text-muted small mb-3">Our artisans are happy to assist you directly.</p>
+				<a th:href="@{/contact}" class="btn btn-primary btn-sm">Contact Support</a>
 			</div>
 		</div>
 	</section>
+
 	<div th:replace="~{footer :: footer}"></div>
 	<div th:replace="~{scripts :: scripts}"></div>
 </body>

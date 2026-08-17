@@ -1,106 +1,162 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="~{header :: head('Order Detail')}"></head>
+<head th:replace="~{header :: head('Manage Order')}"></head>
 
 <body>
-    <div th:replace="~{header :: navbar}"></div>
+	<div th:replace="~{header :: navbar}"></div>
 
-    <section class="py-5">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="mb-1">Order <span th:text="${order.orderNumber}">ORD-001</span></h1>
-                    <p class="text-muted mb-0">Manage and track this order</p>
-                </div>
-                <a th:href="@{/admin/orders}" class="btn btn-outline-secondary">Back to Orders</a>
-            </div>
+	<!-- Breadcrumb Banner -->
+	<section class="py-3 bg-warm-surface border-bottom border-light">
+		<div class="container">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0 small">
+					<li class="breadcrumb-item"><a th:href="@{/}" class="text-muted"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+					<li class="breadcrumb-item"><a th:href="@{/admin/orders}" class="text-muted">Orders</a></li>
+					<li class="breadcrumb-item active text-dark fw-semibold" aria-current="page" th:if="${order != null}" th:text="${order.orderNumber}">ORD-001</li>
+				</ol>
+			</nav>
+		</div>
+	</section>
 
-            <div class="row g-4" th:if="${order != null}">
-                <div class="col-lg-8">
-                    <div class="card-soft p-4 mb-3">
-                        <h5 class="fw-bold mb-3">Customer Details</h5>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label text-muted small">Name</label>
-                                <p class="fw-bold" th:text="${order.customerName}">Customer Name</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label text-muted small">Email</label>
-                                <p th:text="${order.email}">email@example.com</p>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label text-muted small">Phone</label>
-                                <p th:text="${order.phone}">9876543210</p>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label text-muted small">Shipping Address</label>
-                                <p th:text="${order.shippingAddress}">Address</p>
-                            </div>
-                        </div>
-                    </div>
+	<section class="py-5">
+		<div class="container">
+			<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4" th:if="${order != null}">
+				<div>
+					<div class="d-flex align-items-center gap-2 mb-1">
+						<span class="badge-soft mb-0 d-inline-block">Order Management</span>
+						<h1 class="font-heading h3 mb-0">Order <span th:text="${order.orderNumber}">ORD-001</span></h1>
+					</div>
+					<p class="text-muted mb-0 small">Created on <span th:text="${#temporals.format(order.createdDate, 'dd MMMM yyyy, hh:mm a')}">01 Jan 2025</span></p>
+				</div>
+				<a th:href="@{/admin/orders}" class="btn btn-outline-secondary btn-sm">
+					<i class="fa-solid fa-arrow-left me-1"></i> Back to Orders
+				</a>
+			</div>
 
-                    <div class="card-soft p-4 mb-3">
-                        <h5 class="fw-bold mb-3">Order Items</h5>
-                        <div th:each="item : ${order.orderItems}" class="d-flex flex-column flex-sm-row gap-3 align-items-center border-bottom pb-3 mb-3">
-                            <img th:src="${item.imageUrl != null ? item.imageUrl : '/images/product-placeholder.jpg'}" class="rounded-3" width="60" height="60" style="object-fit:cover;" alt="">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-1" th:text="${item.productName}">Product</h6>
-                                <small class="text-muted">Qty: <span th:text="${item.quantity}">1</span> x ₹<span th:text="${item.price}">0</span></small>
-                            </div>
-                            <div class="fw-bold">₹<span th:text="${item.total}">0</span></div>
-                        </div>
-                    </div>
-                </div>
+			<div class="row g-4" th:if="${order != null}">
+				<div class="col-lg-8">
+					<!-- Customer Info Card -->
+					<div class="card-soft p-4 mb-4">
+						<h5 class="font-heading mb-3 pb-2 border-bottom"><i class="fa-solid fa-user me-2 text-primary"></i>Recipient & Shipping</h5>
+						<div class="row g-3">
+							<div class="col-md-6">
+								<small class="text-muted d-block mb-1">Customer Full Name</small>
+								<strong class="text-dark" th:text="${order.customerName}">Customer Name</strong>
+							</div>
+							<div class="col-md-6">
+								<small class="text-muted d-block mb-1">Email Address</small>
+								<span class="text-dark" th:text="${order.email}">loomellecrochet.support@gmail.com</span>
+							</div>
+							<div class="col-md-6">
+								<small class="text-muted d-block mb-1">Contact Phone</small>
+								<span class="text-dark" th:text="${order.phone}">9876543210</span>
+							</div>
+							<div class="col-12">
+								<small class="text-muted d-block mb-1">Delivery Destination</small>
+								<p class="text-dark small mb-0" style="line-height: 1.6;" th:text="${order.shippingAddress}">Address Line</p>
+							</div>
+							<div class="col-12" th:if="${order.notes != null and !order.notes.isEmpty()}">
+								<small class="text-muted d-block mb-1">Special Gift / Delivery Notes</small>
+								<div class="p-2 bg-soft-cream rounded-3 border border-light small text-dark" th:text="${order.notes}"></div>
+							</div>
+						</div>
+					</div>
 
-                <div class="col-lg-4">
-                    <div class="card-soft p-4 mb-3">
-                        <h5 class="fw-bold mb-3">Update Status</h5>
-                       	<form th:action="@{'/admin/orders/' + ${order.id} + '/status'}" method="post" class="row g-2">
-                            <div class="col-12">
-                                <select name="status" class="form-select">
-                                    <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}" th:selected="${s == order.status}"></option>
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary w-100">Update Status</button>
-                            </div>
-                        </form>
-                    </div>
+					<!-- Order Items -->
+					<div class="card-soft p-4 mb-4">
+						<h5 class="font-heading mb-3 pb-2 border-bottom"><i class="fa-solid fa-boxes-stacked me-2 text-primary"></i>Ordered Handmade Items</h5>
+						<div th:each="item : ${order.orderItems}" class="d-flex gap-3 align-items-center py-3 border-bottom border-light">
+							<img th:src="${item.imageUrl != null ? item.imageUrl : '/images/product-placeholder.jpg'}"
+								class="rounded-3 border border-light p-1 flex-shrink-0" width="60" height="60"
+								style="object-fit: contain; background: #FAF6F1;" alt="">
+							<div class="flex-grow-1 min-w-0">
+								<h6 class="font-heading mb-1 text-dark fw-bold" th:text="${item.productName}">Product</h6>
+								<small class="text-muted">Qty: <strong th:text="${item.quantity}">1</strong> &bull; Unit Price: ₹<span th:text="${item.price}">0</span></small>
+							</div>
+							<div class="text-end fw-bold price" style="font-size: 1.15rem;">
+								₹<span th:text="${item.total}">0</span>
+							</div>
+						</div>
+					</div>
+				</div>
 
-                    <div class="card-soft p-4 mb-3">
-                        <h5 class="fw-bold mb-3">Order Summary</h5>
-                        <div class="d-flex justify-content-between mb-2"><span>Subtotal</span><span>₹<span th:text="${order.subtotal}">0</span></span></div>
-                        <div class="d-flex justify-content-between mb-2"><span>Tax</span><span>₹<span th:text="${order.tax}">0</span></span></div>
-                        <div class="d-flex justify-content-between mb-2"><span>Shipping</span><span>₹<span th:text="${order.shipping}">0</span></span></div>
-                        <div class="d-flex justify-content-between mb-2 text-success" th:if="${order.discount > 0}">
-                            <span>Discount</span><span>-₹<span th:text="${order.discount}">0</span></span>
-                        </div>
-                        <hr>
-                        <div class="d-flex justify-content-between fw-bold fs-5">
-                            <span>Total</span><span>₹<span th:text="${order.total}">0</span></span>
-                        </div>
-                    </div>
+				<div class="col-lg-4">
+					<!-- Status Updater -->
+					<div class="card-soft p-4 mb-4">
+						<h5 class="font-heading mb-3 pb-2 border-bottom"><i class="fa-solid fa-truck me-2 text-primary"></i>Update Status</h5>
+						<form th:action="@{'/admin/orders/' + ${order.id} + '/status'}" method="post" class="row g-2">
+							<div class="col-12">
+								<label class="form-label small">Fulfillment Status</label>
+								<select name="status" class="form-select mb-3">
+									<option th:each="s : ${statuses}" th:value="${s}" th:text="${s}" th:selected="${s == order.status}"></option>
+								</select>
+							</div>
+							<div class="col-12">
+								<button type="submit" class="btn btn-primary w-100">
+									<i class="fa-solid fa-check me-1"></i> Save Status
+								</button>
+							</div>
+						</form>
+					</div>
 
-                    <div class="card-soft p-4 mb-3">
-                        <h5 class="fw-bold mb-3">Payment Info</h5>
-                        <div class="mb-2"><span class="text-muted small">Method:</span> <span th:text="${order.paymentMethod}">COD</span></div>
-                        <div class="mb-2"><span class="text-muted small">Status:</span> <span th:text="${order.paymentStatus}">PENDING</span></div>
-                        <div th:if="${order.razorpayPaymentId != null}" class="mb-2">
-                            <span class="text-muted small">Payment ID:</span> <span th:text="${order.razorpayPaymentId}">pay_xxx</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+					<!-- Order Summary -->
+					<div class="card-soft p-4 mb-4">
+						<h5 class="font-heading mb-3 pb-2 border-bottom"><i class="fa-solid fa-receipt me-2 text-primary"></i>Summary</h5>
+						<div class="d-flex justify-content-between mb-2 small text-muted">
+							<span>Subtotal</span>
+							<span class="text-dark fw-semibold">₹<span th:text="${order.subtotal}">0</span></span>
+						</div>
+						<div class="d-flex justify-content-between mb-2 small text-muted">
+							<span>Tax (5%)</span>
+							<span class="text-dark fw-semibold">₹<span th:text="${order.tax}">0</span></span>
+						</div>
+						<div class="d-flex justify-content-between mb-2 small text-muted">
+							<span>Shipping</span>
+							<span class="text-dark fw-semibold">₹<span th:text="${order.shipping}">0</span></span>
+						</div>
+						<div class="d-flex justify-content-between mb-2 text-success small" th:if="${order.discount > 0}">
+							<span>Discount</span>
+							<span>-₹<span th:text="${order.discount}">0</span></span>
+						</div>
+						<hr class="my-3">
+						<div class="d-flex justify-content-between align-items-center">
+							<span class="font-heading h5 mb-0">Total</span>
+							<span class="price font-heading text-dark" style="font-size: 1.35rem;">₹<span th:text="${order.total}">0</span></span>
+						</div>
+					</div>
 
-            <div class="card-soft p-5 text-center" th:unless="${order != null}">
-                <p class="text-muted">Order not found.</p>
-                <a th:href="@{/admin/orders}" class="btn btn-primary">Back to Orders</a>
-            </div>
-        </div>
-    </section>
+					<!-- Payment Info -->
+					<div class="card-soft p-4">
+						<h5 class="font-heading mb-3 pb-2 border-bottom"><i class="fa-solid fa-credit-card me-2 text-primary"></i>Payment Info</h5>
+						<div class="mb-2 small">
+							<span class="text-muted d-block">Method:</span>
+							<strong class="text-dark" th:text="${order.paymentMethod}">COD</strong>
+						</div>
+						<div class="mb-2 small">
+							<span class="text-muted d-block">Payment Status:</span>
+							<span th:if="${order.paymentStatus == 'SUCCESS' or order.paymentStatus == 'PAID'}" class="badge-status-success">PAID</span>
+							<span th:if="${order.paymentStatus == 'FAILED'}" class="badge-status-danger">FAILED</span>
+							<span th:if="${order.paymentStatus != 'SUCCESS' and order.paymentStatus != 'PAID' and order.paymentStatus != 'FAILED'}" class="badge-status-warning" th:text="${order.paymentStatus}">PENDING</span>
+						</div>
+						<div th:if="${order.razorpayPaymentId != null}" class="mb-0 small">
+							<span class="text-muted d-block">Razorpay ID:</span>
+							<code class="text-dark" th:text="${order.razorpayPaymentId}">pay_xxx</code>
+						</div>
+					</div>
+				</div>
+			</div>
 
-    <div th:replace="~{footer :: footer}"></div>
-    <div th:replace="~{scripts :: scripts}"></div>
+			<div class="card-soft p-5 text-center my-4" th:unless="${order != null}">
+				<h4 class="font-heading mb-2">Order Not Found</h4>
+				<p class="text-muted small mb-4">No order found with the specified ID.</p>
+				<a th:href="@{/admin/orders}" class="btn btn-primary">Return to Orders</a>
+			</div>
+		</div>
+	</section>
+
+	<div th:replace="~{footer :: footer}"></div>
+	<div th:replace="~{scripts :: scripts}"></div>
 </body>
+
 </html>

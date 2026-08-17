@@ -1,36 +1,53 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
-<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
-<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
-<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
-<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
-<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
 
 <head th:replace="~{header :: head('Checkout')}"></head>
 
 <body>
 	<div th:replace="~{header :: navbar}"></div>
 
-<section class="py-4">
+	<!-- Breadcrumb Banner -->
+	<section class="py-3 bg-warm-surface border-bottom border-light">
 		<div class="container">
-			<h2 class="section-title mb-3">Checkout</h2>
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0 small">
+					<li class="breadcrumb-item"><a th:href="@{/}" class="text-muted"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+					<li class="breadcrumb-item"><a th:href="@{/cart}" class="text-muted">Cart</a></li>
+					<li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">Checkout</li>
+				</ol>
+			</nav>
+		</div>
+	</section>
 
-			<div th:if="${loggedInCustomer == null}" id="loginSection" class="card-soft p-3 mb-3">
-				<h5 class="fw-bold mb-2"><i class="fa-solid fa-user me-2"></i>Login to Continue</h5>
-				<p class="text-muted small mb-2">Enter your email to receive a one-time password (OTP).</p>
+	<section class="py-5">
+		<div class="container">
+			<div class="mb-4">
+				<h1 class="font-heading h2 mb-1">Secure Checkout</h1>
+				<p class="text-muted mb-0 small">Complete your order with secure payment and doorstep handcrafted delivery.</p>
+			</div>
+
+			<!-- Customer Authentication Section (When Guest) -->
+			<div th:if="${loggedInCustomer == null}" id="loginSection" class="card-soft p-4 mb-4 border-primary border-opacity-25 bg-white shadow-sm">
+				<div class="d-flex align-items-center gap-3 mb-3">
+					<div class="brand-icon-wrapper flex-shrink-0" style="width: 44px; height: 44px;">
+						<i class="fa-solid fa-user-lock"></i>
+					</div>
+					<div>
+						<h5 class="font-heading mb-0">Step 1: Sign In with Email</h5>
+						<p class="text-muted small mb-0">We will send a fast one-time passcode (OTP) to your email.</p>
+					</div>
+				</div>
 
 				<div id="loginStep1">
-					<div class="row g-2">
-						<div class="col-12">
-							<label class="form-label">Email Address *</label>
+					<div class="row g-3">
+						<div class="col-md-8 col-lg-6">
+							<label class="form-label small">Email Address *</label>
 							<div class="input-group">
-								<span class="input-group-text bg-white"><i class="fa-regular fa-envelope"></i></span>
-								<input type="email" id="loginEmail" class="form-control" placeholder="Enter your email"
-									required>
+								<span class="input-group-text bg-light border-end-0"><i class="fa-regular fa-envelope text-muted"></i></span>
+								<input type="email" id="loginEmail" class="form-control border-start-0" placeholder="yourname@example.com" required>
 							</div>
 						</div>
-						<div class="col-12">
+						<div class="col-md-4 col-lg-3 d-flex align-items-end">
 							<button type="button" class="btn btn-primary w-100" id="sendOtpBtn" onclick="handleSendOtp()">
 								<i class="fa-solid fa-paper-plane me-1"></i> Send OTP
 							</button>
@@ -39,252 +56,239 @@
 				</div>
 
 				<div id="loginStep2" class="d-none">
-					<div class="row g-2">
-						<div class="col-12">
-							<label class="form-label">Enter OTP *</label>
+					<div class="row g-3">
+						<div class="col-md-6 col-lg-4">
+							<label class="form-label small">Enter 6-Digit OTP *</label>
 							<div class="input-group">
-								<span class="input-group-text bg-white"><i class="fa-solid fa-shield-halved"></i></span>
-								<input type="text" id="loginOtp" class="form-control" placeholder="Enter 6-digit OTP"
-									maxlength="6">
+								<span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-key text-muted"></i></span>
+								<input type="text" id="loginOtp" class="form-control border-start-0" placeholder="6-digit OTP" maxlength="6">
 							</div>
-							<small class="text-muted">OTP sent to <span id="otpEmailDisplay"></span></small>
+							<small class="text-muted d-block mt-1">OTP sent to: <strong id="otpEmailDisplay" class="text-dark"></strong></small>
 						</div>
-						<div class="col-12">
-							<button type="button" class="btn btn-primary w-100" id="verifyOtpBtn" onclick="handleVerifyOtp()">
+						<div class="col-md-6 col-lg-4 d-flex align-items-end gap-2">
+							<button type="button" class="btn btn-primary flex-grow-1" id="verifyOtpBtn" onclick="handleVerifyOtp()">
 								<i class="fa-solid fa-check me-1"></i> Verify OTP
 							</button>
-							<button type="button" class="btn btn-outline-secondary mt-2 w-100" onclick="resendOtp()">Resend
-								OTP</button>
+							<button type="button" class="btn btn-outline-secondary" onclick="resendOtp()">Resend</button>
 						</div>
 					</div>
 				</div>
 
-				<div id="loginError" class="alert alert-danger d-none mt-2"></div>
+				<div id="loginError" class="alert alert-danger d-none mt-3 mb-0 small"></div>
 			</div>
-		</div>
-		</div>
 
-		<div th:if="${loggedInCustomer != null}">
-			<div id="loggedInCustomerData" th:data-first-name="${loggedInCustomer.firstName}"
-				th:data-last-name="${loggedInCustomer.lastName}" th:data-email="${loggedInCustomer.email}"
-				th:data-phone="${loggedInCustomer.phone}" class="d-none">
-			</div>
-			<div id="loggedInCustomerData" data-first-name="${loggedInCustomer.firstName}"
-				data-last-name="${loggedInCustomer.lastName}" data-email="${loggedInCustomer.email}"
-				data-phone="${loggedInCustomer.phone}" class="d-none">
-			</div>
-			<div class="row g-3">
-				<div class="col-lg-7">
-					<div class="card-soft p-3 mb-3 checkout-section"
-						style="background: rgba(201,123,132,0.05); border: 1px solid rgba(201,123,132,0.15);">
-						<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-							<div>
-								<h6 class="fw-bold mb-1">Welcome, <span
-										th:text="${loggedInCustomer.firstName}">Customer</span>!</h6>
-								<small class="text-muted" th:text="${loggedInCustomer.email}">email@example.com</small>
-							</div>
-							<button type="button" class="btn btn-sm btn-outline-secondary"
-								onclick="handleLogout()">Logout</button>
-						</div>
-					</div>
-
-					<div th:if="${!#lists.isEmpty(savedAddresses)}" class="card-soft p-3 mb-3">
-						<h5 class="fw-bold mb-3"><i class="fa-solid fa-location-dot me-2"></i>Select Delivery Address
-						</h5>
-						<div class="row g-2" id="savedAddressesList">
-							<div th:each="addr, iter : ${savedAddresses}" class="col-12 col-md-6">
-								<div class="card-soft p-3 address-card" th:id="'addr-' + ${addr.id}"
-									style="cursor:pointer; border: 2px solid var(--border);"
-									onclick="selectAddress(this, '${addr.fullName}', '${addr.mobile}', '${addr.addressLine1}', '${addr.addressLine2}', '${addr.city}', '${addr.state}', '${addr.pinCode}', '${addr.landmark}')">
-									<div class="d-flex justify-content-between align-items-start mb-2">
-										<span class="badge badge-soft" th:text="${addr.type}">HOME</span>
-										<span th:if="${addr.isDefault}" class="badge bg-success">Default</span>
-									</div>
-									<h6 class="fw-bold mb-1" th:text="${addr.fullName}">Name</h6>
-									<small class="text-muted d-block mb-1" th:text="${addr.mobile}">Mobile</small>
-									<small class="text-muted d-block"
-										th:text="${addr.addressLine1 + (addr.addressLine2 != null and !addr.addressLine2.isEmpty() ? ', ' + addr.addressLine2 : '')}">Address</small>
-									<small class="text-muted d-block"
-										th:text="${addr.city + ', ' + addr.state + ' - ' + addr.pinCode}">City</small>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<form id="checkoutForm" th:object="${checkoutRequest}" novalidate>
-						<div class="card-soft p-3 mb-3">
-							<h5 class="fw-bold mb-3"><i class="fa-solid fa-truck me-2"></i>Shipping Address</h5>
-							<div class="row g-2">
-								<div class="col-md-6">
-									<label class="form-label">Full Name *</label>
-									<input type="text" id="customerName" th:field="*{customerName}" class="form-control"
-										placeholder="Enter your full name" required>
-									<div class="invalid-feedback" th:errors="*{customerName}"></div>
-								</div>
-								<div class="col-md-6">
-									<label class="form-label">Email *</label>
-									<input type="email" id="email" th:field="*{email}" class="form-control"
-										placeholder="Enter your email" required>
-									<div class="invalid-feedback" th:errors="*{email}"></div>
-								</div>
-								<div class="col-md-6">
-									<label class="form-label">Mobile Number *</label>
-									<input type="tel" id="phone" th:field="*{phone}" class="form-control"
-										placeholder="10-digit mobile number" required>
-									<div class="invalid-feedback" th:errors="*{phone}"></div>
-								</div>
-								<div class="col-12">
-									<label class="form-label">Address Line 1 *</label>
-									<input type="text" id="addressLine1" th:field="*{addressLine1}" class="form-control"
-										placeholder="House/Flat No., Building, Street" required>
-									<div class="invalid-feedback" th:errors="*{addressLine1}"></div>
-								</div>
-								<div class="col-12">
-									<label class="form-label">Address Line 2</label>
-									<input type="text" id="addressLine2" th:field="*{addressLine2}" class="form-control"
-										placeholder="Area, Landmark (optional)">
-								</div>
-								<div class="col-md-4">
-									<label class="form-label">City *</label>
-									<input type="text" id="city" th:field="*{city}" class="form-control"
-										placeholder="City" required>
-									<div class="invalid-feedback" th:errors="*{city}"></div>
-								</div>
-								<div class="col-md-4">
-									<label class="form-label">State *</label>
-									<input type="text" id="state" th:field="*{state}" class="form-control"
-										placeholder="State" required>
-									<div class="invalid-feedback" th:errors="*{state}"></div>
-								</div>
-								<div class="col-md-4">
-									<label class="form-label">Country *</label>
-									<input type="text" th:field="*{country}" class="form-control" placeholder="Country"
-										value="India" required>
-									<div class="invalid-feedback" th:errors="*{country}"></div>
-								</div>
-								<div class="col-md-6">
-									<label class="form-label">Pincode *</label>
-									<input type="text" id="pinCode" th:field="*{pinCode}" class="form-control"
-										placeholder="6-digit pincode" required>
-									<div class="invalid-feedback" th:errors="*{pinCode}"></div>
-								</div>
-								<div class="col-12">
-									<label class="form-label">Order Notes (Optional)</label>
-									<textarea th:field="*{notes}" class="form-control" rows="2"
-										placeholder="Any special instructions for delivery"></textarea>
-								</div>
-							</div>
-						</div>
-
-						<div class="card-soft p-3 mb-3">
-							<h5 class="fw-bold mb-3"><i class="fa-solid fa-credit-card me-2"></i>Payment Method</h5>
-							<div class="row g-2">
-								<div class="col-12 col-md-6">
-									<div class="payment-card" data-method="RAZORPAY">
-										<input type="radio" name="paymentMethod" id="razorpay" value="RAZORPAY"
-											required>
-										<label for="razorpay" class="payment-label">
-											<div class="payment-icon">
-												<i class="fa-solid fa-mobile-screen-button"></i>
-											</div>
-											<div>
-												<div class="fw-bold">Razorpay</div>
-												<small class="text-muted">Pay via UPI, Card, Net Banking</small>
-											</div>
-										</label>
-									</div>
-								</div>
-								<div class="col-12 col-md-6">
-									<div class="payment-card" data-method="COD">
-										<input type="radio" name="paymentMethod" id="cod" value="COD" required>
-										<label for="cod" class="payment-label">
-											<div class="payment-icon">
-												<i class="fa-solid fa-money-bill-wave"></i>
-											</div>
-											<div>
-												<div class="fw-bold">Cash on Delivery</div>
-												<small class="text-muted">Pay when you receive</small>
-											</div>
-										</label>
-									</div>
-								</div>
-
-							</div>
-							<div class="invalid-feedback d-block" id="paymentError">Please select a payment method</div>
-						</div>
-					</form>
+			<!-- Logged In Content / Checkout Flow -->
+			<div th:if="${loggedInCustomer != null}">
+				<div id="loggedInCustomerData" th:data-first-name="${loggedInCustomer.firstName}"
+					th:data-last-name="${loggedInCustomer.lastName}" th:data-email="${loggedInCustomer.email}"
+					th:data-phone="${loggedInCustomer.phone}" class="d-none">
 				</div>
 
-				<div class="col-lg-5">
-					<div class="card-soft p-3 mb-3 order-summary-card">
-						<h5 class="fw-bold mb-3">Order Summary</h5>
-						<div th:each="item : ${items}" class="order-item mb-2 pb-2 border-bottom">
-							<div class="d-flex gap-2 align-items-center">
-								<img th:src="${item.imageUrl != null ? item.imageUrl : '/images/product-placeholder.jpg'}"
-									class="rounded-2" width="60" height="60" style="object-fit:cover;" alt="">
-								<div class="flex-grow-1">
-									<h6 class="mb-1" th:text="${item.productName}">Product Name</h6>
-									<small class="text-muted">Qty: <span th:text="${item.quantity}">1</span></small>
-									<div class="price mt-1">₹<span th:text="${item.price}">0</span></div>
+				<div class="row g-4">
+					<!-- Left Column: Shipping & Payment Form -->
+					<div class="col-lg-7">
+						<!-- Customer Welcome Banner -->
+						<div class="card-soft p-3 mb-4 bg-soft-cream border-light">
+							<div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+								<div class="d-flex align-items-center gap-3">
+									<div class="user-avatar-initials bg-white text-primary fw-bold" style="width: 38px; height: 38px; font-size: 0.95rem;">
+										<i class="fa-regular fa-user"></i>
+									</div>
+									<div>
+										<h6 class="mb-0 fw-bold font-heading">
+											Welcome, <span th:text="${loggedInCustomer.firstName}">Customer</span>!
+										</h6>
+										<small class="text-muted" th:text="${loggedInCustomer.email}">email@example.com</small>
+									</div>
 								</div>
-								<div class="text-end">
-									<div class="fw-bold">₹<span th:text="${item.subtotal}">0</span></div>
+								<button type="button" class="btn btn-sm btn-outline-secondary" onclick="handleLogout()">
+									<i class="fa-solid fa-arrow-right-from-bracket me-1"></i> Sign Out
+								</button>
+							</div>
+						</div>
+
+						<!-- Saved Addresses (if available) -->
+						<div th:if="${!#lists.isEmpty(savedAddresses)}" class="card-soft p-4 mb-4">
+							<h5 class="font-heading mb-3"><i class="fa-solid fa-location-dot me-2 text-primary"></i>Saved Delivery Addresses</h5>
+							<div class="row g-3" id="savedAddressesList">
+								<div th:each="addr, iter : ${savedAddresses}" class="col-12 col-md-6">
+									<div class="address-card h-100" th:id="'addr-' + ${addr.id}"
+										th:onclick="|selectAddress(this, '${addr.fullName}', '${addr.mobile}', '${addr.addressLine1}', '${addr.addressLine2 != null ? addr.addressLine2 : ''}', '${addr.city}', '${addr.state}', '${addr.pinCode}', '${addr.landmark != null ? addr.landmark : ''}')|">
+										<div class="d-flex justify-content-between align-items-start mb-2">
+											<span class="badge-soft small" th:text="${addr.type}">HOME</span>
+											<span th:if="${addr.isDefault}" class="badge bg-success small">Default</span>
+										</div>
+										<h6 class="fw-bold mb-1 text-dark" th:text="${addr.fullName}">Name</h6>
+										<small class="text-muted d-block mb-1"><i class="fa-solid fa-phone me-1 small"></i><span th:text="${addr.mobile}">Mobile</span></small>
+										<small class="text-muted d-block"
+											th:text="${addr.addressLine1 + (addr.addressLine2 != null and !addr.addressLine2.isEmpty() ? ', ' + addr.addressLine2 : '')}">Address</small>
+										<small class="text-muted d-block"
+											th:text="${addr.city + ', ' + addr.state + ' - ' + addr.pinCode}">City</small>
+									</div>
 								</div>
 							</div>
 						</div>
 
-						<div th:if="${#lists.isEmpty(items)}" class="text-center text-muted py-4">
-							<i class="fa-solid fa-cart-shopping fa-2x mb-3 d-block"></i>
-							<p>Your cart is empty</p>
-							<a th:href="@{/shop}" class="btn btn-primary btn-sm">Continue Shopping</a>
-						</div>
+						<!-- Checkout Form -->
+						<form id="checkoutForm" th:object="${checkoutRequest}" novalidate>
+							<!-- Shipping Address Card -->
+							<div class="card-soft p-4 mb-4">
+								<h5 class="font-heading mb-3"><i class="fa-solid fa-truck-fast me-2 text-primary"></i>Shipping Details</h5>
+								<div class="row g-3">
+									<div class="col-md-6">
+										<label class="form-label">Full Name *</label>
+										<input type="text" id="customerName" th:field="*{customerName}" class="form-control" placeholder="Recipient's full name" required>
+										<div class="invalid-feedback" th:errors="*{customerName}"></div>
+									</div>
+									<div class="col-md-6">
+										<label class="form-label">Email Address *</label>
+										<input type="email" id="email" th:field="*{email}" class="form-control" placeholder="Order updates email" required>
+										<div class="invalid-feedback" th:errors="*{email}"></div>
+									</div>
+									<div class="col-md-6">
+										<label class="form-label">Phone / Mobile *</label>
+										<input type="tel" id="phone" th:field="*{phone}" class="form-control" placeholder="10-digit mobile number" required>
+										<div class="invalid-feedback" th:errors="*{phone}"></div>
+									</div>
+									<div class="col-md-6">
+										<label class="form-label">Country *</label>
+										<input type="text" th:field="*{country}" class="form-control" value="India" required>
+										<div class="invalid-feedback" th:errors="*{country}"></div>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Address Line 1 *</label>
+										<input type="text" id="addressLine1" th:field="*{addressLine1}" class="form-control" placeholder="Flat / House no, Building name, Street" required>
+										<div class="invalid-feedback" th:errors="*{addressLine1}"></div>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Address Line 2 (Optional)</label>
+										<input type="text" id="addressLine2" th:field="*{addressLine2}" class="form-control" placeholder="Area, Landmark, Colony">
+									</div>
+									<div class="col-md-4">
+										<label class="form-label">City *</label>
+										<input type="text" id="city" th:field="*{city}" class="form-control" placeholder="City" required>
+										<div class="invalid-feedback" th:errors="*{city}"></div>
+									</div>
+									<div class="col-md-4">
+										<label class="form-label">State *</label>
+										<input type="text" id="state" th:field="*{state}" class="form-control" placeholder="State" required>
+										<div class="invalid-feedback" th:errors="*{state}"></div>
+									</div>
+									<div class="col-md-4">
+										<label class="form-label">Pincode *</label>
+										<input type="text" id="pinCode" th:field="*{pinCode}" class="form-control" placeholder="6-digit PIN" required>
+										<div class="invalid-feedback" th:errors="*{pinCode}"></div>
+									</div>
+									<div class="col-12">
+										<label class="form-label">Order / Gift Notes (Optional)</label>
+										<textarea th:field="*{notes}" class="form-control" rows="2" placeholder="Special delivery notes or personalized gift card message..."></textarea>
+									</div>
+								</div>
+							</div>
 
-						<div class="mt-3 pt-3" th:unless="${#lists.isEmpty(items)}">
-							<div class="d-flex justify-content-between mb-2">
-								<span>Subtotal</span>
-								<span>₹<span id="subtotalAmount">0</span></span>
+							<!-- Payment Method Selection -->
+							<div class="card-soft p-4 mb-4">
+								<h5 class="font-heading mb-3"><i class="fa-solid fa-credit-card me-2 text-primary"></i>Payment Method</h5>
+								<div class="row g-3">
+									<div class="col-12 col-md-6">
+										<div class="payment-card" data-method="RAZORPAY">
+											<input type="radio" name="paymentMethod" id="razorpay" value="RAZORPAY" required>
+											<label for="razorpay" class="payment-label">
+												<div class="payment-icon">
+													<i class="fa-solid fa-shield-halved"></i>
+												</div>
+												<div>
+													<div class="fw-bold text-dark">Online Payment (Razorpay)</div>
+													<small class="text-muted">UPI, GPay, Cards, Net Banking</small>
+												</div>
+											</label>
+										</div>
+									</div>
+									<div class="col-12 col-md-6">
+										<div class="payment-card" data-method="COD">
+											<input type="radio" name="paymentMethod" id="cod" value="COD" required>
+											<label for="cod" class="payment-label">
+												<div class="payment-icon">
+													<i class="fa-solid fa-money-bill-wave"></i>
+												</div>
+												<div>
+													<div class="fw-bold text-dark">Cash on Delivery (COD)</div>
+													<small class="text-muted">Pay in cash when delivered</small>
+												</div>
+											</label>
+										</div>
+									</div>
+								</div>
+								<div class="invalid-feedback d-none text-danger mt-2" id="paymentError">Please select a payment method to proceed.</div>
 							</div>
-							<div class="d-flex justify-content-between mb-2">
-								<span>Shipping</span>
-								<span>₹1</span>
-							</div>
-							<div class="d-flex justify-content-between mb-2">
-								<span>Tax (5%)</span>
-								<span>₹<span id="taxAmount">0</span></span>
-							</div>
-							<div class="d-flex justify-content-between mb-2 text-success" id="discountRow"
-								style="display:none;">
-								<span>Discount</span>
-								<span>-₹<span id="discountAmount">0</span></span>
-							</div>
-							<hr>
-							<div class="d-flex justify-content-between fw-bold">
-								<span>Grand Total</span>
-								<span class="text-primary">₹<span id="grandTotal">0</span></span>
-							</div>
-
-							<button type="submit" class="btn btn-primary w-100 mt-3 btn-lg" id="placeOrderBtn"
-								th:if="${loggedInCustomer != null}" th:unless="${#lists.isEmpty(items)}">
-								<span id="placeOrderText">Place Order</span>
-								<span id="placeOrderSpinner" class="spinner-border spinner-border-sm d-none"
-									role="status" aria-hidden="true"></span>
-							</button>
-							<div th:if="${loggedInCustomer == null and !#lists.isEmpty(items)}"
-								class="alert alert-warning mt-3">
-								Please login above to continue with your order.
-							</div>
-						</div>
+						</form>
 					</div>
 
-					<div class="card-soft p-2">
-						<div class="d-flex align-items-center gap-2 text-muted small">
-							<i class="fa-solid fa-shield-halved"></i>
-							<span>Secure checkout powered by Razorpay</span>
+					<!-- Right Column: Order Summary Box -->
+					<div class="col-lg-5">
+						<div class="order-summary-box sticky-top" style="top: 90px;">
+							<h5 class="font-heading mb-3 pb-2 border-bottom"><i class="fa-solid fa-receipt me-2 text-primary"></i>Order Summary</h5>
+
+							<!-- Order Items List -->
+							<div class="order-items-scroll mb-3" style="max-height: 280px; overflow-y: auto;">
+								<div th:each="item : ${items}" class="order-item d-flex align-items-center gap-3 py-2 border-bottom border-light">
+									<img th:src="${item.imageUrl != null ? item.imageUrl : '/images/product-placeholder.jpg'}"
+										class="rounded-3 border border-light p-1 flex-shrink-0" width="56" height="56" style="object-fit: contain; background: #FAF6F1;" th:alt="${item.productName}">
+									<div class="flex-grow-1 min-w-0">
+										<h6 class="mb-0 text-truncate font-heading small fw-bold" th:text="${item.productName}">Product Name</h6>
+										<small class="text-muted">Qty: <strong th:text="${item.quantity}">1</strong> &bull; ₹<span th:text="${item.price}">0</span></small>
+									</div>
+									<div class="text-end fw-bold text-dark small">
+										₹<span class="order-item-total" th:text="${item.subtotal}">0</span>
+									</div>
+								</div>
+							</div>
+
+							<div th:if="${#lists.isEmpty(items)}" class="text-center text-muted py-4">
+								<i class="fa-solid fa-bag-shopping mb-2 text-muted" style="font-size: 2rem;"></i>
+								<p class="small mb-0">Your bag is empty.</p>
+							</div>
+
+							<div th:unless="${#lists.isEmpty(items)}">
+								<div class="d-flex justify-content-between mb-2 small text-muted">
+									<span>Subtotal</span>
+									<span class="text-dark fw-semibold">₹<span id="subtotalAmount">0</span></span>
+								</div>
+								<div class="d-flex justify-content-between mb-2 small text-muted">
+									<span>Estimated Shipping</span>
+									<span class="text-success fw-semibold">₹1 <small class="text-muted">(Special)</small></span>
+								</div>
+								<div class="d-flex justify-content-between mb-2 small text-muted">
+									<span>Estimated Tax (5%)</span>
+									<span class="text-dark fw-semibold">₹<span id="taxAmount">0</span></span>
+								</div>
+								<div class="d-flex justify-content-between mb-2 text-success small" id="discountRow" style="display:none;">
+									<span>Boutique Discount</span>
+									<span>-₹<span id="discountAmount">0</span></span>
+								</div>
+
+								<hr class="my-3">
+
+								<div class="d-flex justify-content-between align-items-center mb-4">
+									<span class="font-heading h5 mb-0">Grand Total</span>
+									<span class="price font-heading text-dark" style="font-size: 1.45rem;">₹<span id="grandTotal">0</span></span>
+								</div>
+
+								<button type="submit" class="btn btn-primary w-100 btn-lg mb-3" id="placeOrderBtn"
+									th:if="${loggedInCustomer != null}" th:unless="${#lists.isEmpty(items)}">
+									<span id="placeOrderText">Place Handcrafted Order</span>
+									<span id="placeOrderSpinner" class="spinner-border spinner-border-sm d-none ms-2" role="status" aria-hidden="true"></span>
+								</button>
+							</div>
+
+							<div class="p-3 bg-soft-cream rounded-3 border border-light text-center">
+								<small class="text-muted d-block mb-1"><i class="fa-solid fa-lock text-accent me-1"></i> Encrypted 256-bit SSL checkout</small>
+								<small class="text-muted d-block" style="font-size: 0.72rem;">Handmade with care &bull; Pan-India Insured Dispatch</small>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 		</div>
 	</section>
 
@@ -307,6 +311,7 @@
 					})
 					.catch(() => { });
 			}
+
 			const checkoutForm = document.getElementById("checkoutForm");
 			const placeOrderBtn = document.getElementById("placeOrderBtn");
 			const placeOrderText = document.getElementById("placeOrderText");
@@ -326,39 +331,26 @@
 			let subtotal = 0;
 
 			document.querySelectorAll(".order-item").forEach(item => {
-				const totalText = item.querySelector(".fw-bold").textContent;
-
-				const value = parseFloat(
-					totalText.replace(/,/g, "").replace(/[^0-9.]/g, "")
-				) || 0;
-
-				subtotal += value;
+				const totalText = item.querySelector(".order-item-total") || item.querySelector(".fw-bold");
+				if (totalText) {
+					const value = parseFloat(
+						totalText.textContent.replace(/,/g, "").replace(/[^0-9.]/g, "")
+					) || 0;
+					subtotal += value;
+				}
 			});
 
 			const tax = +(subtotal * taxRate).toFixed(2);
 			const discount = subtotal >= discountThreshold ? discountAmount : 0;
 			const total = +(subtotal + shipping + tax - discount).toFixed(2);
 
-			subtotalEl.textContent = subtotal.toFixed(2);
-			taxEl.textContent = tax.toFixed(2);
-			grandTotalEl.textContent = total.toFixed(2);
+			if (subtotalEl) subtotalEl.textContent = subtotal.toFixed(2);
+			if (taxEl) taxEl.textContent = tax.toFixed(2);
+			if (grandTotalEl) grandTotalEl.textContent = total.toFixed(2);
 
-			if (discount > 0) {
+			if (discount > 0 && discountRow && discountEl) {
 				discountRow.style.display = "flex";
 				discountEl.textContent = discount.toFixed(2);
-			}
-
-			if (document.getElementById("defaultAddressData")) {
-				const da = document.getElementById("defaultAddressData");
-				if (da) {
-					fillAddress({
-						addressLine1: da.dataset.addressLine1 || "",
-						addressLine2: da.dataset.addressLine2 || "",
-						city: da.dataset.city || "",
-						state: da.dataset.state || "",
-						pinCode: da.dataset.pinCode || ""
-					});
-				}
 			}
 
 			const loggedInCustomer = document.getElementById("loggedInCustomerData");
@@ -366,107 +358,98 @@
 				const nameEl = document.getElementById("customerName");
 				const emailEl = document.getElementById("email");
 				const phoneEl = document.getElementById("phone");
-				if (nameEl && !nameEl.value) nameEl.value = loggedInCustomer.dataset.firstName || "";
+				if (nameEl && !nameEl.value) {
+					const fName = loggedInCustomer.dataset.firstName || "";
+					const lName = loggedInCustomer.dataset.lastName || "";
+					nameEl.value = (fName + " " + lName).trim() || fName;
+				}
 				if (emailEl && !emailEl.value) emailEl.value = loggedInCustomer.dataset.email || "";
 				if (phoneEl && !phoneEl.value) phoneEl.value = loggedInCustomer.dataset.phone || "";
 			}
 
-			checkoutForm.addEventListener("submit", function (e) {
-				e.preventDefault();
+			if (checkoutForm && placeOrderBtn) {
+				checkoutForm.addEventListener("submit", function (e) {
+					e.preventDefault();
 
-				if (!checkoutForm.checkValidity()) {
-					checkoutForm.classList.add("was-validated");
-					return;
-				}
+					if (!checkoutForm.checkValidity()) {
+						checkoutForm.classList.add("was-validated");
+						return;
+					}
 
-				const selectedPayment = document.querySelector("input[name='paymentMethod']:checked");
-				if (!selectedPayment) {
-					document.getElementById("paymentError").style.display = "block";
-					return;
-				}
-				document.getElementById("paymentError").style.display = "none";
+					const selectedPayment = document.querySelector("input[name='paymentMethod']:checked");
+					if (!selectedPayment) {
+						const payErr = document.getElementById("paymentError");
+						if (payErr) payErr.classList.remove("d-none");
+						return;
+					}
+					const payErr = document.getElementById("paymentError");
+					if (payErr) payErr.classList.add("d-none");
 
-				const paymentMethod = selectedPayment.value;
-				const formData = new FormData(checkoutForm);
-				const data = {};
-				formData.forEach((value, key) => {
-					data[key] = value.trim();
+					const paymentMethod = selectedPayment.value;
+					placeOrderBtn.disabled = true;
+					placeOrderText.textContent = "Processing Order...";
+					placeOrderSpinner.classList.remove("d-none");
+
+					if (paymentMethod === "COD") {
+						const formData = new FormData(checkoutForm);
+						fetch(CONTEXT_PATH + "/api/orders/create-cod", {
+							method: "POST",
+							body: formData
+						})
+							.then(async res => {
+								const text = await res.text();
+								if (!text) throw new Error("Empty response from server");
+								let result;
+								try { result = JSON.parse(text); } catch (e) { throw new Error("Server returned an invalid response."); }
+								if (!result.success) throw new Error(result.message || "Failed to place order");
+								window.location.href = CONTEXT_PATH + "/order-success?orderNumber=" + result.orderNumber;
+							})
+							.catch(err => {
+								console.error("Place order error:", err);
+								showToast(err.message, "danger");
+							})
+							.finally(() => {
+								placeOrderBtn.disabled = false;
+								placeOrderText.textContent = "Place Handcrafted Order";
+								placeOrderSpinner.classList.add("d-none");
+							});
+					} else if (paymentMethod === "RAZORPAY") {
+						const formData = new FormData(checkoutForm);
+						fetch(CONTEXT_PATH + "/api/orders/create-razorpay", {
+							method: "POST",
+							body: formData
+						})
+							.then(async res => {
+								const text = await res.text();
+								if (!text) throw new Error("Empty response from server");
+								let result;
+								try { result = JSON.parse(text); } catch (e) { throw new Error("Server returned an invalid response."); }
+								if (!result.success) throw new Error(result.message || "Failed to initiate payment");
+								openRazorpayCheckout(result);
+							})
+							.catch(err => {
+								console.error("Place order error:", err);
+								showToast(err.message, "danger");
+							})
+							.finally(() => {
+								placeOrderBtn.disabled = false;
+								placeOrderText.textContent = "Place Handcrafted Order";
+								placeOrderSpinner.classList.add("d-none");
+							});
+					}
 				});
 
-				placeOrderBtn.disabled = true;
-				placeOrderText.textContent = "Processing...";
-				placeOrderSpinner.classList.remove("d-none");
-
-			if (paymentMethod === "COD") {
-				const formData = new FormData(checkoutForm);
-				fetch(CONTEXT_PATH + "/api/orders/create-cod", {
-					method: "POST",
-					body: formData
-				})
-						.then(async res => {
-							const text = await res.text();
-							console.log("COD response:", res.status, text);
-							if (!text) throw new Error("Empty response from server");
-							let result;
-							try {
-								result = JSON.parse(text);
-							} catch (e) {
-								throw new Error("Server returned an invalid response. Please try again.");
-							}
-							if (!result.success) throw new Error(result.message || "Failed to place order");
-							window.location.href = CONTEXT_PATH + "/order-success?orderNumber=" + result.orderNumber;
-						})
-						.catch(err => {
-							console.error("Place order error:", err);
-							showToast(err.message, "danger");
-						})
-						.finally(() => {
-							placeOrderBtn.disabled = false;
-							placeOrderText.textContent = "Place Order";
-							placeOrderSpinner.classList.add("d-none");
-						});
-			} else if (paymentMethod === "RAZORPAY") {
-				const formData = new FormData(checkoutForm);
-				fetch(CONTEXT_PATH + "/api/orders/create-razorpay", {
-					method: "POST",
-					body: formData
-				})
-						.then(async res => {
-							const text = await res.text();
-							console.log("Razorpay response:", res.status, text);
-							if (!text) throw new Error("Empty response from server");
-							let result;
-							try {
-								result = JSON.parse(text);
-							} catch (e) {
-								throw new Error("Server returned an invalid response. Please try again.");
-							}
-							if (!result.success) throw new Error(result.message || "Failed to initiate payment");
-
-							openRazorpayCheckout(result);
-						})
-						.catch(err => {
-							console.error("Place order error:", err);
-							showToast(err.message, "danger");
-						})
-						.finally(() => {
-							placeOrderBtn.disabled = false;
-							placeOrderText.textContent = "Place Order";
-							placeOrderSpinner.classList.add("d-none");
-						});
-				}
-			});
-
-			placeOrderBtn.addEventListener("click", function (e) {
-				e.preventDefault();
-				checkoutForm.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
-			});
+				placeOrderBtn.addEventListener("click", function (e) {
+					e.preventDefault();
+					checkoutForm.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+				});
+			}
 
 			document.querySelectorAll("input[name='paymentMethod']").forEach(radio => {
 				radio.addEventListener("change", function () {
 					document.querySelectorAll(".payment-card").forEach(card => card.classList.remove("selected"));
 					if (this.checked) {
-						this.closest(".payment-card").classList.add("selected");
+						this.closest(".payment-card")?.classList.add("selected");
 					}
 				});
 			});
@@ -483,26 +466,29 @@
 
 			const selectedPayment = document.querySelector("input[name='paymentMethod']:checked");
 			if (selectedPayment) {
-				selectedPayment.closest(".payment-card").classList.add("selected");
+				selectedPayment.closest(".payment-card")?.classList.add("selected");
 			}
 		});
 
 		function selectAddress(el, name, mobile, addr1, addr2, city, state, pinCode, landmark) {
-			document.querySelectorAll(".address-card").forEach(card => {
-				card.style.borderColor = "var(--border)";
-				card.style.background = "var(--surface)";
-			});
-			el.style.borderColor = "var(--primary)";
-			el.style.background = "rgba(201,123,132,0.05)";
+			document.querySelectorAll(".address-card").forEach(card => card.classList.remove("selected"));
+			if (el) el.classList.add("selected");
 
-			document.getElementById("customerName").value = name;
-			document.getElementById("phone").value = mobile;
-			document.getElementById("addressLine1").value = addr1;
-			const addr2El = document.getElementById("addressLine2");
-			if (addr2El) addr2El.value = addr2 || "";
-			document.getElementById("city").value = city;
-			document.getElementById("state").value = state;
-			document.getElementById("pinCode").value = pinCode;
+			const nameInput = document.getElementById("customerName");
+			const phoneInput = document.getElementById("phone");
+			const addr1Input = document.getElementById("addressLine1");
+			const addr2Input = document.getElementById("addressLine2");
+			const cityInput = document.getElementById("city");
+			const stateInput = document.getElementById("state");
+			const pinInput = document.getElementById("pinCode");
+
+			if (nameInput && name) nameInput.value = name;
+			if (phoneInput && mobile) phoneInput.value = mobile;
+			if (addr1Input && addr1) addr1Input.value = addr1;
+			if (addr2Input) addr2Input.value = addr2 || "";
+			if (cityInput && city) cityInput.value = city;
+			if (stateInput && state) stateInput.value = state;
+			if (pinInput && pinCode) pinInput.value = pinCode;
 		}
 
 		function handleSendOtp() {
@@ -511,7 +497,7 @@
 			const errorDiv = document.getElementById("loginError");
 
 			if (!email) {
-				errorDiv.textContent = "Please enter your email address";
+				errorDiv.textContent = "Please enter a valid email address.";
 				errorDiv.classList.remove("d-none");
 				return;
 			}
@@ -527,7 +513,7 @@
 						document.getElementById("loginStep2").classList.remove("d-none");
 						document.getElementById("otpEmailDisplay").textContent = email;
 					} else {
-						errorDiv.textContent = result.message || "Failed to send OTP";
+						errorDiv.textContent = result.message || "Failed to send OTP. Please try again.";
 						errorDiv.classList.remove("d-none");
 					}
 				})
@@ -548,7 +534,7 @@
 			const errorDiv = document.getElementById("loginError");
 
 			if (!otp || otp.length !== 6) {
-				errorDiv.textContent = "Please enter the 6-digit OTP";
+				errorDiv.textContent = "Please enter the 6-digit OTP.";
 				errorDiv.classList.remove("d-none");
 				return;
 			}
@@ -571,7 +557,7 @@
 							window.location.reload();
 						}
 					} else {
-						errorDiv.textContent = result.message || "Invalid or expired OTP";
+						errorDiv.textContent = result.message || "Invalid or expired OTP.";
 						errorDiv.classList.remove("d-none");
 					}
 				})
@@ -589,9 +575,9 @@
 			const email = document.getElementById("loginEmail").value.trim();
 			sendOtp(email).then(result => {
 				if (result.success) {
-					showToast("OTP resent successfully", "success");
+					showToast("OTP resent successfully.", "success");
 				} else {
-					showToast(result.message || "Failed to resend OTP", "danger");
+					showToast(result.message || "Failed to resend OTP.", "danger");
 				}
 			});
 		}
@@ -599,7 +585,7 @@
 		function handleLogout() {
 			logoutCustomer().then(result => {
 				if (result.success) {
-					showToast("Logged out successfully", "success");
+					showToast("Logged out successfully.", "success");
 					window.location.reload();
 				}
 			});
@@ -611,12 +597,15 @@
 				amount: data.amount,
 				currency: data.currency,
 				name: "Loomelle Crochet",
-				description: "Order " + data.orderNumber,
+				description: "Order #" + data.orderNumber,
 				order_id: data.razorpayOrderId,
 				prefill: {
 					name: data.customerName,
 					email: data.email,
 					contact: data.phone
+				},
+				theme: {
+					color: "#C27D86"
 				},
 				handler: function (response) {
 					fetch(CONTEXT_PATH + "/api/payment/razorpay/verify", {
@@ -649,67 +638,6 @@
 			rzp.open();
 		}
 	</script>
-
-	<style>
-		.payment-card {
-			border: 2px solid var(--border);
-			border-radius: var(--radius);
-			padding: 1rem;
-			cursor: pointer;
-			transition: all 0.25s ease;
-			background: var(--surface);
-		}
-
-		.payment-card:hover {
-			border-color: var(--primary);
-			box-shadow: 0 4px 12px rgba(201, 123, 132, 0.1);
-		}
-
-		.payment-card.selected {
-			border-color: var(--primary);
-			background: rgba(201, 123, 132, 0.05);
-			box-shadow: 0 4px 16px rgba(201, 123, 132, 0.15);
-		}
-
-		.payment-card input[type="radio"] {
-			display: none;
-		}
-
-		.payment-label {
-			display: flex;
-			align-items: center;
-			gap: 1rem;
-			cursor: pointer;
-			margin: 0;
-			width: 100%;
-		}
-
-		.payment-icon {
-			width: 48px;
-			height: 48px;
-			border-radius: 12px;
-			background: var(--secondary);
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 1.2rem;
-			color: var(--primary);
-			flex-shrink: 0;
-		}
-
-		.order-item img {
-			object-fit: cover;
-		}
-
-		.address-card:hover {
-			border-color: var(--primary) !important;
-		}
-
-		.address-card.selected {
-			border-color: var(--primary) !important;
-			background: rgba(201, 123, 132, 0.05) !important;
-		}
-	</style>
 </body>
 
 </html>

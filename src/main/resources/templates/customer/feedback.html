@@ -1,54 +1,68 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
-<link rel="icon" type="image/x-icon" th:href="@{/uploads/favicon-v2.ico}">
-<link rel="icon" type="image/svg+xml" th:href="@{/uploads/favicon-v2.svg}">
-<link rel="icon" type="image/png" sizes="32x32" th:href="@{/uploads/favicon-v2-32x32.png}">
-<link rel="icon" type="image/png" sizes="16x16" th:href="@{/uploads/favicon-v2-16x16.png}">
-<link rel="apple-touch-icon" th:href="@{/uploads/apple-touch-icon-v2.png}">
 
 <head th:replace="~{header :: head('Share Feedback')}"></head>
 
 <body>
 	<div th:replace="~{header :: navbar}"></div>
-	<section class="py-4">
+
+	<!-- Breadcrumb Banner -->
+	<section class="py-3 bg-warm-surface border-bottom border-light">
+		<div class="container">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb mb-0 small">
+					<li class="breadcrumb-item"><a th:href="@{/}" class="text-muted"><i class="fa-solid fa-house me-1"></i>Home</a></li>
+					<li class="breadcrumb-item"><a th:href="@{/my-orders}" class="text-muted">My Orders</a></li>
+					<li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">Product Review</li>
+				</ol>
+			</nav>
+		</div>
+	</section>
+
+	<section class="py-5">
 		<div class="container">
 			<div class="row justify-content-center">
 				<div class="col-12 col-md-10 col-lg-8">
-					<div th:if="${order != null and product != null}" class="card-soft p-3">
-						<h2 class="section-title mb-2">Share Your Feedback</h2>
-						<p class="text-muted mb-3">How was your experience with this product?</p>
+					<div th:if="${order != null and product != null}" class="card-soft p-4 p-md-5">
+						<span class="badge-soft mb-2 d-inline-block">Artisan Review</span>
+						<h2 class="font-heading h3 mb-1">Share Your Experience</h2>
+						<p class="text-muted small mb-4">Your thoughtful feedback helps our artisans continue perfecting our handmade craft.</p>
 
-						<div class="d-flex gap-2 align-items-center mb-3 p-2" style="background: var(--surface); border-radius: 12px;">
+						<!-- Product Highlight Card -->
+						<div class="d-flex gap-3 align-items-center mb-4 p-3 bg-soft-cream rounded-3 border border-light">
 							<img th:src="${product.imageUrl != null ? product.imageUrl : '/images/product-placeholder.jpg'}"
-								class="rounded-2" width="70" height="70" style="object-fit:cover;" alt="">
+								class="rounded-3 border border-light p-1 flex-shrink-0" width="70" height="70" style="object-fit: contain; background: #FAF6F1;" alt="">
 							<div>
-								<h6 class="fw-bold mb-1" th:text="${product.name}">Product Name</h6>
-								<small class="text-muted">Order: <span th:text="${order.orderNumber}">ORD-001</span></small>
+								<h6 class="font-heading mb-1 text-dark fw-bold" th:text="${product.name}">Product Name</h6>
+								<small class="text-muted">Order: <span class="fw-semibold text-dark" th:text="${order.orderNumber}">ORD-001</span></small>
 							</div>
 						</div>
 
-						<div th:if="${feedbackSuccess}" class="text-center py-3">
-							<div th:if="${existingReview != null}" class="card-soft p-3 mb-3 text-start">
+						<!-- Feedback Success View -->
+						<div th:if="${feedbackSuccess}" class="text-center py-4">
+							<div th:if="${existingReview != null}" class="card-soft p-3 mb-4 text-start bg-light">
 								<div class="text-warning small mb-2">
 									<span th:each="i : ${#numbers.sequence(1, existingReview.rating)}">★</span>
 								</div>
-								<p class="mb-0 text-muted" th:if="${existingReview.comment != null and !existingReview.comment.isEmpty()}" th:text="${existingReview.comment}"></p>
-								<p class="mb-0 text-muted" th:if="${existingReview.comment == null or existingReview.comment.isEmpty()}">No comment provided.</p>
+								<p class="mb-0 text-dark small fst-italic" th:if="${existingReview.comment != null and !existingReview.comment.isEmpty()}" th:text="${existingReview.comment}"></p>
+								<p class="mb-0 text-muted small" th:if="${existingReview.comment == null or existingReview.comment.isEmpty()}">No written comment provided.</p>
 							</div>
 
-							<i class="fa-solid fa-circle-check fa-2x text-success mb-3"></i>
-							<h4 class="fw-bold mb-2">Thanks for your feedback!</h4>
-							<p class="text-muted mb-3">Your review helps us serve you better.</p>
+							<div class="toast-icon-wrap mx-auto mb-3" style="width: 64px; height: 64px; font-size: 2rem; background: var(--success-light); color: var(--success);">
+								<i class="fa-solid fa-circle-check"></i>
+							</div>
+							<h4 class="font-heading mb-2">Thank You for Your Review!</h4>
+							<p class="text-muted small mb-4">Your appreciation means the world to our small handmade workshop.</p>
 
-							<a th:href="@{/my-orders}" class="btn btn-primary btn-lg">
-								<i class="fa-solid fa-grid-2 me-2"></i>Go to Dashboard
+							<a th:href="@{/my-orders}" class="btn btn-primary">
+								<i class="fa-solid fa-box-open me-1"></i> Back to My Orders
 							</a>
 						</div>
 
+						<!-- Feedback Form -->
 						<form th:unless="${feedbackSuccess}" th:action="@{'/customer/feedback/' + ${order.orderNumber}}" th:object="${feedbackForm}" method="post" novalidate>
-							<div class="mb-3">
-								<label class="form-label fw-bold">Your Rating</label>
+							<div class="mb-4">
+								<label class="form-label small fw-bold">Overall Rating *</label>
 								<div class="d-flex gap-2" id="starRating">
 									<i class="fa-solid fa-star fa-2x text-muted" data-rating="1" style="cursor:pointer;"></i>
 									<i class="fa-solid fa-star fa-2x text-muted" data-rating="2" style="cursor:pointer;"></i>
@@ -60,28 +74,32 @@
 								<div class="invalid-feedback d-block" th:if="${#fields.hasErrors('rating')}" th:errors="*{rating}"></div>
 							</div>
 
-							<div class="mb-3">
-								<label class="form-label">Your Feedback</label>
-								<textarea th:field="*{comment}" class="form-control" rows="3"
-									placeholder="Share your experience with this product..."></textarea>
+							<div class="mb-4">
+								<label class="form-label small fw-bold">Your Review & Comments</label>
+								<textarea th:field="*{comment}" class="form-control" rows="4"
+									placeholder="How is the yarn texture, stitch quality, color, and packaging?"></textarea>
 								<div class="invalid-feedback d-block" th:if="${#fields.hasErrors('comment')}" th:errors="*{comment}"></div>
 							</div>
 
-							<div class="d-flex gap-2">
-								<button type="submit" class="btn btn-primary">Submit Feedback</button>
-								<a th:href="@{/my-orders}" class="btn btn-outline-secondary">Cancel</a>
+							<div class="d-flex gap-2 pt-2 border-top">
+								<button type="submit" class="btn btn-primary btn-lg">
+									<i class="fa-solid fa-paper-plane me-1"></i> Submit Review
+								</button>
+								<a th:href="@{/my-orders}" class="btn btn-outline-secondary btn-lg">Cancel</a>
 							</div>
 						</form>
 					</div>
 
-					<div th:if="${order == null or product == null}" class="card-soft p-4 text-center">
-						<p class="text-muted">Invalid feedback request.</p>
-						<a th:href="@{/my-orders}" class="btn btn-primary btn-sm">Back to Orders</a>
+					<div th:if="${order == null or product == null}" class="card-soft p-5 text-center">
+						<h4 class="font-heading mb-2">Invalid Review Request</h4>
+						<p class="text-muted small mb-4">We could not link this feedback to an eligible order item.</p>
+						<a th:href="@{/my-orders}" class="btn btn-primary">Return to Orders</a>
 					</div>
 				</div>
 			</div>
 		</div>
 	</section>
+
 	<div th:replace="~{footer :: footer}"></div>
 	<div th:replace="~{scripts :: scripts}"></div>
 
@@ -128,4 +146,5 @@
 		});
 	</script>
 </body>
+
 </html>
