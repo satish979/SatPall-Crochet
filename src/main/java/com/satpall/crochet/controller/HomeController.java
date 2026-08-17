@@ -137,7 +137,7 @@ public class HomeController {
 			response.put("message", "Thank you for reaching out! Your message has been sent to our artisan support team.");
 		} catch (Exception e) {
 			response.put("success", false);
-			response.put("message", "Failed to send message. Please try again or email us directly at hello@loomellecrochet.in");
+			response.put("message", "Failed to send message. Please try again or email us directly at loomellecrochet.support@gmail.com");
 		}
 
 		return response;
