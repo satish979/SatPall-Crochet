@@ -23,6 +23,8 @@ import com.satpall.crochet.enums.OrderStatus;
 import com.satpall.crochet.enums.PaymentMethod;
 import com.satpall.crochet.enums.PaymentStatus;
 import com.satpall.crochet.exception.OrderException;
+import com.satpall.crochet.repository.CartItemRepository;
+import com.satpall.crochet.repository.CartRepository;
 import com.satpall.crochet.repository.OrderRepository;
 import com.satpall.crochet.repository.ProductRepository;
 
@@ -34,6 +36,8 @@ public class OrderServiceImpl implements OrderService {
 
 	private final OrderRepository orderRepository;
 	private final ProductRepository productRepository;
+	private final CartRepository cartRepository;
+	private final CartItemRepository cartItemRepository;
 	private final PaymentService paymentService;
 	private final EmailService emailService;
 
@@ -181,6 +185,15 @@ public class OrderServiceImpl implements OrderService {
 		order.setCancellationReason(reason);
 		order.setCancelledDate(LocalDateTime.now());
 		return orderRepository.save(order);
+	}
+
+	@Override
+	@Transactional
+	public void clearCartForSession(String sessionId) {
+		cartRepository.findBySessionId(sessionId).ifPresent(cart -> {
+			cartItemRepository.deleteByCart(cart);
+			cartRepository.delete(cart);
+		});
 	}
 
 	private String generateOrderNumber() {

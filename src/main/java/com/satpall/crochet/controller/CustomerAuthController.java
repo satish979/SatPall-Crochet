@@ -28,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomerAuthController {
 
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CustomerAuthController.class);
+
 	private final OtpService otpService;
 	private final CustomerService customerService;
 
@@ -36,27 +38,26 @@ public class CustomerAuthController {
 			HttpSession session) {
 		Map<String, Object> response = new HashMap<>();
 
-		Long existingCustomerId = (Long) session.getAttribute("customerId");
-		if (existingCustomerId != null) {
-			response.put("success", true);
-			response.put("message", "You are already logged in");
-			response.put("authenticated", true);
-			return ResponseEntity.ok(response);
+		if (request.getIdentifier() == null || request.getIdentifier().trim().isEmpty()) {
+			response.put("success", false);
+			response.put("message", "Email address is required.");
+			return ResponseEntity.badRequest().body(response);
 		}
 
 		try {
 			otpService.sendOtp(request.getIdentifier(), request.getType());
 			response.put("success", true);
-			response.put("message", "OTP sent successfully");
+			response.put("message", "OTP sent successfully to " + request.getIdentifier().trim().toLowerCase());
 			return ResponseEntity.ok(response);
 		} catch (PaymentException ex) {
+			log.warn("PaymentException sending OTP to {}: {}", request.getIdentifier(), ex.getMessage());
 			response.put("success", false);
 			response.put("message", ex.getMessage());
 			return ResponseEntity.badRequest().body(response);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			log.error("Failed to send OTP to {}: {}", request.getIdentifier(), ex.getMessage(), ex);
 			response.put("success", false);
-			response.put("message", "Failed to send OTP. Please try again.");
+			response.put("message", "Failed to send OTP email: " + (ex.getMessage() != null ? ex.getMessage() : "Please verify your email or try again."));
 			return ResponseEntity.status(500).body(response);
 		}
 	}
@@ -66,35 +67,30 @@ public class CustomerAuthController {
 			HttpSession session) {
 		Map<String, Object> response = new HashMap<>();
 
-		Long existingCustomerId = (Long) session.getAttribute("customerId");
-		if (existingCustomerId != null) {
-			Customer existing = customerService.getCurrentCustomer(existingCustomerId).orElse(null);
-			if (existing != null) {
-				response.put("success", true);
-				response.put("message", "Already logged in");
-				response.put("authenticated", true);
-				CustomerAuthResponse authResponse = new CustomerAuthResponse();
-				authResponse.setId(existing.getId());
-				authResponse.setFirstName(existing.getFirstName());
-				authResponse.setLastName(existing.getLastName());
-				authResponse.setEmail(existing.getEmail());
-				authResponse.setPhone(existing.getPhone());
-				response.put("customer", authResponse);
-				return ResponseEntity.ok(response);
-			}
+		if (request.getIdentifier() == null || request.getIdentifier().trim().isEmpty()) {
+			response.put("success", false);
+			response.put("message", "Email address is required.");
+			return ResponseEntity.badRequest().body(response);
+		}
+
+		if (request.getOtp() == null || request.getOtp().trim().isEmpty()) {
+			response.put("success", false);
+			response.put("message", "Please enter the 6-digit OTP.");
+			return ResponseEntity.badRequest().body(response);
 		}
 
 		try {
-			boolean valid = otpService.verifyOtp(request.getIdentifier(), request.getOtp());
+			boolean valid = otpService.verifyOtp(request.getIdentifier(), request.getOtp().trim());
 			if (!valid) {
 				response.put("success", false);
-				response.put("message", "Invalid or expired OTP");
+				response.put("message", "Invalid or expired OTP. Please check and try again.");
 				return ResponseEntity.badRequest().body(response);
 			}
 
 			Customer customer = otpService.loginOrCreateCustomer(request.getIdentifier());
 			session.setAttribute("customerId", customer.getId());
 			session.setAttribute("customerEmail", customer.getEmail());
+			session.setAttribute("customer", customer);
 
 			String redirectAfterLogin = (String) session.getAttribute("redirectAfterLogin");
 			if (redirectAfterLogin != null) {
@@ -114,7 +110,7 @@ public class CustomerAuthController {
 			response.put("customer", authResponse);
 			return ResponseEntity.ok(response);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			log.error("Verification error for {}: {}", request.getIdentifier(), ex.getMessage(), ex);
 			response.put("success", false);
 			response.put("message", "Verification failed. Please try again.");
 			return ResponseEntity.status(500).body(response);

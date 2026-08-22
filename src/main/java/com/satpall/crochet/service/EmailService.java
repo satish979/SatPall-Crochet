@@ -12,6 +12,8 @@ public interface EmailService {
 
 	void sendHtmlEmail(String to, String subject, String htmlBody);
 
+	void sendOtpEmail(String to, String otp);
+
 	void sendNewOrderToAdmin(Order order, java.util.List<OrderItem> items);
 
 	void sendOrderStatusUpdateToCustomer(Order order, OrderStatus newStatus);

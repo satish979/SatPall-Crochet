@@ -152,11 +152,7 @@ public class OrderApiController {
 
 	private void clearSessionItems(HttpSession session) {
 		session.removeAttribute("buyNowItem");
-		Cart cart = cartRepository.findBySessionId(session.getId()).orElse(null);
-		if (cart != null) {
-			cartItemRepository.deleteByCart(cart);
-			cartRepository.delete(cart);
-		}
+		orderService.clearCartForSession(session.getId());
 	}
 
 }

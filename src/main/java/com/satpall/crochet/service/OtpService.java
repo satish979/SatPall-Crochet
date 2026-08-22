@@ -44,7 +44,7 @@ public class OtpService {
 		String otp = String.format("%06d", new Random().nextInt(1_000_000));
 		LocalDateTime expiry = LocalDateTime.now().plusMinutes(5);
 
-		log.info("Generating OTP for email: {} with expiry: {}", normalized, expiry);
+		log.info("🔐 [OTP Service] Generated OTP for email: {} (OTP: {}) with expiry: {}", normalized, otp, expiry);
 
 		OtpVerification verification = otpVerificationRepository.findByIdentifier(normalized)
 				.orElseGet(OtpVerification::new);
@@ -58,15 +58,14 @@ public class OtpService {
 
 		otpVerificationRepository.save(verification);
 
-		String subject = "Your Loomelle Crochet verification code";
-
-		String body = "<p>Dear Customer,</p>" + "<p>Your verification code is <strong>" + otp + "</strong>.</p>"
-				+ "<p>This code will expire in 5 minutes.</p>"
-				+ "<p>If you did not request this, please ignore this email.</p>" + "<p>Team Loomelle Crochet</p>";
-
-		log.info("Attempting to send OTP email to: {} via SMTP", normalized);
-		emailService.sendHtmlEmail(normalized, subject, body);
-		log.info("OTP email send triggered for: {}", normalized);
+		log.info("Attempting to send OTP email to: {}", normalized);
+		try {
+			emailService.sendOtpEmail(normalized, otp);
+			log.info("OTP email successfully sent to: {}", normalized);
+		} catch (Exception e) {
+			log.error("Failed to send OTP email to {}: {}", normalized, e.getMessage(), e);
+			throw new PaymentException("Failed to send OTP email. Please ensure your email address is correct and try again.");
+		}
 	}
 
 	public boolean verifyOtp(String identifier, String otp) {

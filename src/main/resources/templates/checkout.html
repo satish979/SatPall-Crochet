@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{header :: head('Checkout')}"></head>
@@ -61,16 +61,22 @@
 							<label class="form-label small">Enter 6-Digit OTP *</label>
 							<div class="input-group">
 								<span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-key text-muted"></i></span>
-								<input type="text" id="loginOtp" class="form-control border-start-0" placeholder="6-digit OTP" maxlength="6">
+								<input type="text" id="loginOtp" class="form-control border-start-0" placeholder="6-digit OTP" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
 							</div>
-							<small class="text-muted d-block mt-1">OTP sent to: <strong id="otpEmailDisplay" class="text-dark"></strong></small>
+							<div class="d-flex justify-content-between align-items-center mt-1">
+								<small class="text-muted">Sent to: <strong id="otpEmailDisplay" class="text-dark"></strong></small>
+								<a href="javascript:void(0)" onclick="backToStep1()" class="small text-primary text-decoration-none fw-semibold">Change</a>
+							</div>
 						</div>
 						<div class="col-md-6 col-lg-4 d-flex align-items-end gap-2">
 							<button type="button" class="btn btn-primary flex-grow-1" id="verifyOtpBtn" onclick="handleVerifyOtp()">
 								<i class="fa-solid fa-check me-1"></i> Verify OTP
 							</button>
-							<button type="button" class="btn btn-outline-secondary" onclick="resendOtp()">Resend</button>
+							<button type="button" class="btn btn-outline-secondary" id="resendOtpBtn" onclick="resendOtp()">Resend</button>
 						</div>
+					</div>
+					<div class="mt-2">
+						<small class="text-muted"><i class="fa-regular fa-clock me-1"></i> OTP is valid for 5 minutes. Please check your inbox and spam folder.</small>
 					</div>
 				</div>
 
@@ -491,14 +497,49 @@
 			if (pinInput && pinCode) pinInput.value = pinCode;
 		}
 
+		let resendTimer = null;
+		let resendCountdown = 0;
+
+		function startResendCooldown(seconds = 45) {
+			const resendBtn = document.getElementById("resendOtpBtn");
+			if (!resendBtn) return;
+			clearInterval(resendTimer);
+			resendCountdown = seconds;
+			resendBtn.disabled = true;
+			resendBtn.textContent = `Resend (${resendCountdown}s)`;
+
+			resendTimer = setInterval(() => {
+				resendCountdown--;
+				if (resendCountdown <= 0) {
+					clearInterval(resendTimer);
+					resendBtn.disabled = false;
+					resendBtn.textContent = "Resend";
+				} else {
+					resendBtn.textContent = `Resend (${resendCountdown}s)`;
+				}
+			}, 1000);
+		}
+
+		function backToStep1() {
+			document.getElementById("loginStep2").classList.add("d-none");
+			document.getElementById("loginStep1").classList.remove("d-none");
+			const errorDiv = document.getElementById("loginError");
+			if (errorDiv) errorDiv.classList.add("d-none");
+			const emailInput = document.getElementById("loginEmail");
+			if (emailInput) emailInput.focus();
+		}
+
 		function handleSendOtp() {
-			const email = document.getElementById("loginEmail").value.trim();
+			const emailInput = document.getElementById("loginEmail");
+			const email = emailInput ? emailInput.value.trim() : "";
 			const btn = document.getElementById("sendOtpBtn");
 			const errorDiv = document.getElementById("loginError");
 
-			if (!email) {
+			const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!email || !emailPattern.test(email)) {
 				errorDiv.textContent = "Please enter a valid email address.";
 				errorDiv.classList.remove("d-none");
+				if (emailInput) emailInput.focus();
 				return;
 			}
 
@@ -509,16 +550,27 @@
 			sendOtp(email)
 				.then(result => {
 					if (result.success) {
+						if (result.authenticated) {
+							window.location.reload();
+							return;
+						}
 						document.getElementById("loginStep1").classList.add("d-none");
 						document.getElementById("loginStep2").classList.remove("d-none");
 						document.getElementById("otpEmailDisplay").textContent = email;
+						const otpInput = document.getElementById("loginOtp");
+						if (otpInput) {
+							otpInput.value = "";
+							otpInput.focus();
+						}
+						startResendCooldown(45);
+						showToast("OTP sent to " + email, "success");
 					} else {
 						errorDiv.textContent = result.message || "Failed to send OTP. Please try again.";
 						errorDiv.classList.remove("d-none");
 					}
 				})
 				.catch(err => {
-					errorDiv.textContent = "Failed to send OTP. Please try again.";
+					errorDiv.textContent = "Failed to send OTP. Please check your network connection and try again.";
 					errorDiv.classList.remove("d-none");
 				})
 				.finally(() => {
@@ -533,9 +585,11 @@
 			const btn = document.getElementById("verifyOtpBtn");
 			const errorDiv = document.getElementById("loginError");
 
-			if (!otp || otp.length !== 6) {
-				errorDiv.textContent = "Please enter the 6-digit OTP.";
+			if (!otp || otp.length !== 6 || !/^\d{6}$/.test(otp)) {
+				errorDiv.textContent = "Please enter the valid 6-digit OTP code.";
 				errorDiv.classList.remove("d-none");
+				const otpInput = document.getElementById("loginOtp");
+				if (otpInput) otpInput.focus();
 				return;
 			}
 
@@ -557,7 +611,7 @@
 							window.location.reload();
 						}
 					} else {
-						errorDiv.textContent = result.message || "Invalid or expired OTP.";
+						errorDiv.textContent = result.message || "Invalid or expired OTP. Please try again.";
 						errorDiv.classList.remove("d-none");
 					}
 				})
@@ -573,14 +627,66 @@
 
 		function resendOtp() {
 			const email = document.getElementById("loginEmail").value.trim();
+			const resendBtn = document.getElementById("resendOtpBtn");
+			const errorDiv = document.getElementById("loginError");
+
+			if (resendCountdown > 0) return;
+
+			if (resendBtn) {
+				resendBtn.disabled = true;
+				resendBtn.textContent = "Sending...";
+			}
+			if (errorDiv) errorDiv.classList.add("d-none");
+
 			sendOtp(email).then(result => {
 				if (result.success) {
-					showToast("OTP resent successfully.", "success");
+					showToast("A new OTP has been sent to your email.", "success");
+					startResendCooldown(45);
 				} else {
-					showToast(result.message || "Failed to resend OTP.", "danger");
+					if (errorDiv) {
+						errorDiv.textContent = result.message || "Failed to resend OTP.";
+						errorDiv.classList.remove("d-none");
+					} else {
+						showToast(result.message || "Failed to resend OTP.", "danger");
+					}
+					if (resendBtn) {
+						resendBtn.disabled = false;
+						resendBtn.textContent = "Resend";
+					}
+				}
+			}).catch(err => {
+				if (errorDiv) {
+					errorDiv.textContent = "Failed to resend OTP. Please try again.";
+					errorDiv.classList.remove("d-none");
+				}
+				if (resendBtn) {
+					resendBtn.disabled = false;
+					resendBtn.textContent = "Resend";
 				}
 			});
 		}
+
+		document.addEventListener("DOMContentLoaded", () => {
+			const emailInput = document.getElementById("loginEmail");
+			if (emailInput) {
+				emailInput.addEventListener("keypress", (e) => {
+					if (e.key === "Enter") {
+						e.preventDefault();
+						handleSendOtp();
+					}
+				});
+			}
+
+			const otpInput = document.getElementById("loginOtp");
+			if (otpInput) {
+				otpInput.addEventListener("keypress", (e) => {
+					if (e.key === "Enter") {
+						e.preventDefault();
+						handleVerifyOtp();
+					}
+				});
+			}
+		});
 
 		function handleLogout() {
 			logoutCustomer().then(result => {

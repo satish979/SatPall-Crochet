@@ -33,4 +33,10 @@ public interface OrderService {
 
 	List<OrderSummaryDTO> buildOrderSummary(List<CartItem> cartItems);
 
+	/**
+	 * Deletes the cart and its items for the given session id.
+	 * Must run inside a transaction (JPA 'remove' operations require one).
+	 */
+	void clearCartForSession(String sessionId);
+
 }
